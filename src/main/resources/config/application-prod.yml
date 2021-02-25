@@ -1,2 +1,4 @@
 wechat:
   token: "0ADCEAF6CCE07DF3"
+server:
+  port: 80

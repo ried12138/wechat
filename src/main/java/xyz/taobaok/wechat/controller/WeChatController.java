@@ -38,7 +38,6 @@ public class WeChatController {
 
 
     @RequestMapping(value = "/wechat",method = RequestMethod.POST)
-    @ResponseBody
     public String RequestPostweChat(HttpServletRequest request, HttpServletResponse response){
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/xml");

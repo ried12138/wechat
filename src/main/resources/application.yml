@@ -5,11 +5,9 @@ spring:
   profiles:
     active: @spring.profiles.active@
 
-
 logging:
   config: 'classpath:logback-spring.xml'
   level:
     org.springframework.boot.autoconfigure: ERROR
 logback:
   file: ${spring.logpath}/${spring.application.name}
-

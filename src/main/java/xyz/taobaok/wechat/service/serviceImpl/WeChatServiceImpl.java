@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import xyz.taobaok.wechat.bean.BaseMessage;
 import xyz.taobaok.wechat.bean.TextMessage;
 import xyz.taobaok.wechat.service.WeChatService;
+import xyz.taobaok.wechat.toolutil.UrlUtil;
 import xyz.taobaok.wechat.toolutil.WechatMessageUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,6 +69,7 @@ public class WeChatServiceImpl implements WeChatService {
     }
 
     /**
+     * 三大平台的商品转链服务
      * 处理微信互动消息
      * 目前只支持消息回复和关注处理
      * @return
@@ -78,13 +80,28 @@ public class WeChatServiceImpl implements WeChatService {
         Map<String, String> requestMap = WechatMessageUtil.parseXml(request);
         switch (requestMap.get("MsgType")){
             case WechatMessageUtil.RESP_MESSAGE_TYPE_TEXT:  //文本
+                String requestContent = requestMap.get("Content");
+                Map<String, String> parse = UrlUtil.parse(requestContent);
+                if (parse.size() >= 1){
+                    switch (parse.get("platform")){
+                        case "tb":
+                            String itemId = parse.get("id");
+                            if (!itemId.isEmpty()){
 
+                            }
+                            break;
+                        case "jd":
+                            break;
+                        case "pdd":
+                            break;
+                    }
+                }
                 break;
             case WechatMessageUtil.RESP_MESSAGE_TYPE_LINK:  //链接
-                String url = requestMap.get("Url");
-                String description = requestMap.get("Description");
-                log.info("url"+url+"\n description"+description);
-                System.out.println("url"+url+"\n description"+description);
+//                String url = requestMap.get("Url");
+//                String description = requestMap.get("Description");
+//                log.info("url"+url+"\n description"+description);
+//                System.out.println("url"+url+"\n description"+description);
                 break;
             case WechatMessageUtil.REQ_MESSAGE_TYPE_EVENT:
                 switch (requestMap.get("Event")){
