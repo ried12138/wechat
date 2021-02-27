@@ -1,4 +1,19 @@
 wechat:
   token: "0ADCEAF6CCE07DF3"
+dtk:
+  appKey: 5e6c5505bb8eb
+  appSecret: bee6c934e19eeb5d03462b413f57187a
+  dataokeToken: 0ADCEAF6CCE07DF3
+  pid: mm_47344560_1373500358_110108500483
+  #高效转链
+  getPrivilegeLink: https://openapi.dataoke.com/api/tb-service/get-privilege-link
+  #获取商品详情
+  details: https://openapi.dataoke.com/api/goods/get-goods-details
+jd:
+  appKey: f18076bf3df77f0a45bd90b11d934b44
+  appSecret: 4120a10bb75444c2998b0b5f1d7facab
+  #根据skuid查询商品信息
+  unionGoodsItemUrl: jd.union.open.goods.promotiongoodsinfo.query
+  unionConvertUrl: jd.union.open.promotion.bysubunionid.get
 server:
   port: 8080

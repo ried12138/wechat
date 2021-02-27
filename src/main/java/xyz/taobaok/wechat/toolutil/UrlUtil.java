@@ -2,6 +2,8 @@ package xyz.taobaok.wechat.toolutil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * url解析工具
@@ -12,6 +14,7 @@ import java.util.Map;
  */
 public class UrlUtil {
 
+    private static final String regEx = "[^0-9]";
 
     //获取url参数
     public static Map<String,String> parse(String url) {
@@ -43,5 +46,17 @@ public class UrlUtil {
             map.put(keyValue[0], keyValue[1]);
         }
         return map;
+    }
+
+
+    /**
+     * 获取url中商品id
+     * @param url
+     * @return
+     */
+    public static String getUrlItemid(String url){
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(url);
+        return m.replaceAll("").trim();
     }
 }

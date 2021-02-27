@@ -1,18 +1,26 @@
 package xyz.taobaok.wechat.service.serviceImpl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.jd.open.api.sdk.JdException;
+import jd.union.open.goods.promotiongoodsinfo.query.response.PromotionGoodsResp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.taobaok.wechat.bean.BaseMessage;
+import xyz.taobaok.wechat.bean.NewsMessage;
 import xyz.taobaok.wechat.bean.TextMessage;
 import xyz.taobaok.wechat.service.WeChatService;
 import xyz.taobaok.wechat.toolutil.UrlUtil;
 import xyz.taobaok.wechat.toolutil.WechatMessageUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,10 +33,15 @@ import java.util.Map;
 @Slf4j
 public class WeChatServiceImpl implements WeChatService {
 
+    private static final String ISEMY = "抱歉,该商品没有优惠券！";
 
 
     @Autowired
     WeChatParseEvent weChatParseEvent;
+    @Autowired
+    DtkApiService dtkApiService;
+    @Autowired
+    JdApiService jdApiService;
 
 
     /**
@@ -77,6 +90,7 @@ public class WeChatServiceImpl implements WeChatService {
     @Override
     public String webChatRequestParse(HttpServletRequest request) {
         BaseMessage msg = null;
+        String content = ISEMY;
         Map<String, String> requestMap = WechatMessageUtil.parseXml(request);
         switch (requestMap.get("MsgType")){
             case WechatMessageUtil.RESP_MESSAGE_TYPE_TEXT:  //文本
@@ -87,14 +101,41 @@ public class WeChatServiceImpl implements WeChatService {
                         case "tb":
                             String itemId = parse.get("id");
                             if (!itemId.isEmpty()){
-
+                                try {
+                                    String item = dtkApiService.SenDaTaoKeApiGoods(itemId);
+                                    if (item.contains("成功")){
+                                        JSONObject jsonObject = JSON.parseObject(item);
+                                        String data = jsonObject.getString("data");
+                                        JSONObject jsonObject1 = JSON.parseObject(data);
+                                        String title = jsonObject1.getString("title");
+                                        String couponJSon = dtkApiService.senDaTaoKeApiLink(itemId);
+                                        if (couponJSon.contains("成功")){
+                                            content = dtkApiService.tbItemCouponArrange(title,couponJSon);
+                                            break;
+                                        }
+                                    }
+                                } catch (UnsupportedEncodingException e) {
+                                    log.error("dtk API is error: Failed to get product information, itemId:{}",itemId);
+                                }
                             }
                             break;
                         case "jd":
+                            String jdGoodsId = UrlUtil.getUrlItemid(parse.get("url"));
+                            if (!jdGoodsId.isEmpty()){
+                                PromotionGoodsResp jdItem = null;
+                                try {
+                                    jdItem = jdApiService.SenJdApiGoods(Arrays.asList(jdGoodsId));
+                                } catch (JdException e) {
+                                    log.error("union API is error: Failed to get product information, itemId:{}",jdGoodsId);
+                                    break;
+                                }
+                                msg = new NewsMessage(requestMap,jdItem.getGoodsName(),"描述",jdItem.getImgUrl(),jdItem.getMaterialUrl());
+                            }
                             break;
                         case "pdd":
                             break;
                     }
+                    msg = new TextMessage(requestMap, content);
                 }
                 break;
             case WechatMessageUtil.RESP_MESSAGE_TYPE_LINK:  //链接
