@@ -27,4 +27,9 @@ public class DtkManager {
     public String pid;
     @Value("${dtk.dataokeToken}")
     public String dataokeToken;
+    @Value("${dtk.jdItemConvert}")
+    public String jdItemConvert;
+
+
+
 }

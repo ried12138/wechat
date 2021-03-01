@@ -1,5 +1,6 @@
 package xyz.taobaok.wechat.service.serviceImpl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jd.open.api.sdk.DefaultJdClient;
 import com.jd.open.api.sdk.JdClient;
 import com.jd.open.api.sdk.JdException;
@@ -11,10 +12,12 @@ import jd.union.open.promotion.byunionid.get.request.UnionOpenPromotionByunionid
 import jd.union.open.promotion.byunionid.get.response.PromotionCodeResp;
 import jd.union.open.promotion.byunionid.get.response.UnionOpenPromotionByunionidGetResponse;
 import jd.union.open.promotion.common.get.response.UnionOpenPromotionCommonGetResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.taobaok.wechat.config.JdManager;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -24,14 +27,25 @@ import java.util.List;
  * @Date 2021/2/27   3:44 下午
  * @Version 1.0
  */
+@Slf4j
 @Service
 public class JdApiService {
 
 
     @Autowired
     JdManager jdManager;
+    @Autowired
+    DtkApiService dtkApiService;
 
-    public PromotionGoodsResp SenJdApiGoods(List<String> skuIds) throws JdException {
+    /**
+     *  京东获取商品详情
+     *  大淘客提供链接转链
+     * @param skuIds 商品id
+     * @return
+     * @throws JdException
+     * @throws UnsupportedEncodingException
+     */
+    public PromotionGoodsResp SenJdApiGoods(List<String> skuIds) throws JdException, UnsupportedEncodingException {
         String skuId = String.join(",", skuIds);
         JdClient client=new DefaultJdClient(jdManager.routerUrl,"",jdManager.appKey,jdManager.appSecret);
         UnionOpenGoodsPromotiongoodsinfoQueryRequest request=new UnionOpenGoodsPromotiongoodsinfoQueryRequest();
@@ -40,8 +54,16 @@ public class JdApiService {
         if (response.getData().length > 0){
             PromotionGoodsResp datum = response.getData()[0];
             if (!datum.getGoodsName().isEmpty()){
-                String convertUrl = SenJdApiConvertUrl(datum.getMaterialUrl());
-                datum.setMaterialUrl(convertUrl);
+                String resJSON = dtkApiService.SenJdApiConvertUrl(datum.getMaterialUrl());
+                JSONObject jsonObject = JSONObject.parseObject(resJSON);
+                String msg = jsonObject.getString("msg");
+                if (msg.contains("成功")){
+                    JSONObject data = JSONObject.parseObject(resJSON).getJSONObject("data");
+                    String convertUrl = data.getString("shortUrl").isEmpty()? data.getString("longUrl"): data.getString("shortUrl");
+                    datum.setMaterialUrl(convertUrl);
+                }else{
+                    log.error("dtk SenJdApiConvertUrl method is error msg:{},materialUrl:{}",msg,datum.getMaterialUrl());
+                }
                 return datum;
             }
         }
@@ -50,7 +72,7 @@ public class JdApiService {
 
 
 
-    public String SenJdApiConvertUrl(String materialUrl) throws JdException {
+    public UnionOpenPromotionByunionidGetResponse SenJdApiConvertUrl(String materialUrl) throws JdException {
         JdClient client=new DefaultJdClient(jdManager.routerUrl,"",jdManager.appKey,jdManager.appSecret);
         UnionOpenPromotionByunionidGetRequest request = new UnionOpenPromotionByunionidGetRequest();
         PromotionCodeReq promotionCodeReq = new PromotionCodeReq();
@@ -58,14 +80,6 @@ public class JdApiService {
         promotionCodeReq.setUnionId(jdManager.unionId);
         request.setPromotionCodeReq(promotionCodeReq);
         UnionOpenPromotionByunionidGetResponse response = client.execute(request);
-        if (response.getData() != null){
-            PromotionCodeResp data = response.getData();
-            if (!data.getClickURL().isEmpty()){
-                return data.getClickURL();
-            }else{
-                return response.getMessage();
-            }
-        }
-        return null;
+        return response;
     }
 }

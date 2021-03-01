@@ -1,11 +1,13 @@
 package xyz.taobaok.wechat.service.serviceImpl;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.taobaok.wechat.bean.dataoke.Dataa;
 import xyz.taobaok.wechat.bean.dataoke.DtktResponse;
 import xyz.taobaok.wechat.config.DtkManager;
+import xyz.taobaok.wechat.config.JdManager;
 import xyz.taobaok.wechat.toolutil.HttpUtils;
 import xyz.taobaok.wechat.toolutil.SignMD5Util;
 
@@ -19,12 +21,33 @@ import java.util.TreeMap;
  * @Date 2021/2/25   10:57 下午
  * @Version 1.0
  */
+@Slf4j
 @Service
 public class DtkApiService {
 
 
+
     @Autowired
     DtkManager dtkManager;
+    @Autowired
+    JdManager jdManager;
+
+    /**
+     * 京东商品转链
+     * @param materialUrl
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    public String SenJdApiConvertUrl(String materialUrl) throws UnsupportedEncodingException {
+        TreeMap<String, Object> paraMap = new TreeMap<>();
+        paraMap.put("version", "v1.0.0");
+        paraMap.put("appKey", dtkManager.appKey);
+        paraMap.put("appSecret", dtkManager.appSecret);
+        paraMap.put("unionId", jdManager.unionId);
+        paraMap.put("materialId", materialUrl);
+        paraMap.put("sign", SignMD5Util.getSignStr(paraMap, dtkManager.appSecret));
+        return HttpUtils.sendGet(dtkManager.jdItemConvert, paraMap);
+    }
 
     /**
      * 高效转链
@@ -33,12 +56,10 @@ public class DtkApiService {
      * @throws UnsupportedEncodingException
      */
     public String senDaTaoKeApiLink(String id) throws UnsupportedEncodingException {
-        TreeMap<String, Object> paraMap = new TreeMap<String, Object>();
-        paraMap.put("version", "v1.1.1");
-        paraMap.put("appKey", dtkManager.appKey);
-        paraMap.put("goodsId", id);
-        paraMap.put("pid", dtkManager.pid);
-        paraMap.put("sign", SignMD5Util.getSignStr(paraMap, dtkManager.appSecret));
+        TreeMap<String, Object> map = new TreeMap<>();
+        map.put("version", "v1.1.1");
+        map.put("goodsId", id);
+        TreeMap<String, Object> paraMap = getParaMap(map);
         String jsonString = HttpUtils.sendGet(dtkManager.getPrivilegeLink, paraMap);
         return jsonString;
     }
@@ -50,12 +71,10 @@ public class DtkApiService {
      * @throws UnsupportedEncodingException
      */
     public String SenDaTaoKeApiGoods(String id) throws UnsupportedEncodingException {
-        TreeMap<String, Object> paraMap = new TreeMap<String, Object>();
-        paraMap.put("version", "v1.2.1");
-        paraMap.put("appKey", dtkManager.appKey);
-        paraMap.put("goodsId", id);
-        paraMap.put("pid", dtkManager.pid);
-        paraMap.put("sign", SignMD5Util.getSignStr(paraMap, dtkManager.appSecret));
+        TreeMap<String, Object> map = new TreeMap<>();
+        map.put("version", "v1.2.1");
+        map.put("goodsId", id);
+        TreeMap<String, Object> paraMap = getParaMap(map);
         String jsonString = HttpUtils.sendGet(dtkManager.details, paraMap);
         return jsonString;
     }
@@ -82,5 +101,19 @@ public class DtkApiService {
             content.append("\n" + "优惠券失效时间：" + data.getCouponEndTime());
         }
         return content.toString();
+    }
+
+    /**
+     * 封装请求paraMap
+     * @param map   需要请求的参数
+     * @return
+     */
+    public TreeMap<String, Object> getParaMap(TreeMap<String, Object> map){
+        TreeMap<String, Object> paraMap = new TreeMap<String, Object>();
+        paraMap.put("appKey", dtkManager.appKey);
+        paraMap.put("pid", dtkManager.pid);
+        paraMap.putAll(map);
+        paraMap.put("sign", SignMD5Util.getSignStr(paraMap, dtkManager.appSecret));
+        return paraMap;
     }
 }

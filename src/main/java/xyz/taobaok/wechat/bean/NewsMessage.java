@@ -1,8 +1,6 @@
 package xyz.taobaok.wechat.bean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import lombok.Data;
-
 import java.util.Map;
 
 /**

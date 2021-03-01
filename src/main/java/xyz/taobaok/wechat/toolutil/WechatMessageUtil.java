@@ -6,6 +6,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import xyz.taobaok.wechat.bean.BaseMessage;
+import xyz.taobaok.wechat.bean.NewsMessage;
 import xyz.taobaok.wechat.bean.TextMessage;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -102,7 +103,7 @@ public class WechatMessageUtil {
         stream.processAnnotations(TextMessage.class);
 //        stream.processAnnotations(ImageMessage.class);
 //        stream.processAnnotations(MusicMessage.class);
-//        stream.processAnnotations(NewsMessage.class);
+        stream.processAnnotations(NewsMessage.class);
 //        stream.processAnnotations(VideoMessage.class);
 //        stream.processAnnotations(VoiceMessage.class);
         String xml = stream.toXML(msg);

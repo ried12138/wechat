@@ -125,16 +125,17 @@ public class WeChatServiceImpl implements WeChatService {
                                 PromotionGoodsResp jdItem = null;
                                 try {
                                     jdItem = jdApiService.SenJdApiGoods(Arrays.asList(jdGoodsId));
-                                } catch (JdException e) {
+                                } catch (Exception e) {
                                     log.error("union API is error: Failed to get product information, itemId:{}",jdGoodsId);
                                     break;
                                 }
                                 if (jdItem != null && jdItem.getMaterialUrl() !=null){
-                                    msg = new NewsMessage(requestMap,jdItem.getGoodsName(),"描述",jdItem.getImgUrl(),jdItem.getMaterialUrl());
+                                    msg = new NewsMessage(requestMap,jdItem.getGoodsName(),"描述这里需要修改",jdItem.getImgUrl(),jdItem.getMaterialUrl());
                                 }
                             }
                             break;
                         case "pdd":
+
                             break;
                     }
 

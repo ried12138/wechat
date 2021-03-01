@@ -9,6 +9,8 @@ dtk:
   getPrivilegeLink: https://openapi.dataoke.com/api/tb-service/get-privilege-link
   #获取商品详情
   details: https://openapi.dataoke.com/api/goods/get-goods-details
+  #京东商品转链
+  jdItemConvert: https://openapi.dataoke.com/api/dels/jd/kit/promotion-union-convert
 jd:
   appKey: f18076bf3df77f0a45bd90b11d934b44
   appSecret: 4120a10bb75444c2998b0b5f1d7facab
