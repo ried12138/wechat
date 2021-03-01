@@ -1,5 +1,6 @@
 package xyz.taobaok.wechat.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import xyz.taobaok.wechat.service.WeChatService;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Date 2021/2/24   2:59 下午
  * @Version 1.0
  */
+@Slf4j
 @RestController
 public class WeChatController {
 
@@ -33,6 +35,7 @@ public class WeChatController {
     @ResponseBody
     public String weChatCheck(@RequestParam("signature") String signature, @RequestParam("timestamp") String timestamp,
                             @RequestParam("nonce") String nonce, @RequestParam("echostr") String echostr){
+        log.info("signature:{},timestamp:{},nonce:{},echostr:{}",signature,timestamp,nonce,echostr);
         return weChatService.webChatCheck(signature,timestamp,nonce,echostr);
     }
 
@@ -41,6 +44,7 @@ public class WeChatController {
     public String RequestPostweChat(HttpServletRequest request, HttpServletResponse response){
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/xml");
+        log.info("被请求了！！！！！！");
         return weChatService.webChatRequestParse(request);
     }
 }
