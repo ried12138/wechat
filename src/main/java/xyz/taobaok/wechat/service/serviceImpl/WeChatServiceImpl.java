@@ -2,13 +2,13 @@ package xyz.taobaok.wechat.service.serviceImpl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.jd.open.api.sdk.JdException;
 import jd.union.open.goods.promotiongoodsinfo.query.response.PromotionGoodsResp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.taobaok.wechat.bean.BaseMessage;
-import xyz.taobaok.wechat.bean.NewsMessage;
+import xyz.taobaok.wechat.bean.Item;
+import xyz.taobaok.wechat.bean.NewsMessages;
 import xyz.taobaok.wechat.bean.TextMessage;
 import xyz.taobaok.wechat.service.WeChatService;
 import xyz.taobaok.wechat.toolutil.UrlUtil;
@@ -18,9 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -130,7 +128,7 @@ public class WeChatServiceImpl implements WeChatService {
                                     break;
                                 }
                                 if (jdItem != null && jdItem.getMaterialUrl() !=null){
-                                    msg = new NewsMessage(requestMap,jdItem.getGoodsName(),"描述这里需要修改",jdItem.getImgUrl(),jdItem.getMaterialUrl());
+                                    msg = new NewsMessages(requestMap,jdItem.getGoodsName(),"描述这里需要修改",jdItem.getImgUrl(),jdItem.getMaterialUrl());
                                 }
                             }
                             break;

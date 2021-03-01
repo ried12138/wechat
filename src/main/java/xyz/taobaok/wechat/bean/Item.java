@@ -1,6 +1,8 @@
 package xyz.taobaok.wechat.bean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import lombok.Data;
+
 import java.util.Map;
 
 /**
@@ -13,8 +15,7 @@ import java.util.Map;
  */
 
 
-@XStreamAlias("xml")
-public class NewsMessage extends BaseMessage {
+public class Item {
 
 
     //标题
@@ -31,14 +32,7 @@ public class NewsMessage extends BaseMessage {
     private String url;
 
 
-    public NewsMessage(Map<String, String> requestMap, String title, String description, String picurl, String url) {
-        super(requestMap);
-        this.setMsgType("news");
-        this.title = title;
-        this.description = description;
-        this.picurl = picurl;
-        this.url = url;
-    }
+
 
     public String getTitle() {
         return title;
