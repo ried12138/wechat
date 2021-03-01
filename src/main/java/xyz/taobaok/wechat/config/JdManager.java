@@ -24,4 +24,8 @@ public class JdManager {
     public String unionGoodsItemUrl;
     @Value("${jd.unionConvertUrl}")
     public String unionConvertUrl;
+    @Value("${jd.routerUrl}")
+    public String routerUrl;
+    @Value("${jd.unionId}")
+    public Long unionId;
 }

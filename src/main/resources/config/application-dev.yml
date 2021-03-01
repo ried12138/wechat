@@ -12,6 +12,8 @@ dtk:
 jd:
   appKey: f18076bf3df77f0a45bd90b11d934b44
   appSecret: 4120a10bb75444c2998b0b5f1d7facab
+  routerUrl: https://router.jd.com/api
+  unionId: 1002425367
   #根据skuid查询商品信息
   unionGoodsItemUrl: jd.union.open.goods.promotiongoodsinfo.query
   unionConvertUrl: jd.union.open.promotion.bysubunionid.get

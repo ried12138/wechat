@@ -129,13 +129,15 @@ public class WeChatServiceImpl implements WeChatService {
                                     log.error("union API is error: Failed to get product information, itemId:{}",jdGoodsId);
                                     break;
                                 }
-                                msg = new NewsMessage(requestMap,jdItem.getGoodsName(),"描述",jdItem.getImgUrl(),jdItem.getMaterialUrl());
+                                if (jdItem != null && jdItem.getMaterialUrl() !=null){
+                                    msg = new NewsMessage(requestMap,jdItem.getGoodsName(),"描述",jdItem.getImgUrl(),jdItem.getMaterialUrl());
+                                }
                             }
                             break;
                         case "pdd":
                             break;
                     }
-                    msg = new TextMessage(requestMap, content);
+
                 }
                 break;
             case WechatMessageUtil.RESP_MESSAGE_TYPE_LINK:  //链接
@@ -151,6 +153,9 @@ public class WeChatServiceImpl implements WeChatService {
                         break;
                 }
                 break;
+        }
+        if(msg == null){
+            msg = new TextMessage(requestMap, content);
         }
         return WechatMessageUtil.beanToXml(msg);
     }

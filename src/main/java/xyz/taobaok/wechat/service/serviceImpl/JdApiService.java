@@ -6,10 +6,11 @@ import com.jd.open.api.sdk.JdException;
 import jd.union.open.goods.promotiongoodsinfo.query.request.UnionOpenGoodsPromotiongoodsinfoQueryRequest;
 import jd.union.open.goods.promotiongoodsinfo.query.response.PromotionGoodsResp;
 import jd.union.open.goods.promotiongoodsinfo.query.response.UnionOpenGoodsPromotiongoodsinfoQueryResponse;
-import jd.union.open.promotion.bysubunionid.get.request.PromotionCodeReq;
-import jd.union.open.promotion.bysubunionid.get.request.UnionOpenPromotionBysubunionidGetRequest;
-import jd.union.open.promotion.bysubunionid.get.response.PromotionCodeResp;
-import jd.union.open.promotion.bysubunionid.get.response.UnionOpenPromotionBysubunionidGetResponse;
+import jd.union.open.promotion.byunionid.get.request.PromotionCodeReq;
+import jd.union.open.promotion.byunionid.get.request.UnionOpenPromotionByunionidGetRequest;
+import jd.union.open.promotion.byunionid.get.response.PromotionCodeResp;
+import jd.union.open.promotion.byunionid.get.response.UnionOpenPromotionByunionidGetResponse;
+import jd.union.open.promotion.common.get.response.UnionOpenPromotionCommonGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.taobaok.wechat.config.JdManager;
@@ -32,7 +33,7 @@ public class JdApiService {
 
     public PromotionGoodsResp SenJdApiGoods(List<String> skuIds) throws JdException {
         String skuId = String.join(",", skuIds);
-        JdClient client=new DefaultJdClient(jdManager.unionGoodsItemUrl,"",jdManager.appKey,jdManager.appSecret);
+        JdClient client=new DefaultJdClient(jdManager.routerUrl,"",jdManager.appKey,jdManager.appSecret);
         UnionOpenGoodsPromotiongoodsinfoQueryRequest request=new UnionOpenGoodsPromotiongoodsinfoQueryRequest();
         request.setSkuIds(skuId);
         UnionOpenGoodsPromotiongoodsinfoQueryResponse response=client.execute(request);
@@ -50,11 +51,13 @@ public class JdApiService {
 
 
     public String SenJdApiConvertUrl(String materialUrl) throws JdException {
-        JdClient client=new DefaultJdClient(jdManager.unionConvertUrl,"",jdManager.appKey,jdManager.appSecret);
-        UnionOpenPromotionBysubunionidGetRequest request=new UnionOpenPromotionBysubunionidGetRequest();
-        PromotionCodeReq promotionCodeReq=new PromotionCodeReq();
+        JdClient client=new DefaultJdClient(jdManager.routerUrl,"",jdManager.appKey,jdManager.appSecret);
+        UnionOpenPromotionByunionidGetRequest request = new UnionOpenPromotionByunionidGetRequest();
+        PromotionCodeReq promotionCodeReq = new PromotionCodeReq();
+        promotionCodeReq.setMaterialId(materialUrl);
+        promotionCodeReq.setUnionId(jdManager.unionId);
         request.setPromotionCodeReq(promotionCodeReq);
-        UnionOpenPromotionBysubunionidGetResponse response = client.execute(request);
+        UnionOpenPromotionByunionidGetResponse response = client.execute(request);
         if (response.getData() != null){
             PromotionCodeResp data = response.getData();
             if (!data.getClickURL().isEmpty()){
