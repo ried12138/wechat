@@ -128,7 +128,13 @@ public class WeChatServiceImpl implements WeChatService {
                                     break;
                                 }
                                 if (jdItem != null && jdItem.getMaterialUrl() !=null){
-                                    msg = new NewsMessages(requestMap,jdItem.getGoodsName(),"描述这里需要修改",jdItem.getImgUrl(),jdItem.getMaterialUrl());
+                                    String goodsName = jdItem.getGoodsName().substring(0, 20);
+                                    msg = new NewsMessages(requestMap,"【"+goodsName+"...】",
+                                            "找到商品了！点击即可购买"+"\n"+
+                                            "价格："+jdItem.getWlUnitPrice()+"\n" +
+                                                    "类别："+jdItem.getCidName()+"\n"+
+                                                    "优惠券信息：该商品暂无优惠券！"
+                                            ,jdItem.getImgUrl(),jdItem.getMaterialUrl());
                                 }
                             }
                             break;
