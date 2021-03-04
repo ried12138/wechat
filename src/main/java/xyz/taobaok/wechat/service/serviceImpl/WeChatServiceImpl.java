@@ -168,7 +168,7 @@ public class WeChatServiceImpl implements WeChatService {
     private String getTaobaoConvert(Map<String, String> parse){
         String itemId = parse.get("id");
         String content = "";
-        if (!itemId.isEmpty()){
+        if (itemId != null){
             try {
                 String item = dtkApiService.SenDaTaoKeApiGoods(itemId);
                 if (item.contains("成功")){
