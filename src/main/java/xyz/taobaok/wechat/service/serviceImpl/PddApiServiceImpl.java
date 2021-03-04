@@ -2,8 +2,11 @@ package xyz.taobaok.wechat.service.serviceImpl;
 
 import com.pdd.pop.sdk.http.PopClient;
 import com.pdd.pop.sdk.http.PopHttpClient;
+import com.pdd.pop.sdk.http.api.pop.request.PddDdkCashgiftDataQueryRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsDetailRequest;
+import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsSearchRequest;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse;
+import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.taobaok.wechat.config.PddManager;
@@ -31,18 +34,18 @@ public class PddApiServiceImpl {
      */
     public PddDdkGoodsDetailResponse.GoodsDetailResponseGoodsDetailsItem senPindDuoDuoApiGoods(String goodsSign) throws Exception {
         PopClient client = new PopHttpClient(pddManager.appKey, pddManager.appSecret);
-        PddDdkGoodsDetailRequest request = new PddDdkGoodsDetailRequest();
+        PddDdkGoodsSearchRequest request = new PddDdkGoodsSearchRequest();
 //        request.setCustomParameters('str');
-        request.setGoodsSign(goodsSign);
+        request.setKeyword("干脆面");
+        request.setCustomParameters("{\"uid\":\"11111\",\"sid\":\"22222\"}");
         request.setPid(pddManager.pid);
 //        request.setPid('str');
 //        request.setSearchId('str');
 //        request.setZsDuoId(0L);
-        PddDdkGoodsDetailResponse response = client.syncInvoke(request);
-        PddDdkGoodsDetailResponse.GoodsDetailResponse goodsDetailResponse = response.getGoodsDetailResponse();
-        List<PddDdkGoodsDetailResponse.GoodsDetailResponseGoodsDetailsItem> goodsDetails = goodsDetailResponse.getGoodsDetails();
-        PddDdkGoodsDetailResponse.GoodsDetailResponseGoodsDetailsItem goodsDetailResponseGoodsDetailsItem = goodsDetails.get(0);
-        return goodsDetailResponseGoodsDetailsItem;
+        PddDdkGoodsSearchResponse pddDdkGoodsSearchResponse = client.syncInvoke(request);
+        PddDdkGoodsSearchResponse.GoodsSearchResponse goodsSearchResponse = pddDdkGoodsSearchResponse.getGoodsSearchResponse();
+        List<PddDdkGoodsSearchResponse.GoodsSearchResponseGoodsListItem> goodsList = goodsSearchResponse.getGoodsList();
+        return null;
     }
 
 

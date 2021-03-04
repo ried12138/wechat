@@ -111,17 +111,18 @@ public class WeChatServiceImpl implements WeChatService {
                             }
                             break;
                         case "pdd":
-                            String goodsId = parse.get("goods_id");
-                            if (!goodsId.isEmpty()){
-                                PddDdkGoodsDetailResponse.GoodsDetailResponseGoodsDetailsItem goodsDetailsItem = null;
-                                try {
-                                    goodsDetailsItem = pddApiService.senPindDuoDuoApiGoods(goodsId);
-                                } catch (Exception e) {
-                                    log.error("pdd API is error: Failed to get product information, itemId:{}",goodsId);
-                                }
-                                String goodsSign = goodsDetailsItem.getGoodsSign();
-                                System.out.println(goodsSign);
-                            }
+                            content = "非常抱歉拼多多接口还在升级....";
+//                            String goodsId = parse.get("goods_id");
+//                            if (!goodsId.isEmpty()){
+//                                PddDdkGoodsDetailResponse.GoodsDetailResponseGoodsDetailsItem goodsDetailsItem = null;
+//                                try {
+//                                    goodsDetailsItem = pddApiService.senPindDuoDuoApiGoods(goodsId);
+//                                } catch (Exception e) {
+//                                    log.error("pdd API is error: Failed to get product information, itemId:{}",goodsId);
+//                                }
+//                                String goodsSign = goodsDetailsItem.getGoodsSign();
+//                                System.out.println(goodsSign);
+//                            }
                             break;
                         default:
                             break;
