@@ -98,8 +98,9 @@ public class WeChatServiceImpl implements WeChatService {
         switch (requestMap.get("MsgType")){
             case WechatMessageUtil.RESP_MESSAGE_TYPE_TEXT:  //文本
                 Map<String, String> parse = UrlUtil.parse(requestMap.get("Content"));
-                if (parse.size() > 1){
-                    switch (parse.get("platform")){
+                String platform = parse.get("platform");
+                if (platform != null){
+                    switch (platform){
                         case "tb":
                             if (!getTaobaoConvert(parse).isEmpty()){
                                 content = getTaobaoConvert(parse);
