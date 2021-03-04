@@ -81,6 +81,15 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/lib/jd-cps-client-2.2.jar</systemPath>
         </dependency>
+        <!--拼多多sdk本地导入 -->
+        <dependency>
+            <groupId>com.pingduoduo.cps</groupId>
+            <artifactId>duoduojinbao</artifactId>
+            <version>1.10.42-all</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/lib/pop-sdk-1.10.42-all.jar</systemPath>
+        </dependency>
+
     </dependencies>
 
     <profiles>

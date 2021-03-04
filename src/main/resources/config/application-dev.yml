@@ -19,5 +19,9 @@ jd:
   #根据skuid查询商品信息
   unionGoodsItemUrl: jd.union.open.goods.promotiongoodsinfo.query
   unionConvertUrl: jd.union.open.promotion.bysubunionid.get
+pdd:
+  appKey: 50f12321d152448f8dab9b4456269d3b
+  appSecret: 05b5f3ba0010042d2581cea16653becbc9efa16f
+  pid: 9941199_188648413
 server:
   port: 8080

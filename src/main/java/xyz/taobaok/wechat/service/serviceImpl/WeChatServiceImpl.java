@@ -2,6 +2,7 @@ package xyz.taobaok.wechat.service.serviceImpl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse;
 import jd.union.open.goods.promotiongoodsinfo.query.response.PromotionGoodsResp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,8 @@ public class WeChatServiceImpl implements WeChatService {
     DtkApiService dtkApiService;
     @Autowired
     JdApiService jdApiService;
+    @Autowired
+    PddApiServiceImpl pddApiService;
 
 
     /**
@@ -90,6 +93,7 @@ public class WeChatServiceImpl implements WeChatService {
         BaseMessage msg = null;
         String content = ISEMY;
         Map<String, String> requestMap = WechatMessageUtil.parseXml(request);
+        log.info("被请求了！！！！！！请求信息为：{}",requestMap.toString());
         switch (requestMap.get("MsgType")){
             case WechatMessageUtil.RESP_MESSAGE_TYPE_TEXT:  //文本
                 String requestContent = requestMap.get("Content");
@@ -97,49 +101,29 @@ public class WeChatServiceImpl implements WeChatService {
                 if (parse.size() >= 1){
                     switch (parse.get("platform")){
                         case "tb":
-                            String itemId = parse.get("id");
-                            if (!itemId.isEmpty()){
-                                try {
-                                    String item = dtkApiService.SenDaTaoKeApiGoods(itemId);
-                                    if (item.contains("成功")){
-                                        JSONObject jsonObject = JSON.parseObject(item);
-                                        String data = jsonObject.getString("data");
-                                        JSONObject jsonObject1 = JSON.parseObject(data);
-                                        String title = jsonObject1.getString("title");
-                                        String couponJSon = dtkApiService.senDaTaoKeApiLink(itemId);
-                                        if (couponJSon.contains("成功")){
-                                            content = dtkApiService.tbItemCouponArrange(title,couponJSon);
-                                            break;
-                                        }
-                                    }
-                                } catch (UnsupportedEncodingException e) {
-                                    log.error("dtk API is error: Failed to get product information, itemId:{}",itemId);
-                                }
+                            if (!getTaobaoConvert(parse).isEmpty()){
+                                content = getTaobaoConvert(parse);
                             }
                             break;
                         case "jd":
-                            String jdGoodsId = UrlUtil.getUrlItemid(parse.get("url"));
-                            if (!jdGoodsId.isEmpty()){
-                                PromotionGoodsResp jdItem = null;
-                                try {
-                                    jdItem = jdApiService.SenJdApiGoods(Arrays.asList(jdGoodsId));
-                                } catch (Exception e) {
-                                    log.error("union API is error: Failed to get product information, itemId:{}",jdGoodsId);
-                                    break;
-                                }
-                                if (jdItem != null && jdItem.getMaterialUrl() !=null){
-                                    String goodsName = jdItem.getGoodsName().substring(0, 20);
-                                    msg = new NewsMessages(requestMap,"【"+goodsName+"...】",
-                                            "找到商品了！点击即可购买"+"\n"+
-                                            "价格："+jdItem.getWlUnitPrice()+"\n" +
-                                                    "类别："+jdItem.getCidName()+"\n"+
-                                                    "优惠券信息：该商品暂无优惠券！"
-                                            ,jdItem.getImgUrl(),jdItem.getMaterialUrl());
-                                }
+                            if (getJdConvert(parse, requestMap) !=null){
+                                msg = getJdConvert(parse, requestMap);
                             }
                             break;
                         case "pdd":
-
+                            String goodsId = parse.get("goods_id");
+                            if (!goodsId.isEmpty()){
+                                PddDdkGoodsDetailResponse.GoodsDetailResponseGoodsDetailsItem goodsDetailsItem = null;
+                                try {
+                                    goodsDetailsItem = pddApiService.senPindDuoDuoApiGoods(goodsId);
+                                } catch (Exception e) {
+                                    log.error("pdd API is error: Failed to get product information, itemId:{}",goodsId);
+                                }
+                                String goodsSign = goodsDetailsItem.getGoodsSign();
+                                System.out.println(goodsSign);
+                            }
+                            break;
+                        default:
                             break;
                     }
 
@@ -156,12 +140,73 @@ public class WeChatServiceImpl implements WeChatService {
                     case WechatMessageUtil.EVENT_TYPE_SUBSCRIBE:
                         msg = new TextMessage(requestMap, WechatMessageUtil.menuText());
                         break;
+                    default:
+                        break;
                 }
+                break;
+            default:
                 break;
         }
         if(msg == null){
             msg = new TextMessage(requestMap, content);
         }
         return WechatMessageUtil.beanToXml(msg);
+    }
+
+    /**
+     * 淘宝商品查询转链
+     * @param parse
+     * @return
+     */
+    private String getTaobaoConvert(Map<String, String> parse){
+        String itemId = parse.get("id");
+        String content = "";
+        if (!itemId.isEmpty()){
+            try {
+                String item = dtkApiService.SenDaTaoKeApiGoods(itemId);
+                if (item.contains("成功")){
+                    JSONObject jsonObject = JSON.parseObject(item);
+                    String data = jsonObject.getString("data");
+                    JSONObject jsonObject1 = JSON.parseObject(data);
+                    String title = jsonObject1.getString("title");
+                    String couponJSon = dtkApiService.senDaTaoKeApiLink(itemId);
+                    if (couponJSon.contains("成功")){
+                        content = dtkApiService.tbItemCouponArrange(title,couponJSon);
+                    }
+                }
+            } catch (UnsupportedEncodingException e) {
+                log.error("dtk API is error: Failed to get product information, itemId:{}",itemId);
+            }
+        }
+        return content;
+    }
+
+    /**
+     * 京东商品查询转链
+     * @param parse
+     * @param requestMap
+     * @return
+     */
+    private BaseMessage getJdConvert(Map<String, String> parse,Map<String, String> requestMap){
+        BaseMessage msg = null;
+        String jdGoodsId = UrlUtil.getUrlItemid(parse.get("url"));
+        if (!jdGoodsId.isEmpty()){
+            PromotionGoodsResp jdItem = null;
+            try {
+                jdItem = jdApiService.SenJdApiGoods(Arrays.asList(jdGoodsId));
+                if (jdItem != null && jdItem.getMaterialUrl() !=null){
+                    String goodsName = jdItem.getGoodsName().substring(0, 20);
+                    msg = new NewsMessages(requestMap,"【"+goodsName+"...】",
+                            "找到商品了！点击即可购买"+"\n"+
+                                    "价格："+jdItem.getWlUnitPrice()+"\n" +
+                                    "类别："+jdItem.getCidName()+"\n"+
+                                    "优惠券信息：该商品暂无优惠券！"
+                            ,jdItem.getImgUrl(),jdItem.getMaterialUrl());
+                }
+            } catch (Exception e) {
+                log.error("union API is error: Failed to get product information, itemId:{}",jdGoodsId);
+            }
+        }
+        return msg;
     }
 }

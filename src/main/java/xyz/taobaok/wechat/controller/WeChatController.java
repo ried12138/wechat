@@ -44,7 +44,6 @@ public class WeChatController {
     public String RequestPostweChat(HttpServletRequest request, HttpServletResponse response){
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/xml");
-        log.info("被请求了！！！！！！");
         return weChatService.webChatRequestParse(request);
     }
 }
