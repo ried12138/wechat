@@ -32,6 +32,21 @@ public class DtkApiService {
     @Autowired
     JdManager jdManager;
 
+
+    /**
+     * 淘口令转淘口令
+     * @param tkl
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    public String getTklConvert(String tkl) throws UnsupportedEncodingException {
+        TreeMap<String, Object> map = new TreeMap<>();
+        map.put("version", "v1.0.0");
+        map.put("content",tkl);
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.tklConvert, paraMap);
+    }
+
     /**
      * 京东商品转链
      * @param materialUrl
@@ -39,13 +54,11 @@ public class DtkApiService {
      * @throws UnsupportedEncodingException
      */
     public String SenJdApiConvertUrl(String materialUrl) throws UnsupportedEncodingException {
-        TreeMap<String, Object> paraMap = new TreeMap<>();
-        paraMap.put("version", "v1.0.0");
-        paraMap.put("appKey", dtkManager.appKey);
-        paraMap.put("appSecret", dtkManager.appSecret);
-        paraMap.put("unionId", jdManager.unionId);
-        paraMap.put("materialId", materialUrl);
-        paraMap.put("sign", SignMD5Util.getSignStr(paraMap, dtkManager.appSecret));
+        TreeMap<String, Object> map = new TreeMap<>();
+        map.put("version", "v1.0.0");
+        map.put("unionId", jdManager.unionId);
+        map.put("materialId", materialUrl);
+        TreeMap<String, Object> paraMap = getParaMap(map);
         return HttpUtils.sendGet(dtkManager.jdItemConvert, paraMap);
     }
 
@@ -75,8 +88,7 @@ public class DtkApiService {
         map.put("version", "v1.2.1");
         map.put("goodsId", id);
         TreeMap<String, Object> paraMap = getParaMap(map);
-        String jsonString = HttpUtils.sendGet(dtkManager.details, paraMap);
-        return jsonString;
+        return HttpUtils.sendGet(dtkManager.details, paraMap);
     }
 
     /**
@@ -89,11 +101,21 @@ public class DtkApiService {
         DtktResponse response = JSONObject.parseObject(couponJSon, DtktResponse.class);
         Dataa data = response.getData();
         StringBuffer content = new StringBuffer("");
-        content.append("找到优惠券!长按复制到淘宝：" + "\n" + "商品名称：【" + title + "】\n" + "------------------\n");
+        title = title == null? data.getTitle():title;
+        content.append("找到优惠券!长按复制到淘宝：" + "\n"+"商品名称：【");
+        if (title ==null){
+            content.append(data.getLongTpwd().split("  ")[1]);
+        }else{
+            content.append(title);
+        }
+        content.append("】\n" + "------------------------\n");
         if (!data.getCouponInfo().equals("")) {
             content.append("优惠面额:" + data.getCouponInfo());
         }
-        if (!data.getCouponRemainCount().equals("")) {
+        if (!data.getCouponTotalCount().equals("0")) {
+            content.append("\n" + "优惠券总量：" + data.getCouponRemainCount());
+        }
+        if (!data.getCouponRemainCount().equals("0")) {
             content.append("\n" + "优惠券剩余数：" + data.getCouponRemainCount());
         }
         content.append("\n" + "优惠码：" + data.getTpwd());

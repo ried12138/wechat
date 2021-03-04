@@ -29,6 +29,8 @@ public class DtkManager {
     public String dataokeToken;
     @Value("${dtk.jdItemConvert}")
     public String jdItemConvert;
+    @Value("${dtk.tklConvert}")
+    public String tklConvert;
 
 
 

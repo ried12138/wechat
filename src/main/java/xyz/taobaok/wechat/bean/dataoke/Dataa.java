@@ -16,4 +16,9 @@ public class Dataa {
     private String tpwd;                    //淘口令
     private String maxCommissionRate;       //佣金比例
     private String shortUrl;                //短链接
+    private String longTpwd;                //针对iOS14版本，增加对应能解析的长口令
+    private String minCommissionRate;       //
+    private String originUrl;               //原始链接
+    private String title;                   //标题
+
 }

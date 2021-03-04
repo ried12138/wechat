@@ -12,6 +12,7 @@ import xyz.taobaok.wechat.bean.Item;
 import xyz.taobaok.wechat.bean.NewsMessages;
 import xyz.taobaok.wechat.bean.TextMessage;
 import xyz.taobaok.wechat.service.WeChatService;
+import xyz.taobaok.wechat.toolutil.TpwdUtil;
 import xyz.taobaok.wechat.toolutil.UrlUtil;
 import xyz.taobaok.wechat.toolutil.WechatMessageUtil;
 
@@ -96,9 +97,8 @@ public class WeChatServiceImpl implements WeChatService {
         log.info("被请求了！！！！！！请求信息为：{}",requestMap.toString());
         switch (requestMap.get("MsgType")){
             case WechatMessageUtil.RESP_MESSAGE_TYPE_TEXT:  //文本
-                String requestContent = requestMap.get("Content");
-                Map<String, String> parse = UrlUtil.parse(requestContent);
-                if (parse.size() >= 1){
+                Map<String, String> parse = UrlUtil.parse(requestMap.get("Content"));
+                if (parse.size() > 1){
                     switch (parse.get("platform")){
                         case "tb":
                             if (!getTaobaoConvert(parse).isEmpty()){
@@ -127,7 +127,12 @@ public class WeChatServiceImpl implements WeChatService {
                         default:
                             break;
                     }
-
+                }else{
+                    //淘口令
+                    String tpwd = TpwdUtil.isTpwd(parse.get("url"));
+                    if (tpwd != null){
+                        content = getTklConvert(tpwd) ==null? ISEMY:getTklConvert(tpwd);
+                    }
                 }
                 break;
             case WechatMessageUtil.RESP_MESSAGE_TYPE_LINK:  //链接
@@ -209,5 +214,23 @@ public class WeChatServiceImpl implements WeChatService {
             }
         }
         return msg;
+    }
+
+
+    /**
+     * 淘口令解析
+     * @param tpwd
+     * @return
+     */
+    private String getTklConvert(String tpwd){
+        try {
+            String tklConvert = dtkApiService.getTklConvert(tpwd);
+            if (tklConvert.contains("成功")){
+                return dtkApiService.tbItemCouponArrange(null, tklConvert);
+            }
+        } catch (UnsupportedEncodingException e) {
+            log.error("tkl API is error: Failed to get product information, tpwd:{}",tpwd);
+        }
+        return null;
     }
 }
