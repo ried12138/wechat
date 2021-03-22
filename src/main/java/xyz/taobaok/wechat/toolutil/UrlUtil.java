@@ -35,7 +35,7 @@ public class UrlUtil {
         //有参数
         if (urlParts[0].contains("taobao.com") ||urlParts[0].contains("tmall.com")){
             map.put("platform","tb");
-        }else if(urlParts[0].contains("jd.com")){
+        }else if(urlParts[0].contains("jd.com") ||urlParts[0].contains("jd.hk")){
             map.put("platform","jd");
         }else if (urlParts[0].contains("yangkeduo.com")){
             map.put("platform","pdd");

@@ -1,6 +1,8 @@
 package xyz.taobaok.wechat.toolutil;
 
 import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
@@ -73,6 +75,11 @@ public class SignMD5Util {
         }
     }
 
-
+    public static String getStringDate() {
+        Date currentTime = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String dateString = formatter.format(currentTime);
+        return dateString;
+    }
 }
 

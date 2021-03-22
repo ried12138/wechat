@@ -73,9 +73,50 @@
                 <onMismatch>DENY</onMismatch>
             </filter>
         </appender>
-
+        <!--请求体落地json -->
+        <appender name="application-requestinfo-web" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/requestinfo/${LOG_NAME}-requestinfo-web.log</file>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>INFO</level>
+            </filter>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/requestinfo/${LOG_NAME}-requestinfo.%d{yyyyMMdd}.%i</fileNamePattern>
+                <maxFileSize>500MB</maxFileSize>
+                <maxHistory>7</maxHistory>
+                <!-- 日志归档总大小超过这个数字会删除之前老的  -->
+                <totalSizeCap>10GB</totalSizeCap>
+                <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%m%n</pattern>
+            </encoder>
+        </appender>
+        <!-- 响应体落地json -->
+        <appender name="application-responseinfo-web" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/responseinfo/${LOG_NAME}-responseinfo-web.log</file>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>INFO</level>
+            </filter>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/responseinfo/${LOG_NAME}-responseinfo.%d{yyyyMMdd}.%i</fileNamePattern>
+                <maxFileSize>500MB</maxFileSize>
+                <maxHistory>7</maxHistory>
+                <!-- 日志归档总大小超过这个数字会删除之前老的  -->
+                <totalSizeCap>10GB</totalSizeCap>
+                <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%m%n</pattern>
+            </encoder>
+        </appender>
+        <logger name="requestinfo" level="INFO" additivity="true">
+            <appender-ref ref="application-requestinfo-web" />
+        </logger>
+        <logger name="responseinfo" level="INFO" additivity="true">
+            <appender-ref ref="application-responseinfo-web" />
+        </logger>
         <!--记录到文件时，记录两类一类是error日志，一个是所有日志-->
-        <root level="info">
+        <root level="INFO">
             <appender-ref ref="STDOUT"/>
             <appender-ref ref="FILE_ERROR"/>
             <appender-ref ref="FILE_ALL"/>
