@@ -112,7 +112,7 @@ public class WeChatServiceImpl implements WeChatService {
                             }
                             break;
                         case "pdd":
-                            content = "非常抱歉拼多多接口还在升级....";
+                            content = "接官方通知，即日起(2020年9月5日)拼多多暂不支持返li查询，恢复时间另行通知";
 //                            String goodsId = parse.get("goods_id");
 //                            if (!goodsId.isEmpty()){
 //                                PddDdkGoodsDetailResponse.GoodsDetailResponseGoodsDetailsItem goodsDetailsItem = null;

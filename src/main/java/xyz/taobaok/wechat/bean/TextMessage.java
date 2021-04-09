@@ -29,7 +29,7 @@ public class TextMessage extends BaseMessage{
 
     public TextMessage(Map<String, String> requestMap, String content) {
         super(requestMap);
-        this.setMsgType("text");
+        this.setMsgType(requestMap.get("MsgType").toLowerCase());
         this.content = content;
     }
 }
