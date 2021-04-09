@@ -34,6 +34,7 @@ import java.util.Map;
 public class WeChatServiceImpl implements WeChatService {
 
     private static final String ISEMY = "抱歉,该商品没有优惠券！";
+    private static final String TEXTERROR = "请输入正确的商品链接或者淘口令！\n目前支持淘宝、天猫、京东商品优惠信息";
 
 
     @Autowired
@@ -133,6 +134,8 @@ public class WeChatServiceImpl implements WeChatService {
                     String tpwd = TpwdUtil.isTpwd(parse.get("url"));
                     if (tpwd != null){
                         content = getTklConvert(tpwd) ==null? ISEMY:getTklConvert(tpwd);
+                    }else{
+                        msg = new TextMessage(requestMap, TEXTERROR);
                     }
                 }
                 break;
