@@ -57,6 +57,7 @@ public class WeChatServiceImpl implements WeChatService {
      */
     @Override
     public String webChatCheck(String signature, String timestamp, String nonce, String echostr) {
+        log.info("wechat token校验接口被调用");
         //字典顺序排序
         String[] attr = {WechatMessageUtil.TOKEN, timestamp, nonce};
         Arrays.sort(attr);
