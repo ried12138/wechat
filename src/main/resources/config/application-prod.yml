@@ -27,3 +27,9 @@ pdd:
   pid: 9941199_188648413
 server:
   port: 80
+  tomcat:
+    max-connections: 1000 #最大连接数，默认为10000
+    accept-count: 10 #最大连接等待数，默认100
+    threads: #并发数
+      max: 100
+      min-spare: 5
