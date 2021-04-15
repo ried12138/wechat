@@ -47,4 +47,10 @@ public class WeChatController {
         response.setContentType("text/xml");
         return weChatService.webChatRequestParse(request);
     }
+
+    @RequestMapping(value = "/",method = RequestMethod.GET,produces = "text/html;charset=utf-8")
+    @ResponseBody
+    public String index(){
+        return "is ok";
+    }
 }
