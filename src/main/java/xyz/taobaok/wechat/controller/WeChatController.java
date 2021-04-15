@@ -53,9 +53,9 @@ public class WeChatController {
     public String index(){
         return "is ok";
     }
-    @RequestMapping(value = "/well-known/pki-validation/fileauth.txt",method = RequestMethod.GET,produces = "text/html;charset=utf-8")
-    @ResponseBody
-    public String checkssl(){
-        return "202104140553224ihvjutr4eccyctmlwcj96elaynjzd4e4hsuqnd9nmcatrv2cz";
-    }
+//    @RequestMapping(value = "/well-known/pki-validation/fileauth.txt",method = RequestMethod.GET,produces = "text/html;charset=utf-8")
+//    @ResponseBody
+//    public String checkssl(){
+//        return "202104140553224ihvjutr4eccyctmlwcj96elaynjzd4e4hsuqnd9nmcatrv2cz";
+//    }
 }
