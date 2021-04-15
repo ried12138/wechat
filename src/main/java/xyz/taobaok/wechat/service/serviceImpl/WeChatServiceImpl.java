@@ -234,7 +234,7 @@ public class WeChatServiceImpl implements WeChatService {
             if (tklConvert.contains("成功")){
                 itemInfo = dtkApiService.tbItemCouponArrange(null, tklConvert);
             }
-            log.info("tklAPI return tklInfo:{},tpwd:{}",itemInfo,tpwd);
+            log.info("tklAPI return tklInfo:{},\ntpwd:{}",itemInfo,tpwd);
         } catch (UnsupportedEncodingException e) {
             log.error("tkl API is error: Failed to get product information, tpwd:{}",tpwd);
         }
