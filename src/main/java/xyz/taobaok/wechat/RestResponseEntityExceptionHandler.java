@@ -22,7 +22,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity handleExceptions(Exception ex, WebRequest request) {
         if ("org.apache.catalina.connector.ClientAbortException".equals(ex.getClass().getName())) {
             log.error("发生clientAbortException");
-            return null;
+//            return null;
         }
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Content-Type", "application/json;charset=UTF-8");
