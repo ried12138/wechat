@@ -1,6 +1,7 @@
 package xyz.taobaok.wechat.toolutil;
 
 import com.thoughtworks.xstream.XStream;
+import lombok.extern.slf4j.Slf4j;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -22,6 +23,7 @@ import java.util.Map;
  * @Date 2021/2/25   3:26 下午
  * @Version 1.0
  */
+@Slf4j
 public class WechatMessageUtil {
     //微信校验token
     public static final String TOKEN = "0ADCEAF6CCE07DF3";
@@ -57,6 +59,8 @@ public class WechatMessageUtil {
             try {
                 document = saxReader.read(inputStream);
             } catch (DocumentException e) {
+                log.error("获取requestinfo内容流异常！！！");
+                inputStream.close();
                 e.printStackTrace();
             }
             //得到xml根元素
@@ -70,6 +74,7 @@ public class WechatMessageUtil {
             //释放关流
             inputStream.close();
         } catch (IOException e) {
+            log.error("获取requestinfo内容流异常！！！");
             e.printStackTrace();
         }
         return map;
