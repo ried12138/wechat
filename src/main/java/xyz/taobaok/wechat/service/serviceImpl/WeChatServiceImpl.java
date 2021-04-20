@@ -104,14 +104,11 @@ public class WeChatServiceImpl implements WeChatService {
                 if (platform != null){
                     switch (platform){
                         case "tb":
-                            if (!getTaobaoConvert(parse).isEmpty()){
-                                content = getTaobaoConvert(parse);
-                            }
+                            content = getTaobaoConvert(parse);
+                            content = content.isEmpty() ? ISEMY : content;
                             break;
                         case "jd":
-                            if (getJdConvert(parse, requestMap) !=null){
-                                msg = getJdConvert(parse, requestMap);
-                            }
+                            msg = getJdConvert(parse, requestMap);
                             break;
                         case "pdd":
                             content = "接官方通知，即日起(2020年9月5日)拼多多暂不支持返li查询，恢复时间另行通知";
@@ -127,6 +124,10 @@ public class WeChatServiceImpl implements WeChatService {
 //                                System.out.println(goodsSign);
 //                            }
                             break;
+                            //订单
+                        case "order":
+                            content = getOrderNumberBind(parse);
+                            break;
                         default:
                             break;
                     }
@@ -134,7 +135,8 @@ public class WeChatServiceImpl implements WeChatService {
                     //淘口令
                     String tpwd = TpwdUtil.isTpwd(parse.get("url"));
                     if (tpwd != null){
-                        content = getTklConvert(tpwd) ==null? ISEMY:getTklConvert(tpwd);
+                        content = getTklConvert(tpwd);
+                        content = content == null? ISEMY:content;
                     }else{
                         msg = new TextMessage(requestMap, TEXTERROR);
                     }
@@ -163,6 +165,12 @@ public class WeChatServiceImpl implements WeChatService {
         }
         return WechatMessageUtil.beanToXml(msg);
     }
+
+    private String getOrderNumberBind(Map<String, String> parse) {
+        String orderNumber = parse.get("orderNumber");
+        return null;
+    }
+
 
     /**
      * 淘宝商品查询转链
