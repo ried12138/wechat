@@ -29,8 +29,8 @@ server:
   port: 80
   tomcat:
     connection-timeout: 60000 #超时时间
-    max-connections: 100 #最大连接数，默认为10000
-    accept-count: 6 #最大连接等待数，默认100
+    max-connections: 200 #最大连接数，默认为10000
+    accept-count: 30 #最大连接等待数，默认100
     threads: #并发数
       max: 100
       min-spare: 5
