@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 @RestController
+@RequestMapping("/")
 public class WeChatController {
 
 
@@ -31,7 +32,7 @@ public class WeChatController {
      * @param echostr    随机字符串
      * @return
      */
-    @RequestMapping(value = "/wechat",method = RequestMethod.GET,produces = "text/html;charset=utf-8")
+    @RequestMapping(value = "wechat",method = RequestMethod.GET,produces = "text/html;charset=utf-8")
     @ResponseBody
     public String weChatCheck(@RequestParam("signature") String signature, @RequestParam("timestamp") String timestamp,
                             @RequestParam("nonce") String nonce, @RequestParam("echostr") String echostr){
@@ -40,7 +41,7 @@ public class WeChatController {
     }
 
 
-    @RequestMapping(value = "/wechat",method = RequestMethod.POST)
+    @RequestMapping(value = "wechat",method = RequestMethod.POST)
     @ResponseBody
     public String RequestPostweChat(HttpServletRequest request, HttpServletResponse response){
         response.setCharacterEncoding("UTF-8");
@@ -48,10 +49,15 @@ public class WeChatController {
         return weChatService.webChatRequestParse(request);
     }
 
-    @RequestMapping(value = "/",method = RequestMethod.GET,produces = "text/html;charset=utf-8")
+    @RequestMapping(value = "",method = RequestMethod.GET,produces = "text/html;charset=utf-8")
     @ResponseBody
     public String index(){
         return "is ok";
+    }
+
+    @GetMapping("verification.html")
+    public String verification(){
+        return "verify_f98bb794916809e779d3129c9aba88b8";
     }
 //    @RequestMapping(value = "/well-known/pki-validation/fileauth.txt",method = RequestMethod.GET,produces = "text/html;charset=utf-8")
 //    @ResponseBody
