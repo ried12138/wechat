@@ -41,6 +41,12 @@ public class WeChatController {
     }
 
 
+    /**
+     * 处理微信公众号发送信息接口
+     * @param request
+     * @param response
+     * @return
+     */
     @RequestMapping(value = "wechat",method = RequestMethod.POST)
     @ResponseBody
     public String RequestPostweChat(HttpServletRequest request, HttpServletResponse response){

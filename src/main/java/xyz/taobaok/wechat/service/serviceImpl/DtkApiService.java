@@ -8,14 +8,18 @@ import xyz.taobaok.wechat.bean.dataoke.Dataa;
 import xyz.taobaok.wechat.bean.dataoke.DtktResponse;
 import xyz.taobaok.wechat.config.DtkManager;
 import xyz.taobaok.wechat.config.JdManager;
+import xyz.taobaok.wechat.toolutil.DateTimeUtil;
 import xyz.taobaok.wechat.toolutil.HttpUtils;
 import xyz.taobaok.wechat.toolutil.SignMD5Util;
 
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.TreeMap;
 
 /**
  * 大淘客接口
+ * http://www.dataoke.com/kfpt/api-market.html
  * @Author weiranliu
  * @Email liuweiran12138@outlook.com
  * @Date 2021/2/25   10:57 下午
@@ -34,15 +38,56 @@ public class DtkApiService {
 
 
     /**
-     * 淘口令转淘口令
-     * @param tkl
+     * 生成淘口令
+     * 必须以https开头，可以是二合一链接、长链接、短链接等各种淘宝高佣链接；
+     * 支持渠道备案链接。* 该参数需要进行Urlencode编码后传入*
+     * http://www.dataoke.com/kfpt/api-d.html?id=28
+     * @param text  口令弹框内容，长度大于5个字符
+     * @param url
+     * @return
+     */
+    public String creatTaokouling(String text,String url){
+        TreeMap<String, Object> map = new TreeMap<>();
+        map.put("version", "v1.0.0");
+        map.put("text",text);
+        map.put("url",url);
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.creatTkl, paraMap);
+    }
+
+    /**
+     * http://www.dataoke.com/kfpt/api-d.html?id=27
+     * @param queryType 查询时间类型，1：按照订单淘客创建时间查询，2:按照订单淘客付款时间查询，3:按照订单淘客结算时间查询
+     * @param orderScene 场景订单场景类型，1:常规订单，2:渠道订单，3:会员运营订单，默认为1
+     * @param startTime 订单查询开始时间。时间格式：YYYY-MM-DD HH:MM:SS
+     * @param endTime 订单查询结束时间。时间格式：YYYY-MM-DD HH:MM:SS
      * @return
      * @throws UnsupportedEncodingException
      */
-    public String getTklConvert(String tkl) throws UnsupportedEncodingException {
+    public String getTbOrderDetails(Integer queryType,Integer orderScene,String startTime,String endTime,Integer tkStatus) throws UnsupportedEncodingException {
+        TreeMap<String, Object> map = new TreeMap<>();
+        map.put("version", "v1.0.0");
+        map.put("endTime", endTime);
+        map.put("startTime", startTime);
+        map.put("queryType",queryType);
+        map.put("orderScene",orderScene);
+        map.put("tkStatus",tkStatus);
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.orderDetails, paraMap);
+    }
+    /**
+     * 淘口令转淘口令
+     * http://www.dataoke.com/kfpt/api-d.html?id=30
+     * @param tkl
+     * @param fromUserName
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    public String getTklConvert(String tkl, String fromUserName){
         TreeMap<String, Object> map = new TreeMap<>();
         map.put("version", "v1.0.0");
         map.put("content",tkl);
+        map.put("external_id",fromUserName);
         TreeMap<String, Object> paraMap = getParaMap(map);
         return HttpUtils.sendGet(dtkManager.tklConvert, paraMap);
     }
@@ -64,14 +109,17 @@ public class DtkApiService {
 
     /**
      * 高效转链
-     * @param id
+     * v1.3.1支持会员授权
+     * http://www.dataoke.com/kfpt/api-d.html?id=7
+     * @param itemid
      * @return
      * @throws UnsupportedEncodingException
      */
-    public String senDaTaoKeApiLink(String id) throws UnsupportedEncodingException {
+    public String senDaTaoKeApiLink(String itemid,String fromUserName) throws UnsupportedEncodingException {
         TreeMap<String, Object> map = new TreeMap<>();
-        map.put("version", "v1.1.1");
-        map.put("goodsId", id);
+        map.put("version", "v1.3.1");
+        map.put("goodsId",itemid);
+        map.put("externalId",fromUserName);
         TreeMap<String, Object> paraMap = getParaMap(map);
         String jsonString = HttpUtils.sendGet(dtkManager.getPrivilegeLink, paraMap);
         return jsonString;
@@ -99,7 +147,18 @@ public class DtkApiService {
      */
     public String tbItemCouponArrange(String title, String couponJSon) {
         DtktResponse response = JSONObject.parseObject(couponJSon, DtktResponse.class);
-        Dataa data = response.getData();
+        Dataa data = (Dataa) response.getData();
+//        Date defineyyyyMMddHH = null;
+//        try {
+//            defineyyyyMMddHH = DateTimeUtil.getDefineyyyyMMddHH(data.getCouponEndTime());
+//        } catch (ParseException e) {
+//            log.error("优惠券日期转换失败！！！请检查是否有优惠券失效情况，itemid：{}",data.getItemId());
+//        }
+//        //判断优惠券过期时间没有过期
+//        if (DateTimeUtil.dateCompareNow(defineyyyyMMddHH,new Date())){
+//            //2020.4.20没写完，判断优惠券链接后转淘口令会员接口
+//
+//        }
         StringBuffer content = new StringBuffer("");
         title = title == null? data.getTitle():title;
         content.append("找到优惠券!长按复制到淘宝：" + "\n"+"商品名称：【");

@@ -11,6 +11,8 @@ import xyz.taobaok.wechat.bean.BaseMessage;
 import xyz.taobaok.wechat.bean.Item;
 import xyz.taobaok.wechat.bean.NewsMessages;
 import xyz.taobaok.wechat.bean.TextMessage;
+import xyz.taobaok.wechat.bean.dataoke.TbOrderDetails;
+import xyz.taobaok.wechat.mapper.TbOrderDetailsMapper;
 import xyz.taobaok.wechat.service.WeChatService;
 import xyz.taobaok.wechat.toolutil.TpwdUtil;
 import xyz.taobaok.wechat.toolutil.UrlUtil;
@@ -45,6 +47,8 @@ public class WeChatServiceImpl implements WeChatService {
     JdApiService jdApiService;
     @Autowired
     PddApiServiceImpl pddApiService;
+    @Autowired
+    TbOrderDetailsMapper tbOrderDetailsMapper;
 
 
     /**
@@ -96,11 +100,14 @@ public class WeChatServiceImpl implements WeChatService {
         BaseMessage msg = null;
         String content = ISEMY;
         Map<String, String> requestMap = WechatMessageUtil.parseXml(request);
+        //获取微信用户信息
+        String fromUserName = requestMap.get("FromUserName");
         log.info("被请求了！！！！！！请求信息为：{}",requestMap.toString());
         switch (requestMap.get("MsgType")){
             case WechatMessageUtil.RESP_MESSAGE_TYPE_TEXT:  //文本
                 Map<String, String> parse = UrlUtil.parse(requestMap.get("Content"));
                 String platform = parse.get("platform");
+                parse.put("FromUserName",fromUserName);
                 if (platform != null){
                     switch (platform){
                         case "tb":
@@ -135,7 +142,7 @@ public class WeChatServiceImpl implements WeChatService {
                     //淘口令
                     String tpwd = TpwdUtil.isTpwd(parse.get("url"));
                     if (tpwd != null){
-                        content = getTklConvert(tpwd);
+                        content = getTklConvert(tpwd,fromUserName);
                         content = content == null? ISEMY:content;
                     }else{
                         msg = new TextMessage(requestMap, TEXTERROR);
@@ -166,9 +173,15 @@ public class WeChatServiceImpl implements WeChatService {
         return WechatMessageUtil.beanToXml(msg);
     }
 
+
     private String getOrderNumberBind(Map<String, String> parse) {
-        String orderNumber = parse.get("orderNumber");
-        return null;
+        String tradeParentId = parse.get("orderNumber");
+        //查询订单信息
+        TbOrderDetails tbOrderDetails = tbOrderDetailsMapper.selectByPrimaryKey(tradeParentId);
+        if(tbOrderDetails != null){
+            //绑定用户信息
+        }
+        return ISEMY;
     }
 
 
@@ -179,6 +192,7 @@ public class WeChatServiceImpl implements WeChatService {
      */
     private String getTaobaoConvert(Map<String, String> parse){
         String itemId = parse.get("id");
+        String fromUserName = parse.get("FromUserName");
         String content = "";
         if (itemId != null){
             try {
@@ -188,7 +202,7 @@ public class WeChatServiceImpl implements WeChatService {
                     String data = jsonObject.getString("data");
                     JSONObject jsonObject1 = JSON.parseObject(data);
                     String title = jsonObject1.getString("title");
-                    String couponJSon = dtkApiService.senDaTaoKeApiLink(itemId);
+                    String couponJSon = dtkApiService.senDaTaoKeApiLink(itemId,fromUserName);
                     if (couponJSon.contains("成功")){
                         content = dtkApiService.tbItemCouponArrange(title,couponJSon);
                     }
@@ -233,19 +247,16 @@ public class WeChatServiceImpl implements WeChatService {
     /**
      * 淘口令解析
      * @param tpwd
+     * @param fromUserName
      * @return
      */
-    private String getTklConvert(String tpwd){
+    private String getTklConvert(String tpwd, String fromUserName){
         String itemInfo = null;
-        try {
-            String tklConvert = dtkApiService.getTklConvert(tpwd);
-            if (tklConvert.contains("成功")){
-                itemInfo = dtkApiService.tbItemCouponArrange(null, tklConvert);
-            }
-            log.info("tklAPI return tklInfo:\n{},\ntpwd:{}",itemInfo,tpwd);
-        } catch (UnsupportedEncodingException e) {
-            log.error("tkl API is error: Failed to get product information, tpwd:{}",tpwd);
+        String tklConvert = dtkApiService.getTklConvert(tpwd,fromUserName);
+        if (tklConvert.contains("成功")){
+            itemInfo = dtkApiService.tbItemCouponArrange(null, tklConvert);
         }
+        log.info("tklAPI return tklInfo:\n{},\ntpwd:{}",itemInfo,tpwd);
         return itemInfo;
     }
 }

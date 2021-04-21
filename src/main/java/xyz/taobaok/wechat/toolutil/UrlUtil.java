@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
  */
 public class UrlUtil {
 
+    private static Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
     private static final String regEx = "[^0-9]";
 
     //获取url参数
@@ -27,11 +28,18 @@ public class UrlUtil {
             return map;
         }
         String[] urlParts = url.split("\\?");
-        map.put("url",urlParts[0]);
         //没有参数
         if (urlParts.length == 1) {
+            if (isInteger(urlParts[0])){
+                //用户订单
+                map.put("platform","order");
+                map.put("orderNumber",urlParts[0]);
+            }else{
+                map.put("url",urlParts[0]);
+            }
             return map;
         }
+//        map.put("url",urlParts[0]);
         //有参数
         if (urlParts[0].contains("taobao.com") ||urlParts[0].contains("tmall.com")){
             map.put("platform","tb");
@@ -58,5 +66,14 @@ public class UrlUtil {
         Pattern p = Pattern.compile(regEx);
         Matcher m = p.matcher(url);
         return m.replaceAll("").trim();
+    }
+
+    /**
+     * 判断是否为整数
+     * @param str 传入的字符串
+     * @return 是整数返回true,否则返回false
+     */
+    public static boolean isInteger(String str) {
+        return pattern.matcher(str).matches();
     }
 }

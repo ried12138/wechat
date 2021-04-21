@@ -13,6 +13,14 @@ dtk:
   jdItemConvert: https://openapi.dataoke.com/api/dels/jd/kit/promotion-union-convert
   #淘口令转淘口令
   tklConvert: https://openapi.dataoke.com/api/tb-service/twd-to-twd
+  #订单拉取
+  orderDetails: https://openapi.dataoke.com/api/tb-service/get-order-details
+  #生成淘口令
+  creatTkl: https://openapi.dataoke.com/api/tb-service/creat-taokouling
+tb:
+  appKey: 32659604
+  secret: 4ecff47fbd6bf526fc2ba51f9b6cf4c0
+  url: https://eco.taobao.com/router/rest
 jd:
   appKey: f18076bf3df77f0a45bd90b11d934b44
   appSecret: 4120a10bb75444c2998b0b5f1d7facab

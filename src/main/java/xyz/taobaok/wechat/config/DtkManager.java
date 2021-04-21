@@ -31,6 +31,10 @@ public class DtkManager {
     public String jdItemConvert;
     @Value("${dtk.tklConvert}")
     public String tklConvert;
+    @Value("${dtk.orderDetails}")
+    public String orderDetails;
+    @Value("${dtk.creatTkl}")
+    public String creatTkl;
 
 
 

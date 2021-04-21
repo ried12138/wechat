@@ -9,6 +9,10 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -21,9 +25,18 @@ import java.util.TreeMap;
  */
 public class HttpUtils {
 
-    public static String doGet(String url) {
+    public static String doGet(String url1) {
         CloseableHttpClient client = HttpClients.createDefault();
-        HttpGet httpGet = new HttpGet(url);
+        URI uri = null;
+        try {
+            URL url = new URL(url1);
+            uri = new URI("https",url.getUserInfo(),url.getHost(),url.getPort(),url.getPath(),url.getQuery(),null);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        HttpGet httpGet = new HttpGet(uri);
         CloseableHttpResponse response = null;
         try {
             response = client.execute(httpGet);
@@ -49,7 +62,7 @@ public class HttpUtils {
     }
 
 
-    public static String sendGet(String getUrl, Map<String, Object> paraMap) throws UnsupportedEncodingException {
+    public static String sendGet(String getUrl, Map<String, Object> paraMap) {
         if (paraMap == null) {
             paraMap = new HashMap<String, Object>();
         }
@@ -63,5 +76,23 @@ public class HttpUtils {
         });
         getUrl = getUrl.contains("?") ? getUrl : getUrl + "?";
         return doGet(getUrl + sb.toString());
+    }
+
+    /**
+     * url转unicode
+     * @param str
+     * @return
+     */
+    private static String getURLEncoderString(String str) {
+        String result = "";
+        if (null == str) {
+            return "";
+        }
+        try {
+            result = java.net.URLEncoder.encode(str, "GBK");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }
