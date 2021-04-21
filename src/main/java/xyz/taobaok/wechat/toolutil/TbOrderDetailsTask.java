@@ -73,7 +73,7 @@ public class TbOrderDetailsTask {
      * @param
      * @return
      */
-    @Scheduled(cron = "0 0/20 * * * ?")
+//    @Scheduled(cron = "0 0/20 * * * ?")
 //    @Scheduled(cron = "0/5 * * * * ?")
     private void getTbOrderDetails(){
         String endTime = DateTimeUtil.dateAddMinutes(null, 20);
