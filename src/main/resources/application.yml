@@ -19,3 +19,6 @@ logging:
     org.springframework.boot.autoconfigure: ERROR
 logback:
   file: ${spring.logpath}/${spring.application.name}
+mybatis:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  type-aliases-package: xyz.taobaok.wechat.mapper

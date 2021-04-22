@@ -7,4 +7,6 @@ package xyz.taobaok.wechat.service;
  * @Version 1.0
  */
 public interface UserInfoService {
+
+    int userInfoBind(String fromUserName, String specialId, String openId);
 }

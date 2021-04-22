@@ -25,7 +25,7 @@ import java.util.TreeMap;
  */
 public class HttpUtils {
 
-    public static String doGet(String url1) {
+    public static String doGet(String url) {
         CloseableHttpClient client = HttpClients.createDefault();
 //        URI uri = null;
 //        try {
@@ -37,7 +37,7 @@ public class HttpUtils {
 //        } catch (URISyntaxException e) {
 //            e.printStackTrace();
 //        }
-        HttpGet httpGet = new HttpGet(url1);
+        HttpGet httpGet = new HttpGet(url);
         CloseableHttpResponse response = null;
         try {
             response = client.execute(httpGet);
@@ -62,7 +62,42 @@ public class HttpUtils {
         return null;
     }
 
-
+    public static String doGetTbOrderDetails(String url) {
+        CloseableHttpClient client = HttpClients.createDefault();
+        URI uri = null;
+        try {
+            URL urls = new URL(url);
+            uri = new URI("https",urls.getUserInfo(),urls.getHost(),urls.getPort(),urls.getPath(),urls.getQuery(),null);
+//            uri = new URI(urls);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        HttpGet httpGet = new HttpGet(uri);
+        CloseableHttpResponse response = null;
+        try {
+            response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            return EntityUtils.toString(entity, "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                client.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
     public static String sendGet(String getUrl, Map<String, Object> paraMap) {
         if (paraMap == null) {
             paraMap = new HashMap<String, Object>();
@@ -78,6 +113,22 @@ public class HttpUtils {
         getUrl = getUrl.contains("?") ? getUrl : getUrl + "?";
         return doGet(getUrl + sb.toString());
     }
+    public static String sendGetTbOrderDetails(String getUrl, Map<String, Object> paraMap) {
+        if (paraMap == null) {
+            paraMap = new HashMap<String, Object>();
+        }
+        paraMap = new TreeMap<String, Object>(paraMap);
+        StringBuilder sb = new StringBuilder();
+        paraMap.entrySet().stream().forEach(entry -> {
+            sb.append(entry.getKey());
+            sb.append("=");
+            sb.append(entry.getValue());
+            sb.append("&");
+        });
+        getUrl = getUrl.contains("?") ? getUrl : getUrl + "?";
+        return doGetTbOrderDetails(getUrl + sb.toString());
+    }
+
 
     /**
      * url编码

@@ -80,6 +80,7 @@ public class DtkApiService {
      * @param orderScene 场景订单场景类型，1:常规订单，2:渠道订单，3:会员运营订单，默认为1
      * @param startTime 订单查询开始时间。时间格式：YYYY-MM-DD HH:MM:SS
      * @param endTime 订单查询结束时间。时间格式：YYYY-MM-DD HH:MM:SS
+     * @param tkStatus
      * @return
      * @throws UnsupportedEncodingException
      */
@@ -92,7 +93,7 @@ public class DtkApiService {
         map.put("orderScene",orderScene);
         map.put("tkStatus",tkStatus);
         TreeMap<String, Object> paraMap = getParaMap(map);
-        return HttpUtils.sendGet(dtkManager.orderDetails, paraMap);
+        return HttpUtils.sendGetTbOrderDetails(dtkManager.orderDetails, paraMap);
     }
     /**
      * 淘口令转淘口令
@@ -205,10 +206,10 @@ public class DtkApiService {
         if (!data.getCouponRemainCount().equals("0")) {
             content.append("\n" + "优惠券剩余数：" + data.getCouponRemainCount());
         }
-        content.append("\n" + "优惠码：" + data.getTpwd());
         if (!data.getCouponEndTime().equals("")) {
             content.append("\n" + "优惠券失效时间：" + data.getCouponEndTime());
         }
+        content.append("\n" + "优惠码：" + data.getTpwd());
         return content.toString();
     }
 

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import xyz.taobaok.wechat.bean.dataoke.DtktResponse;
 import xyz.taobaok.wechat.bean.dataoke.TbOrderConstant;
 import xyz.taobaok.wechat.bean.dataoke.TbOrderDetails;
@@ -31,6 +32,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
+@Service
 public class TbOrderDetailsTask {
 
 
@@ -40,58 +42,97 @@ public class TbOrderDetailsTask {
     @Autowired
     TbOrderDetailsMapper tbOrderDetailsMapper;
 
-
     /**
-     *
+     * 每一小时拉取
+     * 按照结算时间查询
+     * 确认收货的订单
+     */
+    @Scheduled(cron = "1 0 0/1 * * ?")
+    private void getTbOrderDetailsHold(){
+        String startTime= DateTimeUtil.dateAddMinutes(62);
+        String endTime = DateTimeUtil.getNowTime_EN();
+        String str = null;
+        boolean hasNext = false;
+        while (hasNext){
+            try {
+                //付款时间查询
+                str = dtkApiService.getTbOrderDetails(TbOrderConstant.SETTLEMENT_TIME_QUERY,
+                        TbOrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime,TbOrderConstant.ORDER_STATUS_RECEIV);
+            } catch (UnsupportedEncodingException e) {
+                log.error("大淘客拉取订单接口访问失败！！！");
+            }
+            if(str.contains("成功")){
+                JSONObject jsonObject = JSON.parseObject(str);
+                JSONObject data = jsonObject.getJSONObject("data");
+                JSONObject results = data.getJSONObject("results");
+                JSONArray json = JSONArray.parseArray(results.getString("publisher_order_dto"));
+                getIntegration(json);
+                hasNext = data.getBoolean("has_next");
+            }
+        }
+    }
+    /**
+     * 用户主动拉取5分钟内的订单信息
      * @param queryType
      * @param orderScene
      * @param tkStatus
      * @param noInsert
      * @return
      */
-    public List<TbOrderDetails> getTbOrderDetails(Integer queryType,Integer orderScene,Integer tkStatus,boolean noInsert){
-        String endTime = DateTimeUtil.dateAddMinutes(null, 20);
-        String startTime = DateTimeUtil.getNowTime_EN();
+    public void getTbOrderDetails(Integer queryType,Integer orderScene,Integer tkStatus,boolean noInsert){
+        String startTime = DateTimeUtil.dateAddMinutes(5);
+        String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
-        try {
-            str = dtkApiService.getTbOrderDetails(queryType,orderScene,startTime,endTime,tkStatus);
-        } catch (UnsupportedEncodingException e) {
-            log.error("大淘客拉取订单接口访问失败！！！");
+        boolean hasNext = false;
+        while (hasNext) {
+            try {
+                str = dtkApiService.getTbOrderDetails(queryType, orderScene, startTime, endTime, tkStatus);
+            } catch (UnsupportedEncodingException e) {
+                log.error("大淘客拉取订单接口访问失败！！！");
+            }
+            if (str.contains("成功")) {
+                JSONObject jsonObject = JSON.parseObject(str);
+                JSONObject data = jsonObject.getJSONObject("data");
+                JSONObject results = data.getJSONObject("results");
+                JSONArray json = JSONArray.parseArray(results.getString("publisher_order_dto"));
+                getIntegration(json);
+                hasNext = data.getBoolean("has_next");
+            }
         }
-        if(str.contains("成功")){
-            JSONObject jsonObject = JSON.parseObject(str);
-            JSONObject data = jsonObject.getJSONObject("data");
-            JSONObject results = data.getJSONObject("results");
-            JSONArray json = JSONArray.parseArray(results.getString("publisher_order_dto"));
-            return getIntegration(json);
-        }
-        return null;
     }
     /**
      * 淘宝订单拉取
+     * 付款时间查询
+     * 已付款的订单
      * 每20分钟计统计一次
      * @param
      * @return
      */
-//    @Scheduled(cron = "0 0/20 * * * ?")
 //    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0 0/21 * * * ?")
     private void getTbOrderDetails(){
-        String endTime = DateTimeUtil.dateAddMinutes(null, 20);
-        String startTime = DateTimeUtil.getNowTime_EN();
+        String startTime = DateTimeUtil.dateAddMinutes(20);
+        String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
-        try {
-            //付款时间查询
-            str = dtkApiService.getTbOrderDetails(TbOrderConstant.PAYMENT_TIME_QUERY,
-                    TbOrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime,TbOrderConstant.ORDER_STATUS_PAYMENT);
-        } catch (UnsupportedEncodingException e) {
-            log.error("大淘客拉取订单接口访问失败！！！");
-        }
-        if(str.contains("成功")){
-            JSONObject jsonObject = JSON.parseObject(str);
-            JSONObject data = jsonObject.getJSONObject("data");
-            JSONObject results = data.getJSONObject("results");
-            JSONArray json = JSONArray.parseArray(results.getString("publisher_order_dto"));
-            getIntegration(json);
+        boolean hasNext = true;
+        while (hasNext){
+            try {
+                //付款时间查询
+                str = dtkApiService.getTbOrderDetails(TbOrderConstant.PAYMENT_TIME_QUERY,
+                        TbOrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime,TbOrderConstant.ORDER_STATUS_PAYMENT);
+            } catch (UnsupportedEncodingException e) {
+                log.error("大淘客拉取订单接口访问失败！！！");
+            }
+            if(str.contains("成功")){
+                JSONObject jsonObject = JSON.parseObject(str);
+                JSONObject data = jsonObject.getJSONObject("data");
+                JSONObject results = data.getJSONObject("results");
+                JSONArray json = JSONArray.parseArray(results.getString("publisher_order_dto"));
+                getIntegration(json);
+                hasNext = data.getBoolean("has_next");
+            }else{
+                hasNext = false;
+            }
         }
     }
 
@@ -113,9 +154,15 @@ public class TbOrderDetailsTask {
             Integer tk_status = null;
             try {
                 tbPaidTime = DateTimeUtil.getDefineyyyyMMddHHmmss(json.getString("tb_paid_time"));
-                pay_price = new BigDecimal(json.getString("pay_price"));
+                String payPrice = json.getString("pay_price");
+                if (payPrice !=null && !payPrice.isEmpty()){
+                    pay_price = new BigDecimal(payPrice);
+                }
                 pub_share_fee = new BigDecimal(json.getString("pub_share_fee"));
-                tk_earning_time = DateTimeUtil.getDefineyyyyMMddHHmmss(json.getString("tk_earning_time"));
+                String tkEarningTime = json.getString("tk_earning_time");
+                if (tkEarningTime != null && !tkEarningTime.isEmpty()){
+                    tk_earning_time = DateTimeUtil.getDefineyyyyMMddHHmmss(tkEarningTime);
+                }
                 tk_total_rate = new BigDecimal(json.getString("tk_total_rate"));
                 tk_status = Integer.valueOf(json.getString("tk_status"));
             } catch (ParseException e) {
@@ -123,18 +170,14 @@ public class TbOrderDetailsTask {
                 return null;
             }
             String special_id = json.getString("special_id");
-            //订单编号
-            String trade_parent_id = json.getString("trade_parent_id");
-            TbOrderDetails tbOrderDetails = tbOrderDetailsMapper.selectByPrimaryKey(trade_parent_id);
-            if (tbOrderDetails != null){
-                continue;
-            }
             String pub_share_rate = json.getString("pub_share_rate");
             String refund_tag = json.getString("refund_tag");
             String item_title = json.getString("item_title");
             String item_id = json.getString("item_id");
             String item_link = json.getString("item_link");
             String total_commission_fee = json.getString("total_commission_fee");
+            //订单编号
+            String trade_parent_id = json.getString("trade_parent_id");
             tbODs.setTbPaidTime(tbPaidTime);
             tbODs.setPayPrice(pay_price);
             tbODs.setTradeParentId(trade_parent_id);
@@ -149,18 +192,34 @@ public class TbOrderDetailsTask {
             tbODs.setItemLink(item_link);
             tbODs.setTotalCommissionFee(total_commission_fee);
             tbODs.setSpecialId(special_id);
+            TbOrderDetails tbOrderDetails = tbOrderDetailsMapper.selectByPrimaryKey(trade_parent_id);
             int check = 0;
-            try {
-                check = tbOrderDetailsMapper.insertSelective(tbODs);
-            } catch (Exception e) {
-                log.error("插入订单信息失败mysql数据库故障！！！{}",tbODs.toString());
-                return null;
+            if (tbOrderDetails != null){
+                //订单存在，检查订单状态
+                if (tk_earning_time != null && pay_price != null){
+                    Date tkEarningTime = tbOrderDetails.getTkEarningTime();
+                    if (tk_earning_time != null && DateTimeUtil.dateCompareNow(tk_earning_time,tkEarningTime)){
+                        tbODs.setUpdateTime(new Date());
+                        check = tbOrderDetailsMapper.updateByPrimaryKeySelective(tbODs);
+                    }
+                }
+            }else{
+                try {
+                    //插入订单
+                    check = tbOrderDetailsMapper.insertSelective(tbODs);
+                } catch (Exception e) {
+                    log.error("插入订单信息失败mysql数据库故障！！！{}",tbODs.toString(),e);
+                    return null;
+                }
             }
             if (check <= 0){
+                log.info("成功插入一条订单信息：{}",JSONObject.toJSONString(tbODs));
                 return null;
             }
             list.add(tbODs);
         }
         return list;
     }
+
+
 }

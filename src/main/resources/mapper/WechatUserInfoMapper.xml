@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.taobaok.wechat.mapper.WechatUserInfoMapper">
+  <resultMap id="BaseResultMap" type="xyz.taobaok.wechat.bean.WechatUserInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="FromUserName" jdbcType="VARCHAR" property="fromusername" />
+    <result column="open_id" jdbcType="VARCHAR" property="openId" />
+    <result column="special_id" jdbcType="VARCHAR" property="specialId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, FromUserName, open_id, special_id, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from wechat_user_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+    <!--根据微信id查询用户 -->
+    <select id="selectByFromUserName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from wechat_user_info
+        where fromUserName = #{fromUserName,jdbcType=VARCHAR}
+    </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from wechat_user_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="xyz.taobaok.wechat.bean.WechatUserInfo" useGeneratedKeys="true">
+    insert into wechat_user_info (FromUserName, open_id, special_id, 
+      create_time, update_time)
+    values (#{fromusername,jdbcType=VARCHAR}, #{openId,jdbcType=VARCHAR}, #{specialId,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="xyz.taobaok.wechat.bean.WechatUserInfo" useGeneratedKeys="true">
+    insert into wechat_user_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fromusername != null">
+        FromUserName,
+      </if>
+      <if test="openId != null">
+        open_id,
+      </if>
+      <if test="specialId != null">
+        special_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fromusername != null">
+        #{fromusername,jdbcType=VARCHAR},
+      </if>
+      <if test="openId != null">
+        #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="specialId != null">
+        #{specialId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="xyz.taobaok.wechat.bean.WechatUserInfo">
+    update wechat_user_info
+    <set>
+      <if test="fromusername != null">
+        FromUserName = #{fromusername,jdbcType=VARCHAR},
+      </if>
+      <if test="openId != null">
+        open_id = #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="specialId != null">
+        special_id = #{specialId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="xyz.taobaok.wechat.bean.WechatUserInfo">
+    update wechat_user_info
+    set FromUserName = #{fromusername,jdbcType=VARCHAR},
+      open_id = #{openId,jdbcType=VARCHAR},
+      special_id = #{specialId,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

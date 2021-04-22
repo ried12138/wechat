@@ -61,34 +61,29 @@ public class DateTimeUtil {
 
     /**
      * 时间加减分钟
-     * @param startDate 要处理的时间，Null则为当前时间
      * @param minutes 加减的分钟
      * @return Date
      */
-    public static String dateAddMinutes(Date startDate, int minutes) {
-        if (startDate == null) {
-            startDate = new Date();
-        }
-        Calendar c = Calendar.getInstance();
-        c.setTime(startDate);
-        c.set(Calendar.MINUTE, c.get(Calendar.MINUTE) + minutes);
-        Date time = c.getTime();
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+    public static String dateAddMinutes(int minutes) {
+        long time = minutes * 60 * 1000;
+        Date now = new Date();
+        Date date = new Date(now.getTime() - time);
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
     }
 
 
     /**
      * 时间对比
      * @param datea
-     * @param dateb
+     * @param nowDate
      * @return
      */
-    public static boolean dateCompareNow(Date datea,Date dateb) {
+    public static boolean dateCompareNow(Date datea,Date nowDate) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date dateFirst = null;
         try {
             dateFirst = dateFormat.parse(dateFormat.format(datea));
-            Date dateLast = dateFormat.parse(dateFormat.format(dateb));
+            Date dateLast = dateFormat.parse(dateFormat.format(nowDate));
             return dateFirst.after(dateLast);
 //            if (dateFirst.after(dateLast)) {
 //                return 1;

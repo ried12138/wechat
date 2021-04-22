@@ -11,12 +11,13 @@ import xyz.taobaok.wechat.bean.BaseMessage;
 import xyz.taobaok.wechat.bean.Item;
 import xyz.taobaok.wechat.bean.NewsMessages;
 import xyz.taobaok.wechat.bean.TextMessage;
+import xyz.taobaok.wechat.bean.dataoke.TbOrderConstant;
 import xyz.taobaok.wechat.bean.dataoke.TbOrderDetails;
 import xyz.taobaok.wechat.mapper.TbOrderDetailsMapper;
+import xyz.taobaok.wechat.mapper.WechatUserInfoMapper;
+import xyz.taobaok.wechat.service.UserInfoService;
 import xyz.taobaok.wechat.service.WeChatService;
-import xyz.taobaok.wechat.toolutil.TpwdUtil;
-import xyz.taobaok.wechat.toolutil.UrlUtil;
-import xyz.taobaok.wechat.toolutil.WechatMessageUtil;
+import xyz.taobaok.wechat.toolutil.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -24,6 +25,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +39,8 @@ import java.util.Map;
 public class WeChatServiceImpl implements WeChatService {
 
     private static final String ISEMY = "抱歉,该商品没有优惠券！";
+    private static final String USER_BIND_STATUS_ERROR = "订单绑定微信失败！请稍后重试，或联系管理人员";
+    private static final String USER_BIND_STATUS_SUCCESS = "微信绑定成功！返利信息请在确认收货后到账查询";
     private static final String TEXTERROR = "请输入正确的商品链接或者淘口令！\n目前支持淘宝、天猫、京东商品优惠信息";
 
 
@@ -50,6 +54,10 @@ public class WeChatServiceImpl implements WeChatService {
     PddApiServiceImpl pddApiService;
     @Autowired
     TbOrderDetailsMapper tbOrderDetailsMapper;
+    @Autowired
+    UserInfoService userInfoService;
+    @Autowired
+    TbOrderDetailsTask tbOrderDetailsTask;
 
 
     /**
@@ -97,7 +105,7 @@ public class WeChatServiceImpl implements WeChatService {
      * @return
      */
     @Override
-    public String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     webChatRequestParse(HttpServletRequest request) {
+    public String webChatRequestParse(HttpServletRequest request) {
         BaseMessage msg = null;
         String content = ISEMY;
         Map<String, String> requestMap = WechatMessageUtil.parseXml(request);
@@ -175,14 +183,39 @@ public class WeChatServiceImpl implements WeChatService {
     }
 
 
+    /**
+     * 淘宝订单与微信绑定
+     * @param parse
+     * @return
+     */
     private String getOrderNumberBind(Map<String, String> parse) {
         String tradeParentId = parse.get("orderNumber");
+        String status = "";
         //查询订单信息
-        TbOrderDetails tbOrderDetails = tbOrderDetailsMapper.selectByPrimaryKey(tradeParentId);
-        if(tbOrderDetails != null){
-            //绑定用户信息
+        for(int i = 0;i< 3;i++){
+            TbOrderDetails tbOrderDetails = tbOrderDetailsMapper.selectByPrimaryKey(tradeParentId);
+            if(tbOrderDetails != null){
+                //绑定用户信息
+                int label = 0;
+                try {
+                    label = userInfoService.userInfoBind(parse.get("FromUserName"),tbOrderDetails.getSpecialId(),parse.get("FromUserName"));
+                } catch (Exception e) {
+                    log.error("保存用户信息异常");
+                    e.printStackTrace();
+                }
+                if (label == 1){
+                    status = USER_BIND_STATUS_SUCCESS;
+                }else{
+                    status = USER_BIND_STATUS_ERROR;
+                }
+                i = 3;
+            }else{
+                //拉取最新订单信息 付款时间拉取
+                tbOrderDetailsTask.getTbOrderDetails(TbOrderConstant.PAYMENT_TIME_QUERY, TbOrderConstant.ORDER_SCENARIO_MEMBER,
+                        TbOrderConstant.ORDER_STATUS_PAYMENT, false);
+            }
         }
-        return ISEMY;
+        return status;
     }
 
 
