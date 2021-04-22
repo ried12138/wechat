@@ -201,6 +201,7 @@ public class WeChatServiceImpl implements WeChatService {
                 log.error("查询订单sql失败！！！请检查mysql链接情况");
                 e.printStackTrace();
             }
+            log.info("订单信息：{}",JSONObject.toJSONString(tbOrderDetails));
             if(tbOrderDetails != null){
                 //绑定用户信息
                 int label = 0;
@@ -215,7 +216,7 @@ public class WeChatServiceImpl implements WeChatService {
                 }else{
                     status = USER_BIND_STATUS_ERROR;
                 }
-                log.info("用户绑定状态：{}",label);
+                log.info("用户绑定状态：{},微信号：{}",label,parse.get("FromUserName"));
                 i = 3;
             }else{
                 //拉取最新订单信息 付款时间拉取

@@ -54,7 +54,7 @@ public class TbOrderDetailsTask {
         String startTime= DateTimeUtil.dateAddMinutes(62);
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
-        boolean hasNext = false;
+        boolean hasNext = true;
         while (hasNext){
             try {
                 //付款时间查询
@@ -85,7 +85,7 @@ public class TbOrderDetailsTask {
         String startTime = DateTimeUtil.dateAddMinutes(5);
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
-        boolean hasNext = false;
+        boolean hasNext = true;
         while (hasNext) {
             try {
                 str = dtkApiService.getTbOrderDetails(queryType, orderScene, startTime, endTime, tkStatus);
