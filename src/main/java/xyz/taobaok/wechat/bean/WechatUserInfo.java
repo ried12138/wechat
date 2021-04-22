@@ -42,6 +42,17 @@ public class WechatUserInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public WechatUserInfo() {
+    }
+
+    public WechatUserInfo(Integer id, String fromusername, String openId, String specialId, Date createTime, Date updateTime) {
+        this.id = id;
+        this.fromusername = fromusername;
+        this.openId = openId;
+        this.specialId = specialId;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+    }
 
     public WechatUserInfo(String fromusername, String openId, String specialId) {
         this.fromusername = fromusername;

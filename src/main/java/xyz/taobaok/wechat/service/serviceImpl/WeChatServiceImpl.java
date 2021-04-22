@@ -40,6 +40,7 @@ public class WeChatServiceImpl implements WeChatService {
 
     private static final String ISEMY = "抱歉,该商品没有优惠券！";
     private static final String USER_BIND_STATUS_ERROR = "订单绑定微信失败！请稍后重试，或联系管理人员";
+    private static final String USER_BIND_STATUS_REPEAT = "订单已经绑定成功，无需重复绑定！";
     private static final String USER_BIND_STATUS_SUCCESS = "微信绑定成功！返利信息请在确认收货后到账查询";
     private static final String TEXTERROR = "请输入正确的商品链接或者淘口令！\n目前支持淘宝、天猫、京东商品优惠信息";
 
@@ -209,12 +210,15 @@ public class WeChatServiceImpl implements WeChatService {
                     label = userInfoService.userInfoBind(parse.get("FromUserName"),tbOrderDetails.getSpecialId(),parse.get("FromUserName"));
                 } catch (Exception e) {
                     log.error("保存用户信息异常");
+                    status = USER_BIND_STATUS_ERROR;
                     e.printStackTrace();
+                    i = 3;
+                    continue;
                 }
                 if (label == 1){
                     status = USER_BIND_STATUS_SUCCESS;
                 }else{
-                    status = USER_BIND_STATUS_ERROR;
+                    status = USER_BIND_STATUS_REPEAT;
                 }
                 log.info("用户绑定状态：{},微信号：{}",label,parse.get("FromUserName"));
                 i = 3;
@@ -222,6 +226,7 @@ public class WeChatServiceImpl implements WeChatService {
                 //拉取最新订单信息 付款时间拉取
                 tbOrderDetailsTask.getTbOrderDetails(TbOrderConstant.PAYMENT_TIME_QUERY, TbOrderConstant.ORDER_SCENARIO_MEMBER,
                         TbOrderConstant.ORDER_STATUS_PAYMENT, false);
+                status = "抱歉没有查询到订单信息，请重试！或联系管理员";
             }
         }
         return status;
