@@ -193,7 +193,13 @@ public class WeChatServiceImpl implements WeChatService {
         String status = "";
         //查询订单信息
         for(int i = 0;i< 3;i++){
-            TbOrderDetails tbOrderDetails = tbOrderDetailsMapper.selectByPrimaryKey(tradeParentId);
+            TbOrderDetails tbOrderDetails = null;
+            try {
+                tbOrderDetails = tbOrderDetailsMapper.selectByPrimaryKey(tradeParentId);
+            } catch (Exception e) {
+                log.error("查询订单sql失败！！！请检查mysql链接情况");
+                e.printStackTrace();
+            }
             if(tbOrderDetails != null){
                 //绑定用户信息
                 int label = 0;
