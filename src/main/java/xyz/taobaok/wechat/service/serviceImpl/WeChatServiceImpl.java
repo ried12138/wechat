@@ -192,6 +192,7 @@ public class WeChatServiceImpl implements WeChatService {
         String tradeParentId = parse.get("orderNumber");
         String status = "";
         //查询订单信息
+        log.info("进入订单绑定！！！！");
         for(int i = 0;i< 3;i++){
             TbOrderDetails tbOrderDetails = null;
             try {
@@ -214,6 +215,7 @@ public class WeChatServiceImpl implements WeChatService {
                 }else{
                     status = USER_BIND_STATUS_ERROR;
                 }
+                log.info("用户绑定状态：{}",label);
                 i = 3;
             }else{
                 //拉取最新订单信息 付款时间拉取
