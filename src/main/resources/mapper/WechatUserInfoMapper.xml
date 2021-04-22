@@ -19,11 +19,11 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
     <!--根据微信id查询用户 -->
-    <select id="selectByFromUserName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectBySpecialId" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from wechat_user_info
-        where FromUserName = #{fromUserName,jdbcType=VARCHAR}
+        where special_id = #{specialId,jdbcType=VARCHAR}
     </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from wechat_user_info

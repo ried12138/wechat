@@ -13,7 +13,7 @@ public interface WechatUserInfoMapper {
 
     WechatUserInfo selectByPrimaryKey(Integer id);
 
-    WechatUserInfo selectByFromUserName(String fromUserName);
+    WechatUserInfo selectBySpecialId(String specialId);
 
     int updateByPrimaryKeySelective(WechatUserInfo record);
 

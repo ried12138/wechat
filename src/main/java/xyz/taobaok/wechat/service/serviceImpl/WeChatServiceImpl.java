@@ -40,7 +40,7 @@ public class WeChatServiceImpl implements WeChatService {
 
     private static final String ISEMY = "抱歉,该商品没有优惠券！";
     private static final String USER_BIND_STATUS_ERROR = "订单绑定微信失败！请稍后重试，或联系管理人员";
-    private static final String USER_BIND_STATUS_REPEAT = "订单已经绑定成功，无需重复绑定！";
+    private static final String USER_BIND_STATUS_REPEAT = "订单已经被绑定成功，无需重复绑定！";
     private static final String USER_BIND_STATUS_SUCCESS = "微信绑定成功！返利信息请在确认收货后到账查询";
     private static final String TEXTERROR = "请输入正确的商品链接或者淘口令！\n目前支持淘宝、天猫、京东商品优惠信息";
 

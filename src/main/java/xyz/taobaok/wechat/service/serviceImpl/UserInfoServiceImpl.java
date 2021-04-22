@@ -31,7 +31,7 @@ public class UserInfoServiceImpl implements UserInfoService {
      */
     @Override
     public int userInfoBind(String fromUserName, String specialId, String openId) {
-        WechatUserInfo wechatUserInfo = wechatUserInfoMapper.selectByFromUserName(fromUserName);
+        WechatUserInfo wechatUserInfo = wechatUserInfoMapper.selectBySpecialId(specialId);
         if (wechatUserInfo == null){
             WechatUserInfo user = new WechatUserInfo(fromUserName,openId,specialId);
             user.setUpdateTime(new Date());
