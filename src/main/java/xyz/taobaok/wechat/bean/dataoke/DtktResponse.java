@@ -11,6 +11,6 @@ public class DtktResponse {
     private Integer code;
     private String msg;
     @JSONField(name = "data")
-    private Object data;
+    private Dataa data;
 
 }

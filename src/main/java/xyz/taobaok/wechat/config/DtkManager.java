@@ -35,6 +35,8 @@ public class DtkManager {
     public String orderDetails;
     @Value("${dtk.creatTkl}")
     public String creatTkl;
+    @Value("${dtk.parseTkl}")
+    public String parseTkl;
 
 
 

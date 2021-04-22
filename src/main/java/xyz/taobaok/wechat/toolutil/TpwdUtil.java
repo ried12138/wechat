@@ -99,4 +99,15 @@ public class TpwdUtil {
         Matcher matcher = EmojiPattern.matcher(reviewerName);
         return matcher.find();
     }
+
+
+    /**
+     * 淘口令截取替换前后符号
+     * @param tpwd
+     * @return
+     */
+    public static String headAndTailSubstitution(String tpwd){
+        String substring = tpwd.substring(1, tpwd.length() - 1);
+        return new StringBuffer("¥" + substring + "¥").toString();
+    }
 }

@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -96,7 +97,7 @@ public class WeChatServiceImpl implements WeChatService {
      * @return
      */
     @Override
-    public String webChatRequestParse(HttpServletRequest request) {
+    public String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     webChatRequestParse(HttpServletRequest request) {
         BaseMessage msg = null;
         String content = ISEMY;
         Map<String, String> requestMap = WechatMessageUtil.parseXml(request);
@@ -252,11 +253,20 @@ public class WeChatServiceImpl implements WeChatService {
      */
     private String getTklConvert(String tpwd, String fromUserName){
         String itemInfo = null;
-        String tklConvert = dtkApiService.getTklConvert(tpwd,fromUserName);
-        if (tklConvert.contains("成功")){
-            itemInfo = dtkApiService.tbItemCouponArrange(null, tklConvert);
+        String json = dtkApiService.parseTkl(tpwd);
+        if (json.contains("成功")){
+            String itemid = JSONObject.parseObject(json).getJSONObject("data").getString("goodsId");
+            Map<String, String> parse = new HashMap<>();
+            parse.put("id",itemid);
+            parse.put("FromUserName",fromUserName);
+            itemInfo = getTaobaoConvert(parse);
+        }else{
+            String tklConvert = dtkApiService.getTklConvert(tpwd,fromUserName);
+            if (tklConvert.contains("成功")){
+                itemInfo = dtkApiService.tbItemCouponArrange(null, tklConvert);
+            }
+            log.info("tklAPI return tklInfo:\n{},\ntpwd:{}",itemInfo,tpwd);
         }
-        log.info("tklAPI return tklInfo:\n{},\ntpwd:{}",itemInfo,tpwd);
         return itemInfo;
     }
 }

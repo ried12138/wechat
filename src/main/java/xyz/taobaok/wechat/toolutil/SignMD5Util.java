@@ -22,11 +22,9 @@ public class SignMD5Util {
      * @return
      */
     public static String getSignStr(TreeMap<String, Object> map, String secretKey) {
-
         if (map.size() == 0) {
             return "";
         }
-
         StringBuffer sb = new StringBuffer("");
 
         Set<String> keySet = map.keySet();

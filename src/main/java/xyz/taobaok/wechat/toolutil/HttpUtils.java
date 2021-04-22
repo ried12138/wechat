@@ -27,16 +27,17 @@ public class HttpUtils {
 
     public static String doGet(String url1) {
         CloseableHttpClient client = HttpClients.createDefault();
-        URI uri = null;
-        try {
-            URL url = new URL(url1);
-            uri = new URI("https",url.getUserInfo(),url.getHost(),url.getPort(),url.getPath(),url.getQuery(),null);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        HttpGet httpGet = new HttpGet(uri);
+//        URI uri = null;
+//        try {
+//            URL url = new URL(url1);
+////            uri = new URI("https",url.getUserInfo(),url.getHost(),url.getPort(),url.getPath(),url.getQuery(),null);
+//            uri = new URI(url1);
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
+        HttpGet httpGet = new HttpGet(url1);
         CloseableHttpResponse response = null;
         try {
             response = client.execute(httpGet);
@@ -79,17 +80,35 @@ public class HttpUtils {
     }
 
     /**
-     * url转unicode
+     * url编码
      * @param str
      * @return
      */
-    private static String getURLEncoderString(String str) {
+    public static String getURLEncoderString(String str) {
         String result = "";
         if (null == str) {
             return "";
         }
         try {
-            result = java.net.URLEncoder.encode(str, "GBK");
+            result = java.net.URLEncoder.encode(str, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * url解码
+     * @param str
+     * @return
+     */
+    public static String URLDecoderString(String str) {
+        String result = "";
+        if (null == str) {
+            return "";
+        }
+        try {
+            result = java.net.URLDecoder.decode(str, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

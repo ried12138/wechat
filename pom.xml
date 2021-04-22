@@ -100,6 +100,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/lib/taobao-sdk-java-auto_1600678017147-20210415.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>com.taobao.api</groupId>
+            <artifactId>taobao-sdk-java</artifactId>
+            <version>0.0.19</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/lib/taobao-sdk-java-0.0.19.jar</systemPath>
+        </dependency>
         <!-- 京东sdk本地导入-->
         <dependency>
             <groupId>com.jd.cps</groupId>

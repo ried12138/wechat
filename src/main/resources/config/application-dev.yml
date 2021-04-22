@@ -17,6 +17,8 @@ dtk:
   orderDetails: https://openapi.dataoke.com/api/tb-service/get-order-details
   #生成淘口令
   creatTkl: https://openapi.dataoke.com/api/tb-service/creat-taokouling
+  #淘口令解析
+  parseTkl: https://openapi.dataoke.com/api/tb-service/parse-taokouling
 tb:
   appKey: 32659604
   secret: 4ecff47fbd6bf526fc2ba51f9b6cf4c0

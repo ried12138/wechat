@@ -11,6 +11,7 @@ import xyz.taobaok.wechat.config.JdManager;
 import xyz.taobaok.wechat.toolutil.DateTimeUtil;
 import xyz.taobaok.wechat.toolutil.HttpUtils;
 import xyz.taobaok.wechat.toolutil.SignMD5Util;
+import xyz.taobaok.wechat.toolutil.TpwdUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
@@ -30,6 +31,8 @@ import java.util.TreeMap;
 public class DtkApiService {
 
 
+    @Autowired
+    TaobaoInfoCacheBiz taobaoInfoCacheBiz;
 
     @Autowired
     DtkManager dtkManager;
@@ -37,6 +40,20 @@ public class DtkApiService {
     JdManager jdManager;
 
 
+    /**
+     * 淘口令解析
+     * http://www.dataoke.com/kfpt/api-d.html?id=26
+     * @param tkl
+     * @return
+     */
+    public String parseTkl(String tkl){
+        tkl = TpwdUtil.headAndTailSubstitution(tkl);
+        TreeMap<String, Object> map = new TreeMap<>();
+        map.put("version", "v1.0.0");
+        map.put("content",tkl);
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.parseTkl, paraMap);
+    }
     /**
      * 生成淘口令
      * 必须以https开头，可以是二合一链接、长链接、短链接等各种淘宝高佣链接；
@@ -47,11 +64,13 @@ public class DtkApiService {
      * @return
      */
     public String creatTaokouling(String text,String url){
+        String urlEncoderString = HttpUtils.getURLEncoderString(url);
         TreeMap<String, Object> map = new TreeMap<>();
         map.put("version", "v1.0.0");
-        map.put("text",text);
+        map.put("text","wechata");
         map.put("url",url);
         TreeMap<String, Object> paraMap = getParaMap(map);
+        paraMap.put("url",urlEncoderString);
         return HttpUtils.sendGet(dtkManager.creatTkl, paraMap);
     }
 
@@ -147,20 +166,29 @@ public class DtkApiService {
      */
     public String tbItemCouponArrange(String title, String couponJSon) {
         DtktResponse response = JSONObject.parseObject(couponJSon, DtktResponse.class);
-        Dataa data = (Dataa) response.getData();
-//        Date defineyyyyMMddHH = null;
-//        try {
-//            defineyyyyMMddHH = DateTimeUtil.getDefineyyyyMMddHH(data.getCouponEndTime());
-//        } catch (ParseException e) {
-//            log.error("优惠券日期转换失败！！！请检查是否有优惠券失效情况，itemid：{}",data.getItemId());
-//        }
-//        //判断优惠券过期时间没有过期
-//        if (DateTimeUtil.dateCompareNow(defineyyyyMMddHH,new Date())){
-//            //2020.4.20没写完，判断优惠券链接后转淘口令会员接口
-//
-//        }
-        StringBuffer content = new StringBuffer("");
+        Dataa data = response.getData();
         title = title == null? data.getTitle():title;
+        //优惠券信息校验未完整
+        //生成淘口令有问题
+        String json = "";
+        if (data.getCouponEndTime() != null && !data.getCouponEndTime().isEmpty()){
+            try {
+                Date defineyyyyMMddHH = DateTimeUtil.getDefineyyyyMMddHH(data.getCouponEndTime());
+                //判断优惠券过期时间没有过期
+                if (DateTimeUtil.dateCompareNow(defineyyyyMMddHH,new Date())){
+                    json = creatTaokouling(title,data.getCouponClickUrl());
+                }
+            } catch (ParseException e) {
+                log.error("优惠券日期转换失败！！！请检查是否有优惠券失效情况，itemid：{}",data.getItemId());
+            }
+        }else if (data.getItemUrl() != null &&!data.getItemUrl().isEmpty()){
+            json = creatTaokouling(title,data.getItemUrl());
+        }
+        if (json.contains("成功")){
+            String model = JSONObject.parseObject(json).getJSONObject("data").getString("model");
+            data.setTpwd(model);
+        }
+        StringBuffer content = new StringBuffer("");
         content.append("找到优惠券!长按复制到淘宝：" + "\n"+"商品名称：【");
         if (title ==null){
             content.append(data.getLongTpwd().split("  ")[1]);
