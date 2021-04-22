@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -47,8 +48,9 @@ public class TbOrderDetailsTask {
      * 按照结算时间查询
      * 确认收货的订单
      */
+    @Async
     @Scheduled(cron = "1 0 0/1 * * ?")
-    private void getTbOrderDetailsHold(){
+    public void getTbOrderDetailsHold(){
         String startTime= DateTimeUtil.dateAddMinutes(62);
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
@@ -109,8 +111,9 @@ public class TbOrderDetailsTask {
      * @return
      */
 //    @Scheduled(cron = "0/5 * * * * ?")
+    @Async
     @Scheduled(cron = "0 0/21 * * * ?")
-    private void getTbOrderDetails(){
+    public void getTbOrderDetails(){
         String startTime = DateTimeUtil.dateAddMinutes(20);
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
