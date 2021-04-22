@@ -54,7 +54,7 @@ public class TaobaoApiServiceImpl implements TaobaoApiService {
     /**
      * 定时刷新tb token值。
      */
-    @Scheduled(cron = "0 0 22/23 * * ?")
+//    @Scheduled(cron = "0 0 22/23 * * ?")
     private void refreshToken(){
         String url="https://oauth.taobao.com/token";
         Map<String,String> props=new HashMap<String,String>();
