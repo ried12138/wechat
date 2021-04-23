@@ -15,5 +15,5 @@ import java.util.Date;
 public class MaxMinCreateTime {
 
     private Date minTime;
-    private Date MaxTime;
+    private Date maxTime;
 }

@@ -141,7 +141,7 @@ public class TbOrderDetailsTask {
     }
 
     /**
-     * 每天8小时刷新一次
+     * 每天凌晨3点刷新订单完成时间的订单
      * 刷新订单状态，拉取完成的订单信息进行数据库修改
      */
     @Async

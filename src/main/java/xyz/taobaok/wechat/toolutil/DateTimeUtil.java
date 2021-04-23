@@ -83,7 +83,7 @@ public class DateTimeUtil {
         }else{
             appoint = date;
         }
-        appoint = new Date(appoint.getTime() - time);
+        appoint = new Date(appoint.getTime() + time);
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(appoint);
     }
 

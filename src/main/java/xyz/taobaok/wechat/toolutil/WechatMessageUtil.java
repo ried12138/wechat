@@ -146,7 +146,7 @@ public class WechatMessageUtil {
                 "————自己订单————\n");
         List<TbOrderDetails> details = tbod.getDetails();
         for (TbOrderDetails detail : details) {
-            str.append(detail.getItemTitle()+"\n");
+            str.append("订单编号："+detail.getTradeParentId()+"\n");
         }
         return str.toString();
     }
@@ -159,11 +159,11 @@ public class WechatMessageUtil {
     public static String userWalletInfo(UserWallet wallet){
         return "\uD83C\uDF89【钱包信息】\n" +
                 "\n" +
-                "已提现金额:0元\n" +
-                "可提现金额:0元\n" +
-                "提现中:0元\n" +
+                "已提现金额:"+wallet.getCumulationIncome()+"元\n" +
+                "可提现金额:"+wallet.getBalance()+"元\n" +
+                "提现中:"+wallet.getExtracting()+"元\n" +
                 "*******************\n" +
-                "未收货金额:0元\n";
+                "未收货金额:"+wallet.getPubShareFee()+"元\n";
 
     }
 }
