@@ -43,6 +43,17 @@ public class DateTimeUtil {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//注意月份是MM
         return simpleDateFormat.parse(time);
     }
+
+
+    /**
+     * date转String
+     * @param date
+     * @return
+     */
+    public static String getDate(Date date){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format(date);
+    }
     /**
      * 获取当前日期
      * @return
@@ -61,16 +72,32 @@ public class DateTimeUtil {
 
     /**
      * 时间加减分钟
+     * @param minutes 加的分钟
+     * @return Date
+     */
+    public static String datereducedMinutes(Date date ,int minutes) {
+        long time = minutes * 60 * 1000;
+        Date appoint = null;
+        if (date == null) {
+            appoint = new Date();
+        }else{
+            appoint = date;
+        }
+        appoint = new Date(appoint.getTime() - time);
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(appoint);
+    }
+
+    /**
+     * 时间加减分钟
      * @param minutes 加减的分钟
      * @return Date
      */
     public static String dateAddMinutes(int minutes) {
         long time = minutes * 60 * 1000;
-        Date now = new Date();
-        Date date = new Date(now.getTime() - time);
+         Date date = new Date();
+        date = new Date(date.getTime() - time);
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
     }
-
 
     /**
      * 时间对比

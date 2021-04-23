@@ -27,6 +27,13 @@
     refund_tag, tk_total_rate, item_title, tk_status, item_id, item_link, total_commission_fee, 
     special_id, relation_id, `status`, create_time, update_time
   </sql>
+    <!-- 根据special_id查询订单信息 -->
+  <select id="selectByPrimarySpecialId" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select
+    COUNT(*)
+    from tb_order_details
+    where special_id = #{specialId,jdbcType=VARCHAR}
+  </select>
     <!-- 根据订单号查询订单信息 -->
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -34,7 +41,29 @@
     from tb_order_details
     where trade_parent_id = #{tradeParentId,jdbcType=VARCHAR}
   </select>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="xyz.taobaok.wechat.bean.dataoke.TbOrderDetails" useGeneratedKeys="true">
+
+    <!-- 查询用户已付款订单数-->
+    <select id="selectSpecialIdtkStatus" resultType="java.lang.Integer">
+        select
+        COUNT(*)
+        from tb_order_details
+        where special_id = #{specialId,jdbcType=VARCHAR} and tk_status = #{tkStatus,jdbcType=INTEGER}
+    </select>
+    <!-- 查询用户订单数据 可选条件：条数 -->
+    <select id="selectByPrimarySpecialIdInfo" resultType="xyz.taobaok.wechat.bean.dataoke.TbOrderDetails">
+        select
+        <include refid="Base_Column_List" />
+        from tb_order_details
+        where special_id = #{specialId,jdbcType=VARCHAR}
+        <if test="limit != null">
+            LIMIT #{limit,jdbcType=INTEGER}
+        </if>
+    </select>
+    <!--查询订单表中付款状态订单最早和最晚时间 -->
+    <select id="allTkStatusPayment" resultType="xyz.taobaok.wechat.bean.MaxMinCreateTime">
+        SELECT MIN(create_time) min_time, MAX(create_time) max_time FROM tb_order_details WHERE tk_status = 12
+    </select>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="xyz.taobaok.wechat.bean.dataoke.TbOrderDetails" useGeneratedKeys="true">
     insert into tb_order_details (tb_paid_time, pay_price, trade_parent_id, 
       pub_share_fee, tk_earning_time, pub_share_rate, 
       refund_tag, tk_total_rate, item_title, 

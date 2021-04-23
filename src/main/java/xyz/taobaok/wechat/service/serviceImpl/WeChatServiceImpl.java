@@ -39,26 +39,17 @@ import java.util.Map;
 public class WeChatServiceImpl implements WeChatService {
 
     private static final String ISEMY = "抱歉,该商品没有优惠券！";
-    private static final String USER_BIND_STATUS_ERROR = "订单绑定微信失败！请稍后重试，或联系管理人员";
-    private static final String USER_BIND_STATUS_REPEAT = "订单已经被绑定成功，无需重复绑定！";
-    private static final String USER_BIND_STATUS_SUCCESS = "微信绑定成功！返利信息请在确认收货后到账查询";
     private static final String TEXTERROR = "请输入正确的商品链接或者淘口令！\n目前支持淘宝、天猫、京东商品优惠信息";
 
 
     @Autowired
     WeChatParseEvent weChatParseEvent;
     @Autowired
-    DtkApiService dtkApiService;
-    @Autowired
     JdApiService jdApiService;
     @Autowired
     PddApiServiceImpl pddApiService;
     @Autowired
-    TbOrderDetailsMapper tbOrderDetailsMapper;
-    @Autowired
-    UserInfoService userInfoService;
-    @Autowired
-    TbOrderDetailsTask tbOrderDetailsTask;
+    WeChatParseMessage weChatParseMessage;
 
 
     /**
@@ -108,7 +99,7 @@ public class WeChatServiceImpl implements WeChatService {
     @Override
     public String webChatRequestParse(HttpServletRequest request) {
         BaseMessage msg = null;
-        String content = ISEMY;
+        String content = WechatMessageUtil.menuText();
         Map<String, String> requestMap = WechatMessageUtil.parseXml(request);
         //获取微信用户信息
         String fromUserName = requestMap.get("FromUserName");
@@ -121,7 +112,7 @@ public class WeChatServiceImpl implements WeChatService {
                 if (platform != null){
                     switch (platform){
                         case "tb":
-                            content = getTaobaoConvert(parse);
+                            content = weChatParseMessage.getTaobaoConvert(parse);
                             content = content.isEmpty() ? ISEMY : content;
                             break;
                         case "jd":
@@ -143,20 +134,27 @@ public class WeChatServiceImpl implements WeChatService {
                             break;
                             //订单
                         case "order":
-                            content = getOrderNumberBind(parse);
+                            content = weChatParseMessage.getOrderNumberBind(parse);
+                            break;
+                        case "tklpwd":
+                            content = weChatParseMessage.getTklConvert(parse);
+                            content = content == null? ISEMY:content;
+                            break;
+                        case "instruct":
+                            content = weChatParseMessage.getInstruct(parse);
                             break;
                         default:
                             break;
                     }
                 }else{
                     //淘口令
-                    String tpwd = TpwdUtil.isTpwd(parse.get("url"));
-                    if (tpwd != null){
-                        content = getTklConvert(tpwd,fromUserName);
-                        content = content == null? ISEMY:content;
-                    }else{
-                        msg = new TextMessage(requestMap, TEXTERROR);
-                    }
+//                    String tpwd = TpwdUtil.isTpwd(parse.get("url"));
+//                    if (tpwd != null){
+//                        content = getTklConvert(tpwd,fromUserName);
+//                        content = content == null? ISEMY:content;
+//                    }else{
+//                        msg = new TextMessage(requestMap, TEXTERROR);
+//                    }
                 }
                 break;
             case WechatMessageUtil.RESP_MESSAGE_TYPE_LINK:  //链接
@@ -181,85 +179,6 @@ public class WeChatServiceImpl implements WeChatService {
             msg = new TextMessage(requestMap, content);
         }
         return WechatMessageUtil.beanToXml(msg);
-    }
-
-
-    /**
-     * 淘宝订单与微信绑定
-     * @param parse
-     * @return
-     */
-    private String getOrderNumberBind(Map<String, String> parse) {
-        String tradeParentId = parse.get("orderNumber");
-        String status = "";
-        //查询订单信息
-        log.info("进入订单绑定！！！！");
-        for(int i = 0;i< 3;i++){
-            TbOrderDetails tbOrderDetails = null;
-            try {
-                tbOrderDetails = tbOrderDetailsMapper.selectByPrimaryKey(tradeParentId);
-            } catch (Exception e) {
-                log.error("查询订单sql失败！！！请检查mysql链接情况");
-                e.printStackTrace();
-            }
-            log.info("订单信息：{}",JSONObject.toJSONString(tbOrderDetails));
-            if(tbOrderDetails != null){
-                //绑定用户信息
-                int label = 0;
-                try {
-                    label = userInfoService.userInfoBind(parse.get("FromUserName"),tbOrderDetails.getSpecialId(),parse.get("FromUserName"));
-                } catch (Exception e) {
-                    log.error("保存用户信息异常");
-                    status = USER_BIND_STATUS_ERROR;
-                    e.printStackTrace();
-                    i = 3;
-                    continue;
-                }
-                if (label == 1){
-                    status = USER_BIND_STATUS_SUCCESS;
-                }else{
-                    status = USER_BIND_STATUS_REPEAT;
-                }
-                log.info("用户绑定状态：{},微信号：{}",label,parse.get("FromUserName"));
-                i = 3;
-            }else{
-                //拉取最新订单信息 付款时间拉取
-                tbOrderDetailsTask.getTbOrderDetails(TbOrderConstant.PAYMENT_TIME_QUERY, TbOrderConstant.ORDER_SCENARIO_MEMBER,
-                        TbOrderConstant.ORDER_STATUS_PAYMENT, false);
-                status = "抱歉没有查询到订单信息，请重试！或联系管理员";
-            }
-        }
-        return status;
-    }
-
-
-    /**
-     * 淘宝商品查询转链
-     * @param parse
-     * @return
-     */
-    private String getTaobaoConvert(Map<String, String> parse){
-        String itemId = parse.get("id");
-        String fromUserName = parse.get("FromUserName");
-        String content = "";
-        if (itemId != null){
-            try {
-                String item = dtkApiService.SenDaTaoKeApiGoods(itemId);
-                if (item.contains("成功")){
-                    JSONObject jsonObject = JSON.parseObject(item);
-                    String data = jsonObject.getString("data");
-                    JSONObject jsonObject1 = JSON.parseObject(data);
-                    String title = jsonObject1.getString("title");
-                    String couponJSon = dtkApiService.senDaTaoKeApiLink(itemId,fromUserName);
-                    if (couponJSon.contains("成功")){
-                        content = dtkApiService.tbItemCouponArrange(title,couponJSon);
-                    }
-                }
-            } catch (UnsupportedEncodingException e) {
-                log.error("dtk API is error: Failed to get product information, itemId:{}",itemId);
-            }
-        }
-        return content;
     }
 
     /**
@@ -289,31 +208,5 @@ public class WeChatServiceImpl implements WeChatService {
             }
         }
         return msg;
-    }
-
-
-    /**
-     * 淘口令解析
-     * @param tpwd
-     * @param fromUserName
-     * @return
-     */
-    private String getTklConvert(String tpwd, String fromUserName){
-        String itemInfo = null;
-        String json = dtkApiService.parseTkl(tpwd);
-        if (json.contains("成功")){
-            String itemid = JSONObject.parseObject(json).getJSONObject("data").getString("goodsId");
-            Map<String, String> parse = new HashMap<>();
-            parse.put("id",itemid);
-            parse.put("FromUserName",fromUserName);
-            itemInfo = getTaobaoConvert(parse);
-        }else{
-            String tklConvert = dtkApiService.getTklConvert(tpwd,fromUserName);
-            if (tklConvert.contains("成功")){
-                itemInfo = dtkApiService.tbItemCouponArrange(null, tklConvert);
-            }
-            log.info("tklAPI return tklInfo:\n{},\ntpwd:{}",itemInfo,tpwd);
-        }
-        return itemInfo;
     }
 }

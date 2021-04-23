@@ -25,7 +25,14 @@
         from wechat_user_info
         where special_id = #{specialId,jdbcType=VARCHAR}
     </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <!-- 根据FromUserName 查询用户信息-->
+    <select id="selectBySpecialFromUserName" resultType="xyz.taobaok.wechat.bean.WechatUserInfo">
+        select
+        <include refid="Base_Column_List" />
+        from wechat_user_info
+        where FromUserName = #{fromUserName,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from wechat_user_info
     where id = #{id,jdbcType=INTEGER}
   </delete>

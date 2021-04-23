@@ -6,10 +6,9 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import xyz.taobaok.wechat.bean.BaseMessage;
-import xyz.taobaok.wechat.bean.Item;
-import xyz.taobaok.wechat.bean.NewsMessages;
-import xyz.taobaok.wechat.bean.TextMessage;
+import xyz.taobaok.wechat.bean.*;
+import xyz.taobaok.wechat.bean.dataoke.TbOrderDetails;
+
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -120,7 +119,46 @@ public class WechatMessageUtil {
 
     //关注事件回复信息内容
     public static String menuText() {
-        return "感谢关注涿鹿领券分享！\n获取优惠券方式，请直接：\n打开【手机淘宝】————>\n选择要购买的【商品】————>" +
-                "\n进入商品【详情页】————>\n长按商品名称【复制宝贝链接】————>\n打开微信————>\n进入【涿鹿领券分享】————>\n粘贴标题查询优惠券,\n我们还支持京东商品优惠查询哦！";
+        return "感谢关注领券分享返利网！-公众号目前支持淘宝、天猫、京东等电商平台，通过公众号购物可享受返利！AI智能全网检索商品优惠信息，下单后即可获取返利\n一一一一一一一一一一一一\n[[Packet]【返利步骤】如下：\n" +
+                "1、复制【淘宝】、【天猫】、【京东】商品链接发送给我\n" +
+                "2、全网智能搜索商品优惠和返利信息！！\n" +
+                "3、付款成功后，复制订单号并发送给我绑定返利\n" +
+                "\uD83D\uDC8C 其他【帮助指令】：\n" +
+                "\n" +
+                "发送“余额”可以查看余额等个人信息\n" +
+                "发送“查询”可以查询最近订单记录\n" +
+                "发送“提现”可以提取当前余额\n" +
+                "发送“客服”大西湾往东600米\uD83D\uDC4F";
+    }
+
+    //客服信息内容
+    public static String customerServiceInfo(){
+        return "\uD83D\uDCAC【客服信息】：\n" +
+                "  微信：autonomy_developer";
+    }
+    //用户下单详情信息内容
+    public static String orderDetailsInfo(OrderDetailsInfo tbod){
+        StringBuffer str = new StringBuffer("\uD83D\uDC8C【最近订单详情】\n" +
+                "总共：" + tbod.getNum() + ",笔\n" +
+                "结算订单：" + tbod.getSettlementOrder() + ",笔\n" +
+                "付款订单：" + tbod.getPaymentOrder() + ",笔\n" +
+                "只能显示近期10条记录\n\n"+
+                "————自己订单————\n");
+        List<TbOrderDetails> details = tbod.getDetails();
+        for (TbOrderDetails detail : details) {
+            str.append(detail.getItemTitle()+"\n");
+        }
+        return str.toString();
+    }
+
+    public static String userWalletInfo(UserWallet wallet){
+        return "\uD83C\uDF89【钱包信息】\n" +
+                "\n" +
+                "已提现金额:0元\n" +
+                "可提现金额:0元\n" +
+                "提现中:0元\n" +
+                "*******************\n" +
+                "未收货金额:0元\n";
+
     }
 }

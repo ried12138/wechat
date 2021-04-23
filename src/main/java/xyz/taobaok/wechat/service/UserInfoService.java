@@ -1,5 +1,7 @@
 package xyz.taobaok.wechat.service;
 
+import xyz.taobaok.wechat.bean.WechatUserInfo;
+
 /**
  * @Author weiranliu
  * @Email liuweiran12138@outlook.com
@@ -9,4 +11,7 @@ package xyz.taobaok.wechat.service;
 public interface UserInfoService {
 
     int userInfoBind(String fromUserName, String specialId, String openId);
+
+    WechatUserInfo queryUserInfo(String fromUserName);
+
 }

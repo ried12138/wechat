@@ -18,4 +18,6 @@ public interface WechatUserInfoMapper {
     int updateByPrimaryKeySelective(WechatUserInfo record);
 
     int updateByPrimaryKey(WechatUserInfo record);
+
+    WechatUserInfo selectBySpecialFromUserName(String fromUserName);
 }

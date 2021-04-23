@@ -5,6 +5,7 @@ import java.util.Date;
 import lombok.Data;
 
 /**
+ * 微信用户信息
  * wechat_user_info
  * @author 
  */

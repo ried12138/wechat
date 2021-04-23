@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
  */
 public class UrlUtil {
 
+    private static Pattern ch_EN = Pattern.compile("[\u4e00-\u9fa5]");
     private static Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
     private static final String regEx = "[^0-9]";
 
@@ -30,12 +31,19 @@ public class UrlUtil {
         String[] urlParts = url.split("\\?");
         //没有参数
         if (urlParts.length == 1) {
+            int length = urlParts[0].length();
             if (isInteger(urlParts[0])){
                 //用户订单
                 map.put("platform","order");
                 map.put("orderNumber",urlParts[0]);
-            }else{
-                map.put("url",urlParts[0]);
+            }else if (TpwdUtil.isTpwd(urlParts[0]) != null){
+                //淘口令
+                map.put("platform","tklpwd");
+                map.put("tklpwd",TpwdUtil.isTpwd(urlParts[0]));
+            }else if(ch_EN.matcher(urlParts[0]).find() && urlParts[0].length() == 2){
+                //指令
+                map.put("platform","instruct");
+                map.put("instruct",urlParts[0]);
             }
             return map;
         }

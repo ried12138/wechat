@@ -11,10 +11,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import xyz.taobaok.wechat.bean.MaxMinCreateTime;
 import xyz.taobaok.wechat.bean.dataoke.DtktResponse;
 import xyz.taobaok.wechat.bean.dataoke.TbOrderConstant;
 import xyz.taobaok.wechat.bean.dataoke.TbOrderDetails;
 import xyz.taobaok.wechat.mapper.TbOrderDetailsMapper;
+import xyz.taobaok.wechat.service.TbOrderDetailsService;
 import xyz.taobaok.wechat.service.serviceImpl.DtkApiService;
 
 import java.io.UnsupportedEncodingException;
@@ -39,9 +41,8 @@ public class TbOrderDetailsTask {
 
     @Autowired
     DtkApiService dtkApiService;
-
     @Autowired
-    TbOrderDetailsMapper tbOrderDetailsMapper;
+    TbOrderDetailsService tbOrderDetailsService;
 
     /**
      * 每一小时拉取
@@ -140,6 +141,49 @@ public class TbOrderDetailsTask {
     }
 
     /**
+     * 每天8小时刷新一次
+     * 刷新订单状态，拉取完成的订单信息进行数据库修改
+     */
+    @Async
+    @Scheduled(cron = "0 0 3 * * ?")
+    public void lcoalOrderDetailsStatusUpdate(){
+        MaxMinCreateTime time = tbOrderDetailsService.allTkStatusPayment();
+        String startTime = DateTimeUtil.getDate(time.getMinTime());
+        String endTime = DateTimeUtil.datereducedMinutes(time.getMinTime(), 30);
+        boolean flag = true;
+        while (flag){
+            Date end = null;
+            try {
+                end = DateTimeUtil.getDefineyyyyMMddHHmmss(endTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            flag = DateTimeUtil.dateCompareNow(time.getMaxTime(), end);
+            String str = null;
+            boolean hasNext = true;
+            while (hasNext){
+                try {
+                    //结算时间查询，结算成功的订单
+                    str = dtkApiService.getTbOrderDetails(TbOrderConstant.SETTLEMENT_TIME_QUERY,
+                            TbOrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime,TbOrderConstant.ORDER_STATUS_SUCCESS);
+                } catch (UnsupportedEncodingException e) {
+                    log.error("大淘客拉取订单接口访问失败！！！");
+                }
+                if(str.contains("成功")){
+                    JSONObject jsonObject = JSON.parseObject(str);
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    JSONObject results = data.getJSONObject("results");
+                    JSONArray json = JSONArray.parseArray(results.getString("publisher_order_dto"));
+                    getIntegration(json);
+                    hasNext = data.getBoolean("has_next");
+                }else{
+                    hasNext = false;
+                }
+            }
+            endTime = DateTimeUtil.datereducedMinutes(end, 30);
+        }
+    }
+    /**
      * 封装订单对象
      * @param jsonObject
      * @return
@@ -195,7 +239,7 @@ public class TbOrderDetailsTask {
             tbODs.setItemLink(item_link);
             tbODs.setTotalCommissionFee(total_commission_fee);
             tbODs.setSpecialId(special_id);
-            TbOrderDetails tbOrderDetails = tbOrderDetailsMapper.selectByPrimaryKey(trade_parent_id);
+            TbOrderDetails tbOrderDetails = tbOrderDetailsService.selectByPrimaryKey(trade_parent_id);
             int check = 0;
             if (tbOrderDetails != null){
                 //订单存在，检查订单状态
@@ -203,13 +247,13 @@ public class TbOrderDetailsTask {
                     Date tkEarningTime = tbOrderDetails.getTkEarningTime();
                     if (tk_earning_time != null && DateTimeUtil.dateCompareNow(tk_earning_time,tkEarningTime)){
                         tbODs.setUpdateTime(new Date());
-                        check = tbOrderDetailsMapper.updateByPrimaryKeySelective(tbODs);
+                        check = tbOrderDetailsService.updateByPrimaryKeySelective(tbODs);
                     }
                 }
             }else{
                 try {
                     //插入订单
-                    check = tbOrderDetailsMapper.insertSelective(tbODs);
+                    check = tbOrderDetailsService.insertSelective(tbODs);
                 } catch (Exception e) {
                     log.error("插入订单信息失败mysql数据库故障！！！{}",tbODs.toString(),e);
                     return null;
