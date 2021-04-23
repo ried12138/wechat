@@ -8,6 +8,7 @@ spring:
     name: waiter-Sale
   profiles:
     active: @spring.profiles.active@
+
 logging:
   config: 'classpath:logback-spring.xml'
   level:

@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class ExecutorConfig {
 
     @Bean
-    public Executor executor1() {
+    public Executor taskScheduler() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setThreadNamePrefix("order-schedule2-");   // 线程池名前缀
         executor.setMaxPoolSize(10);    // 最大线程数
