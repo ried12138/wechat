@@ -3,6 +3,7 @@ package xyz.taobaok.wechat.service.serviceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import xyz.taobaok.wechat.bean.UserWallet;
 import xyz.taobaok.wechat.bean.WechatUserInfo;
 import xyz.taobaok.wechat.mapper.WechatUserInfoMapper;
@@ -33,6 +34,7 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param openId
      * @return
      */
+    @Transactional
     @Override
     public int userInfoBind(String fromUserName, String specialId, String openId) {
         WechatUserInfo wechatUserInfo = wechatUserInfoMapper.selectBySpecialId(specialId);
