@@ -12,6 +12,7 @@ import xyz.taobaok.wechat.bean.dataoke.TbOrderDetails;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -157,13 +158,17 @@ public class WechatMessageUtil {
      * @return
      */
     public static String userWalletInfo(UserWallet wallet){
+        BigDecimal cumulationIncome = wallet.getCumulationIncome();
+        cumulationIncome = cumulationIncome == null ? BigDecimal.valueOf(0.00) : cumulationIncome;
+        BigDecimal pubShareFee = wallet.getPubShareFee();
+        pubShareFee = pubShareFee == null ? BigDecimal.valueOf(0.00) : pubShareFee;
         return "\uD83C\uDF89【钱包信息】\n" +
                 "\n" +
-                "已提现金额:"+wallet.getCumulationIncome()+"元\n" +
+                "已提现金额:"+cumulationIncome+"元\n" +
                 "可提现金额:"+wallet.getBalance()+"元\n" +
                 "提现中:"+wallet.getExtracting()+"元\n" +
                 "*******************\n" +
-                "未收货金额:"+wallet.getPubShareFee()+"元\n";
+                "未收货金额:"+pubShareFee+"元\n";
 
     }
 }
