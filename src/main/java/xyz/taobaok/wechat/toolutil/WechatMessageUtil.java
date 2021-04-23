@@ -151,6 +151,11 @@ public class WechatMessageUtil {
         return str.toString();
     }
 
+    /**
+     * 钱包信息内容
+     * @param wallet
+     * @return
+     */
     public static String userWalletInfo(UserWallet wallet){
         return "\uD83C\uDF89【钱包信息】\n" +
                 "\n" +
