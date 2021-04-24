@@ -52,6 +52,8 @@ public class TbOrderDetailsTask {
     @Async
     @Scheduled(cron = "1 0 0/1 * * ?")
     public void getTbOrderDetailsHold(){
+        long start = System.currentTimeMillis();
+        log.info("拉取结算订单任务开始.....");
         String startTime= DateTimeUtil.dateAddMinutes(62);
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
@@ -73,6 +75,7 @@ public class TbOrderDetailsTask {
                 hasNext = data.getBoolean("has_next");
             }
         }
+        log.info("拉取订单完成！耗时：{} ms",System.currentTimeMillis() - start);
     }
     /**
      * 用户主动拉取5分钟内的订单信息
@@ -115,6 +118,8 @@ public class TbOrderDetailsTask {
     @Async
     @Scheduled(cron = "0 0/21 * * * ?")
     public void getTbOrderDetails(){
+        long start = System.currentTimeMillis();
+        log.info("拉取付款订单任务开始.....");
         String startTime = DateTimeUtil.dateAddMinutes(20);
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
@@ -138,6 +143,7 @@ public class TbOrderDetailsTask {
                 hasNext = false;
             }
         }
+        log.info("拉取订单完成！耗时：{} ms",System.currentTimeMillis() - start);
     }
 
     /**
@@ -147,40 +153,47 @@ public class TbOrderDetailsTask {
     @Async
     @Scheduled(cron = "0 0 3 * * ?")
     public void lcoalOrderDetailsStatusUpdate(){
+        long start = System.currentTimeMillis();
         MaxMinCreateTime time = tbOrderDetailsService.allTkStatusPayment();
-        String startTime = DateTimeUtil.getDate(time.getMinTime());
-        String endTime = DateTimeUtil.datereducedMinutes(time.getMinTime(), 30);
-        boolean flag = true;
-        while (flag){
-            Date end = null;
-            try {
-                end = DateTimeUtil.getDefineyyyyMMddHHmmss(endTime);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            flag = DateTimeUtil.dateCompareNow(time.getMaxTime(), end);
-            String str = null;
-            boolean hasNext = true;
-            while (hasNext){
+        if (time!=null){
+            log.info("拉取结算订单任务开始.....");
+            String startTime = DateTimeUtil.getDate(time.getMinTime());
+            String endTime = DateTimeUtil.datereducedMinutes(time.getMinTime(), 30);
+            boolean flag = true;
+            while (flag){
+                Date end = null;
                 try {
-                    //结算时间查询，结算成功的订单
-                    str = dtkApiService.getTbOrderDetails(TbOrderConstant.SETTLEMENT_TIME_QUERY,
-                            TbOrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime,TbOrderConstant.ORDER_STATUS_SUCCESS);
-                } catch (UnsupportedEncodingException e) {
-                    log.error("大淘客拉取订单接口访问失败！！！");
+                    end = DateTimeUtil.getDefineyyyyMMddHHmmss(endTime);
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
-                if(str.contains("成功")){
-                    JSONObject jsonObject = JSON.parseObject(str);
-                    JSONObject data = jsonObject.getJSONObject("data");
-                    JSONObject results = data.getJSONObject("results");
-                    JSONArray json = JSONArray.parseArray(results.getString("publisher_order_dto"));
-                    getIntegration(json);
-                    hasNext = data.getBoolean("has_next");
-                }else{
-                    hasNext = false;
+                flag = DateTimeUtil.dateCompareNow(time.getMaxTime(), end);
+                String str = null;
+                boolean hasNext = true;
+                while (hasNext){
+                    try {
+                        //结算时间查询，结算成功的订单
+                        str = dtkApiService.getTbOrderDetails(TbOrderConstant.SETTLEMENT_TIME_QUERY,
+                                TbOrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime,TbOrderConstant.ORDER_STATUS_SUCCESS);
+                    } catch (UnsupportedEncodingException e) {
+                        log.error("大淘客拉取订单接口访问失败！！！");
+                    }
+                    if(str.contains("成功")){
+                        JSONObject jsonObject = JSON.parseObject(str);
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        JSONObject results = data.getJSONObject("results");
+                        JSONArray json = JSONArray.parseArray(results.getString("publisher_order_dto"));
+                        getIntegration(json);
+                        hasNext = data.getBoolean("has_next");
+                    }else{
+                        hasNext = false;
+                    }
                 }
+                endTime = DateTimeUtil.datereducedMinutes(end, 30);
             }
-            endTime = DateTimeUtil.datereducedMinutes(end, 30);
+            log.info("拉取订单完成！耗时：{} ms",System.currentTimeMillis() - start);
+        }else{
+            log.info("订单拉取结束.......没有任何订单需要更新！");
         }
     }
     /**

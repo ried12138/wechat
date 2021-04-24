@@ -89,7 +89,7 @@ public class DateTimeUtil {
 
     /**
      * 时间加减分钟
-     * @param minutes 加减的分钟
+     * @param minutes 减的分钟
      * @return Date
      */
     public static String dateAddMinutes(int minutes) {
