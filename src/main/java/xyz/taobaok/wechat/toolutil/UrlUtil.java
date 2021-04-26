@@ -36,16 +36,18 @@ public class UrlUtil {
                 //用户订单
                 map.put("platform","order");
                 map.put("orderNumber",urlParts[0]);
+                return map;
             }else if (TpwdUtil.isTpwd(urlParts[0]) != null){
                 //淘口令
                 map.put("platform","tklpwd");
                 map.put("tklpwd",TpwdUtil.isTpwd(urlParts[0]));
+                return map;
             }else if(ch_EN.matcher(urlParts[0]).find() && urlParts[0].length() == 2){
                 //指令
                 map.put("platform","instruct");
                 map.put("instruct",urlParts[0]);
+                return map;
             }
-            return map;
         }
 //        map.put("url",urlParts[0]);
         //有参数
@@ -53,13 +55,16 @@ public class UrlUtil {
             map.put("platform","tb");
         }else if(urlParts[0].contains("jd.com") ||urlParts[0].contains("jd.hk")){
             map.put("platform","jd");
+            map.put("url",urlParts[0]);
         }else if (urlParts[0].contains("yangkeduo.com")){
             map.put("platform","pdd");
         }
-        String[] params = urlParts[1].split("&");
-        for (String param : params) {
-            String[] keyValue = param.split("=");
-            map.put(keyValue[0], keyValue[1]);
+        if(urlParts.length >1){
+            String[] params = urlParts[1].split("&");
+            for (String param : params) {
+                String[] keyValue = param.split("=");
+                map.put(keyValue[0], keyValue[1]);
+            }
         }
         return map;
     }
