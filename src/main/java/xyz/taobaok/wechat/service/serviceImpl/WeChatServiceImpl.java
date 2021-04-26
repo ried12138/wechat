@@ -189,7 +189,12 @@ public class WeChatServiceImpl implements WeChatService {
      */
     private BaseMessage getJdConvert(Map<String, String> parse,Map<String, String> requestMap){
         BaseMessage msg = null;
-        String jdGoodsId = UrlUtil.getUrlItemid(parse.get("url"));
+        String jdGoodsId = null;
+        if (parse.get("sku") != null){
+            jdGoodsId = UrlUtil.getUrlItemid(parse.get("sku"));
+        }else{
+            jdGoodsId = UrlUtil.getUrlItemid(parse.get("url"));
+        }
         if (!jdGoodsId.isEmpty()){
             PromotionGoodsResp jdItem = null;
             try {
