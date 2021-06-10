@@ -43,7 +43,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             user.setUpdateTime(new Date());
             int i = wechatUserInfoMapper.insertSelective(user);
             UserWallet userWallet = new UserWallet();
-            userWallet.setOpenId(fromUserName);
+            userWallet.setOpenId(openId);
             int is = userWalletService.insertSelective(userWallet);
             if ((i+is)==2){
                 return 1;

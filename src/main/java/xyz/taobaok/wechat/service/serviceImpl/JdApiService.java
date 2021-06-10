@@ -87,7 +87,7 @@ public class JdApiService {
         if (response.getQueryResult().getData().length > 0){
             PromotionGoodsResp datum = response.getQueryResult().getData()[0];
             if (!datum.getGoodsName().isEmpty()){
-                String resJSON = dtkApiService.SenJdApiConvertUrl(datum.getMaterialUrl(),parse.get("FromUserName"));
+                String resJSON = dtkApiService.SenJdApiConvertUrl(datum.getMaterialUrl(),Long.valueOf(parse.get("openId")));
                 JSONObject jsonObject = JSONObject.parseObject(resJSON);
                 String msg = jsonObject.getString("msg");
                 if (msg.contains("成功")){

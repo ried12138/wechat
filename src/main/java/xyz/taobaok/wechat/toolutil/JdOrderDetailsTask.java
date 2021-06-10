@@ -14,10 +14,9 @@ import xyz.taobaok.wechat.mapper.JdOrderDetailsMapper;
 import xyz.taobaok.wechat.service.serviceImpl.JdApiService;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 京东订单查询
@@ -154,9 +153,10 @@ public class JdOrderDetailsTask {
         jdOrderDetails.setPlus(orderRow.getPlus());
         jdOrderDetails.setSkuid(orderRow.getSkuId());
         jdOrderDetails.setSkuname(orderRow.getSkuName());
-        jdOrderDetails.setActualcosprice(String.valueOf(orderRow.getActualCosPrice()));
+        jdOrderDetails.setActualcosprice(new BigDecimal(orderRow.getActualCosPrice()));
+        jdOrderDetails.setEstimateCosPrice(new BigDecimal(orderRow.getEstimateCosPrice()));
         jdOrderDetails.setValidcode(orderRow.getValidCode());
-        jdOrderDetails.setSubunionid(orderRow.getSubUnionId());
+        jdOrderDetails.setSubunionid(String.valueOf(orderRow.getPositionId()));
         jdOrderDetails.setPaymonth(orderRow.getPayMonth());
         jdOrderDetails.setUpdateTime(new Date());
         return jdOrderDetails;

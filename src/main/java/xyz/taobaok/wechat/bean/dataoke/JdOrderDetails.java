@@ -1,6 +1,7 @@
 package xyz.taobaok.wechat.bean.dataoke;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
 
@@ -58,7 +59,12 @@ public class JdOrderDetails implements Serializable {
     /**
      * 实际计算佣金的金额。订单完成后，会将误扣除的运费券金额更正。如订单完成后发生退款，此金额会更新。
      */
-    private String actualcosprice;
+    private BigDecimal actualcosprice;
+
+    /**
+     * 预估计佣金额：由订单的实付金额拆分至每个商品的预估计佣金额，不包括运费，以及京券、东券、E卡、余额等虚拟资产支付的金额。该字段仅为预估值，实际佣金以actualCosPrice为准进行计算
+     */
+    private BigDecimal estimateCosPrice;
 
     /**
      * sku维度的有效码（-1：未知,2.无效-拆单,3.无效-取消,4.无效-京东帮帮主订单,5.无效-账号异常,6.无效-赠品类目不返佣,7.无效-校园订单,8.无效-企业订单,9.无效-团购订单,11.无效-乡村推广员下单,13.无效-违规订单,14.无效-来源与备案网址不符,15.待付款,16.已付款,17.已完成（购买用户确认收货）,20.无效-此复购订单对应的首购订单无效,21.无效-云店订单

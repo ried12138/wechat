@@ -119,13 +119,13 @@ public class DtkApiService {
      * @return
      * @throws UnsupportedEncodingException
      */
-    public String SenJdApiConvertUrl(String materialUrl,String subUnionId) throws UnsupportedEncodingException {
+    public String SenJdApiConvertUrl(String materialUrl,Long positionId) throws UnsupportedEncodingException {
         TreeMap<String, Object> map = new TreeMap<>();
         map.put("version", "v1.0.0");
         map.put("unionId", jdManager.unionId);
         map.put("materialId", materialUrl);
-        if (subUnionId != null && !subUnionId.isEmpty()){
-            map.put("subUnionId",subUnionId);
+        if (positionId != null && positionId != 0){
+            map.put("positionId",positionId);
         }
         TreeMap<String, Object> paraMap = getParaMap(map);
         return HttpUtils.sendGet(dtkManager.jdItemConvert, paraMap);

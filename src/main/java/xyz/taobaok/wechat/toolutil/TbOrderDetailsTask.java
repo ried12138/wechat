@@ -84,7 +84,7 @@ public class TbOrderDetailsTask {
      * @return
      */
     public void getTbOrderDetails(Integer queryType,Integer orderScene,Integer tkStatus,boolean noInsert){
-        String startTime = DateTimeUtil.dateAddMinutes(5);
+        String startTime = DateTimeUtil.dateAddMinutes(6);
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
         boolean hasNext = true;

@@ -11,7 +11,8 @@
     <result column="plus" jdbcType="INTEGER" property="plus" />
     <result column="skuId" jdbcType="BIGINT" property="skuid" />
     <result column="skuName" jdbcType="VARCHAR" property="skuname" />
-    <result column="actualCosPrice" jdbcType="VARCHAR" property="actualcosprice" />
+    <result column="actualCosPrice" jdbcType="DECIMAL" property="actualcosprice" />
+    <result column="estimateCosPrice" jdbcType="DECIMAL" property="estimateCosPrice" />
     <result column="validCode" jdbcType="INTEGER" property="validcode" />
     <result column="subUnionId" jdbcType="VARCHAR" property="subunionid" />
     <result column="payMonth" jdbcType="VARCHAR" property="paymonth" />
@@ -22,6 +23,17 @@
     id, orderId, parentId, orderTime, finishTime, modifyTime, plus, skuId, skuName, actualCosPrice, 
     validCode, subUnionId, payMonth, create_time, update_time
   </sql>
+    <!--通过subunionId获取用户信息 -->
+    <select id="selectByPrimarySubUnionIdInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from jd_order_details
+        where subUnionId = #{subUnionId,jdbcType=VARCHAR}
+        <if test="limit != null">
+            LIMIT #{limit,jdbcType=INTEGER}
+        </if>
+    </select>
+    <!--通过订单号 -->
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -35,13 +47,13 @@
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="xyz.taobaok.wechat.bean.dataoke.JdOrderDetails" useGeneratedKeys="true">
     insert into jd_order_details (orderId, parentId, orderTime, 
       finishTime, modifyTime, plus, 
-      skuId, skuName, actualCosPrice, 
+      skuId, skuName, actualCosPrice, estimateCosPrice,
       validCode, subUnionId, payMonth, 
       create_time, update_time)
     values (#{orderid,jdbcType=BIGINT}, #{parentid,jdbcType=BIGINT}, #{ordertime,jdbcType=TIMESTAMP}, 
       #{finishtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP}, #{plus,jdbcType=INTEGER}, 
-      #{skuid,jdbcType=BIGINT}, #{skuname,jdbcType=VARCHAR}, #{actualcosprice,jdbcType=VARCHAR}, 
-      #{validcode,jdbcType=INTEGER}, #{subunionid,jdbcType=VARCHAR}, #{paymonth,jdbcType=VARCHAR}, 
+      #{skuid,jdbcType=BIGINT}, #{skuname,jdbcType=VARCHAR}, #{actualcosprice,jdbcType=DECIMAL}, #{estimateCosPrice,jdbcType=DECIMAL},
+            #{validcode,jdbcType=INTEGER}, #{subunionid,jdbcType=VARCHAR}, #{paymonth,jdbcType=VARCHAR},
       #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="xyz.taobaok.wechat.bean.dataoke.JdOrderDetails" useGeneratedKeys="true">
@@ -76,6 +88,9 @@
       </if>
       <if test="actualcosprice != null">
         actualCosPrice,
+      </if>
+      <if test="estimateCosPrice != null">
+          estimateCosPrice,
       </if>
       <if test="validcode != null">
         validCode,
@@ -122,7 +137,10 @@
         #{skuname,jdbcType=VARCHAR},
       </if>
       <if test="actualcosprice != null">
-        #{actualcosprice,jdbcType=VARCHAR},
+        #{actualcosprice,jdbcType=DECIMAL},
+      </if>
+      <if test="estimateCosPrice != null">
+        #{estimateCosPrice,jdbcType=DECIMAL},
       </if>
       <if test="validcode != null">
         #{validcode,jdbcType=INTEGER},
@@ -169,7 +187,10 @@
         skuName = #{skuname,jdbcType=VARCHAR},
       </if>
       <if test="actualcosprice != null">
-        actualCosPrice = #{actualcosprice,jdbcType=VARCHAR},
+        actualCosPrice = #{actualcosprice,jdbcType=DECIMAL},
+      </if>
+      <if test="estimateCosPrice != null">
+        estimateCosPrice = #{estimateCosPrice,jdbcType=DECIMAL},
       </if>
       <if test="validcode != null">
         validCode = #{validcode,jdbcType=INTEGER},
@@ -199,7 +220,8 @@
       plus = #{plus,jdbcType=INTEGER},
       skuId = #{skuid,jdbcType=BIGINT},
       skuName = #{skuname,jdbcType=VARCHAR},
-      actualCosPrice = #{actualcosprice,jdbcType=VARCHAR},
+      actualCosPrice = #{actualcosprice,jdbcType=DECIMAL},
+      estimateCosPrice = #{estimateCosPrice,jdbcType=DECIMAL},
       validCode = #{validcode,jdbcType=INTEGER},
       subUnionId = #{subunionid,jdbcType=VARCHAR},
       payMonth = #{paymonth,jdbcType=VARCHAR},

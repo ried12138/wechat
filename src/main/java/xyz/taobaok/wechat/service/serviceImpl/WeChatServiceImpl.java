@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import xyz.taobaok.wechat.bean.BaseMessage;
 import xyz.taobaok.wechat.bean.NewsMessages;
 import xyz.taobaok.wechat.bean.TextMessage;
+import xyz.taobaok.wechat.bean.WechatUserInfo;
+import xyz.taobaok.wechat.service.UserInfoService;
 import xyz.taobaok.wechat.service.WeChatService;
 import xyz.taobaok.wechat.toolutil.*;
 
@@ -40,7 +42,8 @@ public class WeChatServiceImpl implements WeChatService {
     WeChatParseMessage weChatParseMessage;
     @Autowired
     AsyncMysqlServiceImpl asyncMysqlUser;
-
+    @Autowired
+    UserInfoService userInfoService;
 
     /**
      * 服务器与微信公众号校验token值
@@ -106,6 +109,13 @@ public class WeChatServiceImpl implements WeChatService {
                             content = content.isEmpty() ? ISEMY : content;
                             break;
                         case "jd":
+                            //查询用户,因为没有京东的返利权限，所以要使用其他字段来代替返现标示
+                            WechatUserInfo wechatUserInfo = userInfoService.queryUserInfo(fromUserName);
+                            if (wechatUserInfo !=null && !wechatUserInfo.getOpenId().equals("")){
+                                parse.put("openId",wechatUserInfo.getOpenId());
+                            }else{
+                                parse.put("openId",String.valueOf(System.currentTimeMillis()));
+                            }
                             msg = getJdConvert(parse, requestMap);
                             break;
                         case "pdd":
@@ -198,7 +208,8 @@ public class WeChatServiceImpl implements WeChatService {
                                     "优惠券信息：该商品暂无优惠券！"
                             ,jdItem.getImgUrl(),jdItem.getMaterialUrl());
                     String fromUserName = parse.get("FromUserName");
-                    asyncMysqlUser.UserCheckInsert(fromUserName,fromUserName,fromUserName);
+                    String openId = parse.get("openId");
+                    asyncMysqlUser.UserCheckInsert(fromUserName,openId,openId);
                 }
             } catch (Exception e) {
                 log.error("union API is error: Failed to get product information, itemId:{}",jdGoodsId);

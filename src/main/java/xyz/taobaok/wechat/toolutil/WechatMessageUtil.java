@@ -8,6 +8,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import xyz.taobaok.wechat.bean.*;
 import xyz.taobaok.wechat.bean.dataoke.TbOrderDetails;
+import xyz.taobaok.wechat.bean.dataoke.WechatOrderDetails;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -144,8 +145,9 @@ public class WechatMessageUtil {
                 "付款订单：" + tbod.getPaymentOrder() + ",笔\n" +
                 "只能显示近期10条记录\n\n"+
                 "————自己订单————\n");
-        List<TbOrderDetails> details = tbod.getDetails();
-        for (TbOrderDetails detail : details) {
+        List<WechatOrderDetails> details = tbod.getDetails();
+        for (WechatOrderDetails detail : details) {
+            str.append("商品："+detail.getItemTitle()+"\n");
             str.append("订单编号："+detail.getTradeParentId()+"\n");
         }
         return str.toString();
