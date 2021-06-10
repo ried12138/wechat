@@ -5,17 +5,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import xyz.taobaok.wechat.bean.MaxMinCreateTime;
-import xyz.taobaok.wechat.bean.dataoke.DtktResponse;
-import xyz.taobaok.wechat.bean.dataoke.TbOrderConstant;
+import xyz.taobaok.wechat.bean.dataoke.OrderConstant;
 import xyz.taobaok.wechat.bean.dataoke.TbOrderDetails;
-import xyz.taobaok.wechat.mapper.TbOrderDetailsMapper;
 import xyz.taobaok.wechat.service.TbOrderDetailsService;
 import xyz.taobaok.wechat.service.serviceImpl.DtkApiService;
 
@@ -27,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 订单定时拉取服务
+ * 淘宝订单定时拉取服务
  * @Author weiranliu
  * @Email liuweiran12138@outlook.com
  * @Date 2021/4/16   4:21 下午
@@ -58,11 +54,13 @@ public class TbOrderDetailsTask {
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
         boolean hasNext = true;
+        int pageNo = 0;
         while (hasNext){
             try {
+                pageNo++;
                 //付款时间查询
-                str = dtkApiService.getTbOrderDetails(TbOrderConstant.SETTLEMENT_TIME_QUERY,
-                        TbOrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime,TbOrderConstant.ORDER_STATUS_RECEIV);
+                str = dtkApiService.getTbOrderDetails(OrderConstant.SETTLEMENT_TIME_QUERY,
+                        OrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime, OrderConstant.ORDER_STATUS_RECEIV,pageNo);
             } catch (UnsupportedEncodingException e) {
                 log.error("大淘客拉取订单接口访问失败！！！");
             }
@@ -90,9 +88,11 @@ public class TbOrderDetailsTask {
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
         boolean hasNext = true;
+        int pageNo = 0;
         while (hasNext) {
             try {
-                str = dtkApiService.getTbOrderDetails(queryType, orderScene, startTime, endTime, tkStatus);
+                pageNo++;
+                str = dtkApiService.getTbOrderDetails(queryType, orderScene, startTime, endTime, tkStatus,pageNo);
             } catch (UnsupportedEncodingException e) {
                 log.error("大淘客拉取订单接口访问失败！！！");
             }
@@ -124,11 +124,13 @@ public class TbOrderDetailsTask {
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
         boolean hasNext = true;
+        int pageNo = 0;
         while (hasNext){
             try {
+                pageNo++;
                 //付款时间查询
-                str = dtkApiService.getTbOrderDetails(TbOrderConstant.PAYMENT_TIME_QUERY,
-                        TbOrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime,TbOrderConstant.ORDER_STATUS_PAYMENT);
+                str = dtkApiService.getTbOrderDetails(OrderConstant.PAYMENT_TIME_QUERY,
+                        OrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime, OrderConstant.ORDER_STATUS_PAYMENT,pageNo);
             } catch (UnsupportedEncodingException e) {
                 log.error("大淘客拉取订单接口访问失败！！！");
             }
@@ -170,11 +172,13 @@ public class TbOrderDetailsTask {
                 flag = DateTimeUtil.dateCompareNow(time.getMaxTime(), end);
                 String str = null;
                 boolean hasNext = true;
+                int pageNo = 0;
                 while (hasNext){
                     try {
+                        pageNo++;
                         //结算时间查询，结算成功的订单
-                        str = dtkApiService.getTbOrderDetails(TbOrderConstant.SETTLEMENT_TIME_QUERY,
-                                TbOrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime,TbOrderConstant.ORDER_STATUS_SUCCESS);
+                        str = dtkApiService.getTbOrderDetails(OrderConstant.SETTLEMENT_TIME_QUERY,
+                                OrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime, OrderConstant.ORDER_STATUS_SUCCESS,pageNo);
                     } catch (UnsupportedEncodingException e) {
                         log.error("大淘客拉取订单接口访问失败！！！");
                     }

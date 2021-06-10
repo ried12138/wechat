@@ -62,8 +62,10 @@ public class UrlUtil {
         if(urlParts.length >1){
             String[] params = urlParts[1].split("&");
             for (String param : params) {
-                String[] keyValue = param.split("=");
-                map.put(keyValue[0], keyValue[1]);
+                if (!param.equals("")){
+                    String[] keyValue = param.split("=");
+                    map.put(keyValue[0], keyValue[1]);
+                }
             }
         }
         return map;

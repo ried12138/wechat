@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Author weiranliu
  * @Email liuweiran12138@outlook.com
  * @Date 2021/2/25   3:26 下午
  * @Version 1.0
@@ -120,7 +119,7 @@ public class WechatMessageUtil {
 
     //关注事件回复信息内容
     public static String menuText() {
-        return "感谢关注领券分享返利网！-公众号目前支持淘宝、天猫、京东等电商平台，通过公众号购物可享受返利！AI智能全网检索商品优惠信息，下单后即可获取返利\n一一一一一一一一一一一一\n[[Packet]【返利步骤】如下：\n" +
+        return "感谢关注领券分享折扣网！-公众号目前支持淘宝、天猫、京东等电商平台，通过公众号购物可享受返利！AI智能全网检索商品优惠信息，下单后即可获取返利\n一一一一一一一一一一一一\n[[Packet]【返利步骤】如下：\n" +
                 "1、复制【淘宝】、【天猫】、【京东】商品链接发送给我\n" +
                 "2、全网智能搜索商品优惠和返利信息！！\n" +
                 "3、付款成功后，复制订单号并发送给我绑定返利\n" +

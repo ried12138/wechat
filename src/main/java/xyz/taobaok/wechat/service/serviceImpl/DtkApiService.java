@@ -84,7 +84,7 @@ public class DtkApiService {
      * @return
      * @throws UnsupportedEncodingException
      */
-    public String getTbOrderDetails(Integer queryType,Integer orderScene,String startTime,String endTime,Integer tkStatus) throws UnsupportedEncodingException {
+    public String getTbOrderDetails(Integer queryType,Integer orderScene,String startTime,String endTime,Integer tkStatus,int pageNo) throws UnsupportedEncodingException {
         TreeMap<String, Object> map = new TreeMap<>();
         map.put("version", "v1.0.0");
         map.put("endTime", endTime);
@@ -92,6 +92,7 @@ public class DtkApiService {
         map.put("queryType",queryType);
         map.put("orderScene",orderScene);
         map.put("tkStatus",tkStatus);
+        map.put("pageNo",pageNo);
         TreeMap<String, Object> paraMap = getParaMap(map);
         return HttpUtils.sendGetTbOrderDetails(dtkManager.orderDetails, paraMap);
     }
@@ -118,11 +119,14 @@ public class DtkApiService {
      * @return
      * @throws UnsupportedEncodingException
      */
-    public String SenJdApiConvertUrl(String materialUrl) throws UnsupportedEncodingException {
+    public String SenJdApiConvertUrl(String materialUrl,String subUnionId) throws UnsupportedEncodingException {
         TreeMap<String, Object> map = new TreeMap<>();
         map.put("version", "v1.0.0");
         map.put("unionId", jdManager.unionId);
         map.put("materialId", materialUrl);
+        if (subUnionId != null && !subUnionId.isEmpty()){
+            map.put("subUnionId",subUnionId);
+        }
         TreeMap<String, Object> paraMap = getParaMap(map);
         return HttpUtils.sendGet(dtkManager.jdItemConvert, paraMap);
     }

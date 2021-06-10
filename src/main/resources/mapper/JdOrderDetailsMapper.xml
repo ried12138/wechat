@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.taobaok.wechat.mapper.JdOrderDetailsMapper">
+  <resultMap id="BaseResultMap" type="xyz.taobaok.wechat.bean.dataoke.JdOrderDetails">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="orderId" jdbcType="BIGINT" property="orderid" />
+    <result column="parentId" jdbcType="BIGINT" property="parentid" />
+    <result column="orderTime" jdbcType="TIMESTAMP" property="ordertime" />
+    <result column="finishTime" jdbcType="TIMESTAMP" property="finishtime" />
+    <result column="modifyTime" jdbcType="TIMESTAMP" property="modifytime" />
+    <result column="plus" jdbcType="INTEGER" property="plus" />
+    <result column="skuId" jdbcType="BIGINT" property="skuid" />
+    <result column="skuName" jdbcType="VARCHAR" property="skuname" />
+    <result column="actualCosPrice" jdbcType="VARCHAR" property="actualcosprice" />
+    <result column="validCode" jdbcType="INTEGER" property="validcode" />
+    <result column="subUnionId" jdbcType="VARCHAR" property="subunionid" />
+    <result column="payMonth" jdbcType="VARCHAR" property="paymonth" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, orderId, parentId, orderTime, finishTime, modifyTime, plus, skuId, skuName, actualCosPrice, 
+    validCode, subUnionId, payMonth, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from jd_order_details
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from jd_order_details
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="xyz.taobaok.wechat.bean.dataoke.JdOrderDetails" useGeneratedKeys="true">
+    insert into jd_order_details (orderId, parentId, orderTime, 
+      finishTime, modifyTime, plus, 
+      skuId, skuName, actualCosPrice, 
+      validCode, subUnionId, payMonth, 
+      create_time, update_time)
+    values (#{orderid,jdbcType=BIGINT}, #{parentid,jdbcType=BIGINT}, #{ordertime,jdbcType=TIMESTAMP}, 
+      #{finishtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP}, #{plus,jdbcType=INTEGER}, 
+      #{skuid,jdbcType=BIGINT}, #{skuname,jdbcType=VARCHAR}, #{actualcosprice,jdbcType=VARCHAR}, 
+      #{validcode,jdbcType=INTEGER}, #{subunionid,jdbcType=VARCHAR}, #{paymonth,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="xyz.taobaok.wechat.bean.dataoke.JdOrderDetails" useGeneratedKeys="true">
+    insert into jd_order_details
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+          id,
+      </if>
+      <if test="orderid != null">
+        orderId,
+      </if>
+      <if test="parentid != null">
+        parentId,
+      </if>
+      <if test="ordertime != null">
+        orderTime,
+      </if>
+      <if test="finishtime != null">
+        finishTime,
+      </if>
+      <if test="modifytime != null">
+        modifyTime,
+      </if>
+      <if test="plus != null">
+        plus,
+      </if>
+      <if test="skuid != null">
+        skuId,
+      </if>
+      <if test="skuname != null">
+        skuName,
+      </if>
+      <if test="actualcosprice != null">
+        actualCosPrice,
+      </if>
+      <if test="validcode != null">
+        validCode,
+      </if>
+      <if test="subunionid != null">
+        subUnionId,
+      </if>
+      <if test="paymonth != null">
+        payMonth,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+          #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="orderid != null">
+        #{orderid,jdbcType=BIGINT},
+      </if>
+      <if test="parentid != null">
+        #{parentid,jdbcType=BIGINT},
+      </if>
+      <if test="ordertime != null">
+        #{ordertime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finishtime != null">
+        #{finishtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifytime != null">
+        #{modifytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="plus != null">
+        #{plus,jdbcType=INTEGER},
+      </if>
+      <if test="skuid != null">
+        #{skuid,jdbcType=BIGINT},
+      </if>
+      <if test="skuname != null">
+        #{skuname,jdbcType=VARCHAR},
+      </if>
+      <if test="actualcosprice != null">
+        #{actualcosprice,jdbcType=VARCHAR},
+      </if>
+      <if test="validcode != null">
+        #{validcode,jdbcType=INTEGER},
+      </if>
+      <if test="subunionid != null">
+        #{subunionid,jdbcType=VARCHAR},
+      </if>
+      <if test="paymonth != null">
+        #{paymonth,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="xyz.taobaok.wechat.bean.dataoke.JdOrderDetails">
+    update jd_order_details
+    <set>
+      <if test="orderid != null">
+        orderId = #{orderid,jdbcType=BIGINT},
+      </if>
+      <if test="parentid != null">
+        parentId = #{parentid,jdbcType=BIGINT},
+      </if>
+      <if test="ordertime != null">
+        orderTime = #{ordertime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finishtime != null">
+        finishTime = #{finishtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifytime != null">
+        modifyTime = #{modifytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="plus != null">
+        plus = #{plus,jdbcType=INTEGER},
+      </if>
+      <if test="skuid != null">
+        skuId = #{skuid,jdbcType=BIGINT},
+      </if>
+      <if test="skuname != null">
+        skuName = #{skuname,jdbcType=VARCHAR},
+      </if>
+      <if test="actualcosprice != null">
+        actualCosPrice = #{actualcosprice,jdbcType=VARCHAR},
+      </if>
+      <if test="validcode != null">
+        validCode = #{validcode,jdbcType=INTEGER},
+      </if>
+      <if test="subunionid != null">
+        subUnionId = #{subunionid,jdbcType=VARCHAR},
+      </if>
+      <if test="paymonth != null">
+        payMonth = #{paymonth,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="xyz.taobaok.wechat.bean.dataoke.JdOrderDetails">
+    update jd_order_details
+    set orderId = #{orderid,jdbcType=BIGINT},
+      parentId = #{parentid,jdbcType=BIGINT},
+      orderTime = #{ordertime,jdbcType=TIMESTAMP},
+      finishTime = #{finishtime,jdbcType=TIMESTAMP},
+      modifyTime = #{modifytime,jdbcType=TIMESTAMP},
+      plus = #{plus,jdbcType=INTEGER},
+      skuId = #{skuid,jdbcType=BIGINT},
+      skuName = #{skuname,jdbcType=VARCHAR},
+      actualCosPrice = #{actualcosprice,jdbcType=VARCHAR},
+      validCode = #{validcode,jdbcType=INTEGER},
+      subUnionId = #{subunionid,jdbcType=VARCHAR},
+      payMonth = #{paymonth,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

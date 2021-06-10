@@ -59,7 +59,6 @@ public class TaobaoApiServiceImpl implements TaobaoApiService {
         String url="https://oauth.taobao.com/token";
         Map<String,String> props=new HashMap<String,String>();
         props.put("grant_type","authorization_code");
-        /*测试时，需把test参数换成自己应用对应的值*/
         props.put("code",defaultRefreshToken);  //此code值非code值，需要定时拉去
         props.put("client_id",tbManager.getAppKey());
         props.put("client_secret",tbManager.getSecret());

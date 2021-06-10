@@ -8,9 +8,8 @@ import org.springframework.stereotype.Service;
 import xyz.taobaok.wechat.bean.OrderDetailsInfo;
 import xyz.taobaok.wechat.bean.UserWallet;
 import xyz.taobaok.wechat.bean.WechatUserInfo;
-import xyz.taobaok.wechat.bean.dataoke.TbOrderConstant;
+import xyz.taobaok.wechat.bean.dataoke.OrderConstant;
 import xyz.taobaok.wechat.bean.dataoke.TbOrderDetails;
-import xyz.taobaok.wechat.mapper.TbOrderDetailsMapper;
 import xyz.taobaok.wechat.service.TbOrderDetailsService;
 import xyz.taobaok.wechat.service.UserInfoService;
 import xyz.taobaok.wechat.service.UserWalletService;
@@ -185,8 +184,8 @@ public class WeChatParseMessage {
                 i = 3;
             }else{
                 //拉取最新订单信息 付款时间拉取
-                tbOrderDetailsTask.getTbOrderDetails(TbOrderConstant.PAYMENT_TIME_QUERY, TbOrderConstant.ORDER_SCENARIO_MEMBER,
-                        TbOrderConstant.ORDER_STATUS_PAYMENT, false);
+                tbOrderDetailsTask.getTbOrderDetails(OrderConstant.PAYMENT_TIME_QUERY, OrderConstant.ORDER_SCENARIO_MEMBER,
+                        OrderConstant.ORDER_STATUS_PAYMENT, false);
                 status = "抱歉没有查询到订单信息，请重试！或联系管理员";
             }
         }

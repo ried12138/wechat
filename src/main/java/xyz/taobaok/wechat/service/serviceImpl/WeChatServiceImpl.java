@@ -1,31 +1,19 @@
 package xyz.taobaok.wechat.service.serviceImpl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsDetailResponse;
-import jd.union.open.goods.promotiongoodsinfo.query.response.PromotionGoodsResp;
+import com.jd.open.api.sdk.domain.kplunion.GoodsService.response.query.PromotionGoodsResp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.taobaok.wechat.bean.BaseMessage;
-import xyz.taobaok.wechat.bean.Item;
 import xyz.taobaok.wechat.bean.NewsMessages;
 import xyz.taobaok.wechat.bean.TextMessage;
-import xyz.taobaok.wechat.bean.dataoke.TbOrderConstant;
-import xyz.taobaok.wechat.bean.dataoke.TbOrderDetails;
-import xyz.taobaok.wechat.mapper.TbOrderDetailsMapper;
-import xyz.taobaok.wechat.mapper.WechatUserInfoMapper;
-import xyz.taobaok.wechat.service.UserInfoService;
 import xyz.taobaok.wechat.service.WeChatService;
 import xyz.taobaok.wechat.toolutil.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,6 +38,8 @@ public class WeChatServiceImpl implements WeChatService {
     PddApiServiceImpl pddApiService;
     @Autowired
     WeChatParseMessage weChatParseMessage;
+    @Autowired
+    AsyncMysqlServiceImpl asyncMysqlUser;
 
 
     /**
@@ -198,7 +188,7 @@ public class WeChatServiceImpl implements WeChatService {
         if (!jdGoodsId.isEmpty()){
             PromotionGoodsResp jdItem = null;
             try {
-                jdItem = jdApiService.SenJdApiGoods(Arrays.asList(jdGoodsId));
+                jdItem = jdApiService.SenJdApiGoods(Arrays.asList(jdGoodsId),parse);
                 if (jdItem != null && jdItem.getMaterialUrl() !=null){
                     String goodsName = jdItem.getGoodsName().substring(0, 20);
                     msg = new NewsMessages(requestMap,"【"+goodsName+"...】",
@@ -207,6 +197,8 @@ public class WeChatServiceImpl implements WeChatService {
                                     "类别："+jdItem.getCidName()+"\n"+
                                     "优惠券信息：该商品暂无优惠券！"
                             ,jdItem.getImgUrl(),jdItem.getMaterialUrl());
+                    String fromUserName = parse.get("FromUserName");
+                    asyncMysqlUser.UserCheckInsert(fromUserName,fromUserName,fromUserName);
                 }
             } catch (Exception e) {
                 log.error("union API is error: Failed to get product information, itemId:{}",jdGoodsId);

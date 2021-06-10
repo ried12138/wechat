@@ -28,4 +28,5 @@ public class JdManager {
     public String routerUrl;
     @Value("${jd.unionId}")
     public Long unionId;
+
 }
