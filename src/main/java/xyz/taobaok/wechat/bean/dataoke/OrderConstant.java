@@ -33,5 +33,5 @@ public class OrderConstant {
 
 
     public static final Integer REBATE_STATUS = 0;          //返利未发放的
-    public static final Integer REBATE_STATUS_N = 2;          //返利未发放的
+    public static final Integer REBATE_STATUS_N = 2;        //已扫描返利未发放的
 }
