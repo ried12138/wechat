@@ -148,7 +148,7 @@ public class WechatMessageUtil {
         List<WechatOrderDetails> details = tbod.getDetails();
         for (WechatOrderDetails detail : details) {
             str.append("商品："+detail.getItemTitle()+"\n");
-            str.append("订单编号："+detail.getTradeParentId()+"\n");
+            str.append("订单号："+detail.getTradeParentId()+"\n");
         }
         return str.toString();
     }
