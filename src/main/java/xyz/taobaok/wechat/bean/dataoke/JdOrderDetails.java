@@ -91,5 +91,9 @@ public class JdOrderDetails implements Serializable {
      */
     private Date updateTime;
 
+    /**
+     * 订单状态，0=未完成(返利未发放)，1=已完成(返利已发放)
+     */
+    private Integer status;
     private static final long serialVersionUID = 1L;
 }

@@ -18,10 +18,11 @@
     <result column="payMonth" jdbcType="VARCHAR" property="paymonth" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
   </resultMap>
   <sql id="Base_Column_List">
     id, orderId, parentId, orderTime, finishTime, modifyTime, plus, skuId, skuName, actualCosPrice, 
-    validCode, subUnionId, payMonth, create_time, update_time
+    validCode, subUnionId, payMonth, create_time, update_time, `status`
   </sql>
     <!--通过subunionId获取用户信息 -->
     <select id="selectByPrimarySubUnionIdInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -33,6 +34,15 @@
             LIMIT #{limit,jdbcType=INTEGER}
         </if>
     </select>
+
+    <!--通过subunionId获取用户订单信息 已付款和已确认收货 -->
+    <select id="selectByPrimarySubUnionId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from jd_order_details
+        where (validCode = 16 or validCode = 17) and subUnionId = #{subUnionId,jdbcType=VARCHAR} and `status` = #{status,jdbcType=INTEGER}
+    </select>
+
     <!--通过订单号 -->
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -200,6 +210,9 @@
       </if>
       <if test="paymonth != null">
         payMonth = #{paymonth,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+          `status` = #{status,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},

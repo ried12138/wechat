@@ -38,6 +38,14 @@
     from tb_order_details
     where special_id = #{specialId,jdbcType=VARCHAR}
   </select>
+    <!-- 根据special_id 和订单状态：已付款、已结算、未返利的 查询订单信息 -->
+    <select id="selectByRebateOrder" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List" />
+        from tb_order_details
+        where (tk_status = 12 or tk_status = 3) and special_id = #{specialId,jdbcType=VARCHAR} and `status` = #{status,jdbcType=INTEGER}
+    </select>
+
     <!-- 根据订单号查询订单信息 -->
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 

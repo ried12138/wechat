@@ -15,6 +15,7 @@ import xyz.taobaok.wechat.bean.dataoke.TbOrderDetails;
 import xyz.taobaok.wechat.service.TbOrderDetailsService;
 import xyz.taobaok.wechat.service.serviceImpl.DtkApiService;
 
+import javax.annotation.PostConstruct;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -49,7 +50,7 @@ public class TbOrderDetailsTask {
     public void getTbOrderDetailsHold(){
         long start = System.currentTimeMillis();
         log.info("按照订单更新时间拉取所有订单任务开始.....");
-        String startTime= DateTimeUtil.dateAddMinutes(122);
+        String startTime= DateTimeUtil.dateAddMinutes(15);
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
         boolean hasNext = true;
@@ -126,7 +127,7 @@ public class TbOrderDetailsTask {
     public void getTbOrderDetails(){
         long start = System.currentTimeMillis();
         log.info("拉取付款订单任务开始.....");
-        String startTime = DateTimeUtil.dateAddMinutes(20);
+        String startTime = DateTimeUtil.dateAddMinutes(16);
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
         boolean hasNext = true;
@@ -158,16 +159,17 @@ public class TbOrderDetailsTask {
     /**
      * 每天凌晨3点刷新订单完成时间的订单
      * 刷新订单状态，拉取完成的订单信息进行数据库修改
+     * 暂不可用
      */
-    @Async
-    @Scheduled(cron = "0 0 3 * * ?")
+//    @Async
+//    @Scheduled(cron = "1 0/6 * * * ?")
     public void lcoalOrderDetailsStatusUpdate(){
         long start = System.currentTimeMillis();
         MaxMinCreateTime time = tbOrderDetailsService.allTkStatusPayment();
         if (time!=null){
             log.info("拉取结算订单任务开始.....");
             String startTime = DateTimeUtil.getDate(time.getMinTime());
-            String endTime = DateTimeUtil.datereducedMinutes(time.getMinTime(), 1445);
+            String endTime = DateTimeUtil.datereducedMinutes(time.getMinTime(), 12);
             boolean flag = true;
             while (flag){
                 Date end = null;

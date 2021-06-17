@@ -62,7 +62,7 @@ public class JdApiService {
         request.setVersion("1.0");
         UnionOpenOrderRowQueryResponse response=client.execute(request);
         OrderRowQueryResult queryResult = response.getQueryResult();
-        if (queryResult.getCode() == 200 && queryResult.getData().length > 0){
+        if (queryResult.getCode() == 200 && queryResult.getData() != null && queryResult.getData().length >0){
             return queryResult;
         }
         return null;

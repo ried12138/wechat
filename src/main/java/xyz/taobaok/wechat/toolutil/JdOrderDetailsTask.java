@@ -12,6 +12,8 @@ import xyz.taobaok.wechat.bean.dataoke.JdOrderDetails;
 import xyz.taobaok.wechat.bean.dataoke.OrderConstant;
 import xyz.taobaok.wechat.mapper.JdOrderDetailsMapper;
 import xyz.taobaok.wechat.service.serviceImpl.JdApiService;
+
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
@@ -36,15 +38,16 @@ public class JdOrderDetailsTask {
 
 
     /**
-     * 每30分钟拉取
+     * 每4分钟拉取
      * 下单完成
      */
     @Async
-    @Scheduled(cron = "1 0/4 * * * ?")
+//    @Scheduled(cron = "1 0/4 * * * ?")
+    @PostConstruct
     public void getTbOrderDetails(){
         long start = System.currentTimeMillis();
         log.info("拉取京东下单订单任务开始.....");
-        String startTime= DateTimeUtil.dateAddMinutes(32);
+        String startTime= DateTimeUtil.dateAddMinutes(15);
         String endTime = DateTimeUtil.getNowTime_EN();
         boolean hasNext = true;
         int pageNo = 0;
@@ -92,7 +95,7 @@ public class JdOrderDetailsTask {
     public void getJdOrderDetailsUpdate(){
         long start = System.currentTimeMillis();
         log.info("拉取京东更新状态订单任务开始.....");
-        String startTime= DateTimeUtil.dateAddMinutes(122);
+        String startTime= DateTimeUtil.dateAddMinutes(17);
         String endTime = DateTimeUtil.getNowTime_EN();
         boolean hasNext = true;
         int pageNo = 0;

@@ -22,14 +22,14 @@
     from user_wallet
     where id = #{id,jdbcType=INTEGER}
   </select>
-    <!--根据open id 查询钱包信息 -->
-   <select id="queryUserWalletInfo" resultType="xyz.taobaok.wechat.bean.UserWallet">
-       select
-       <include refid="Base_Column_List" />
-       from user_wallet
-       where open_id = #{fromUserName,jdbcType=VARCHAR}
-   </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+<!-- 通过fromUserName 查询用户信息 -->
+    <select id="queryUserWalletInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user_wallet
+        where open_id = #{open_id,jdbcType=VARCHAR}
+    </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from user_wallet
     where id = #{id,jdbcType=INTEGER}
   </delete>

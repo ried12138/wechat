@@ -21,6 +21,8 @@ public interface TbOrderDetailsMapper {
 
     Integer selectByPrimarySpecialId(String specialId);
 
+    List<TbOrderDetails> selectByRebateOrder(String specialId,Integer status);
+
     Integer selectSpecialIdtkStatus(String specialId, int tkStatus);
 
     List<TbOrderDetails> selectByPrimarySpecialIdInfo(String specialId, Integer limit);

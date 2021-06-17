@@ -6,7 +6,6 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 用户钱包信息
  * user_wallet
  * @author 
  */

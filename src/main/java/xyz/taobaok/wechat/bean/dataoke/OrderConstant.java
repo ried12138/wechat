@@ -25,4 +25,12 @@ public class OrderConstant {
     public static final Integer ORDER_PLACE_TIME = 1;             //京东订单状态，下单时间
     public static final Integer ORDER_COMPLETE_TIME = 2;          //京东订单状态，完成时间
     public static final Integer ORDER_UPDATE_TIME = 3;            //京东订单状态，更新时间
+
+
+    public static final Integer JD_ORDER_STATUS_RECEIV = 17;              //京东订单 确认收货
+    public static final Integer JD_ORDER_STATUS_SUCCESS = 16;              //京东订单 付款
+
+
+
+    public static final Integer REBATE_STATUS = 0;          //返利未发放的
 }
