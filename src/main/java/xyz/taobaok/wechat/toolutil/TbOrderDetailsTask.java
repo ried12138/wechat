@@ -42,15 +42,14 @@ public class TbOrderDetailsTask {
 
     /**
      * 每一小时拉取
-     * 按照结算时间查询
-     * 确认收货的订单
+     * 按照订单更新时间查询
      */
     @Async
     @Scheduled(cron = "1 0 0/1 * * ?")
     public void getTbOrderDetailsHold(){
         long start = System.currentTimeMillis();
-        log.info("拉取结算订单任务开始.....");
-        String startTime= DateTimeUtil.dateAddMinutes(62);
+        log.info("按照订单更新时间拉取所有订单任务开始.....");
+        String startTime= DateTimeUtil.dateAddMinutes(122);
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
         boolean hasNext = true;
@@ -59,8 +58,8 @@ public class TbOrderDetailsTask {
             try {
                 pageNo++;
                 //付款时间查询
-                str = dtkApiService.getTbOrderDetails(OrderConstant.SETTLEMENT_TIME_QUERY,
-                        OrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime, OrderConstant.ORDER_STATUS_RECEIV,pageNo);
+                str = dtkApiService.getTbOrderDetails(OrderConstant.UPDATE_TIME_QUERY,
+                        OrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime, null,pageNo);
             } catch (UnsupportedEncodingException e) {
                 log.error("大淘客拉取订单接口访问失败！！！");
             }
@@ -71,6 +70,9 @@ public class TbOrderDetailsTask {
                 JSONArray json = JSONArray.parseArray(results.getString("publisher_order_dto"));
                 getIntegration(json);
                 hasNext = data.getBoolean("has_next");
+            }else{
+                log.info(str);
+                hasNext = false;
             }
         }
         log.info("拉取订单完成！耗时：{} ms",System.currentTimeMillis() - start);
@@ -96,6 +98,7 @@ public class TbOrderDetailsTask {
             } catch (UnsupportedEncodingException e) {
                 log.error("大淘客拉取订单接口访问失败！！！");
             }
+            JSONObject jsonObject1 = JSONObject.parseObject(str);
             if (str.contains("成功")) {
                 JSONObject jsonObject = JSON.parseObject(str);
                 JSONObject data = jsonObject.getJSONObject("data");
@@ -103,6 +106,9 @@ public class TbOrderDetailsTask {
                 JSONArray json = JSONArray.parseArray(results.getString("publisher_order_dto"));
                 getIntegration(json);
                 hasNext = data.getBoolean("has_next");
+            }else if(jsonObject1.getString("code").equals("10209")){
+                log.info(str);
+                hasNext = false;
             }
         }
     }
@@ -110,13 +116,13 @@ public class TbOrderDetailsTask {
      * 淘宝订单拉取
      * 付款时间查询
      * 已付款的订单
-     * 每20分钟计统计一次
+     * 每3分钟计统计一次20分钟前的付款时间
      * @param
      * @return
      */
 //    @Scheduled(cron = "0/5 * * * * ?")
     @Async
-    @Scheduled(cron = "0 0/21 * * * ?")
+    @Scheduled(cron = "0 0/3 * * * ?")
     public void getTbOrderDetails(){
         long start = System.currentTimeMillis();
         log.info("拉取付款订单任务开始.....");
@@ -142,6 +148,7 @@ public class TbOrderDetailsTask {
                 getIntegration(json);
                 hasNext = data.getBoolean("has_next");
             }else{
+                log.info(str);
                 hasNext = false;
             }
         }
@@ -160,7 +167,7 @@ public class TbOrderDetailsTask {
         if (time!=null){
             log.info("拉取结算订单任务开始.....");
             String startTime = DateTimeUtil.getDate(time.getMinTime());
-            String endTime = DateTimeUtil.datereducedMinutes(time.getMinTime(), 30);
+            String endTime = DateTimeUtil.datereducedMinutes(time.getMinTime(), 1445);
             boolean flag = true;
             while (flag){
                 Date end = null;
@@ -177,8 +184,8 @@ public class TbOrderDetailsTask {
                     try {
                         pageNo++;
                         //结算时间查询，结算成功的订单
-                        str = dtkApiService.getTbOrderDetails(OrderConstant.SETTLEMENT_TIME_QUERY,
-                                OrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime, OrderConstant.ORDER_STATUS_SUCCESS,pageNo);
+                        str = dtkApiService.getTbOrderDetails(OrderConstant.UPDATE_TIME_QUERY,
+                                OrderConstant.ORDER_SCENARIO_MEMBER,startTime,endTime, null,pageNo);
                     } catch (UnsupportedEncodingException e) {
                         log.error("大淘客拉取订单接口访问失败！！！");
                     }
@@ -190,6 +197,7 @@ public class TbOrderDetailsTask {
                         getIntegration(json);
                         hasNext = data.getBoolean("has_next");
                     }else{
+                        log.info(str);
                         hasNext = false;
                     }
                 }

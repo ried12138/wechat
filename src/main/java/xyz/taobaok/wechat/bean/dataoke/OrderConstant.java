@@ -10,6 +10,7 @@ public class OrderConstant {
     public static final Integer CREATE_TIME_QUERY = 1;                 //按照订单淘客创建时间查询
     public static final Integer PAYMENT_TIME_QUERY = 2;                //按照订单淘客付款时间查询
     public static final Integer SETTLEMENT_TIME_QUERY = 3;             //按照订单淘客结算时间查询
+    public static final Integer UPDATE_TIME_QUERY = 4;             //按照订单更新时间查询
 
     public static final Integer ORDER_STATUS_PAYMENT = 12;             //淘客订单状态，付款
     public static final Integer ORDER_STATUS_CLOSE = 13;               //淘客订单状态，关闭

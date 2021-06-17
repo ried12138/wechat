@@ -91,7 +91,9 @@ public class DtkApiService {
         map.put("startTime", startTime);
         map.put("queryType",queryType);
         map.put("orderScene",orderScene);
-        map.put("tkStatus",tkStatus);
+        if (tkStatus != null){
+            map.put("tkStatus",tkStatus);
+        }
         map.put("pageNo",pageNo);
         TreeMap<String, Object> paraMap = getParaMap(map);
         return HttpUtils.sendGetTbOrderDetails(dtkManager.orderDetails, paraMap);

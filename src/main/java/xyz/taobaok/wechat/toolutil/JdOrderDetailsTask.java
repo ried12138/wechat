@@ -12,8 +12,6 @@ import xyz.taobaok.wechat.bean.dataoke.JdOrderDetails;
 import xyz.taobaok.wechat.bean.dataoke.OrderConstant;
 import xyz.taobaok.wechat.mapper.JdOrderDetailsMapper;
 import xyz.taobaok.wechat.service.serviceImpl.JdApiService;
-
-import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
@@ -42,7 +40,7 @@ public class JdOrderDetailsTask {
      * 下单完成
      */
     @Async
-    @Scheduled(cron = "1 0/30 * * * ?")
+    @Scheduled(cron = "1 0/4 * * * ?")
     public void getTbOrderDetails(){
         long start = System.currentTimeMillis();
         log.info("拉取京东下单订单任务开始.....");
@@ -86,14 +84,14 @@ public class JdOrderDetailsTask {
         log.info("拉取下单订单完成！耗时：{} ms",System.currentTimeMillis() - start);
     }
     /**
-     * 每两小时拉取
-     * 已完成订单
+     * 每10分钟拉取
+     * 更新的订单
      */
     @Async
-    @Scheduled(cron = "1 0 0/2 * * ?")
+    @Scheduled(cron = "1 0/10 * * * ?")
     public void getJdOrderDetailsUpdate(){
         long start = System.currentTimeMillis();
-        log.info("拉取京东完成订单任务开始.....");
+        log.info("拉取京东更新状态订单任务开始.....");
         String startTime= DateTimeUtil.dateAddMinutes(122);
         String endTime = DateTimeUtil.getNowTime_EN();
         boolean hasNext = true;
@@ -103,7 +101,7 @@ public class JdOrderDetailsTask {
             OrderRowQueryResult result = null;
             try {
                 //拉取完成状态订单
-                result = jdApiService.jdOrderDetails(startTime, endTime, "", pageNo, OrderConstant.ORDER_COMPLETE_TIME);
+                result = jdApiService.jdOrderDetails(startTime, endTime, "", pageNo, OrderConstant.ORDER_UPDATE_TIME);
             } catch (Exception e) {
                 log.error("京东拉取订单接口访问失败！！！");
             }
@@ -115,10 +113,10 @@ public class JdOrderDetailsTask {
                         //插入数据库 未写完
                         try {
                             if (jdODMapper.updateByPrimaryKeySelective(orderDetail) == 1){
-                                log.info("修改一条已完成订单：{}",orderDetail.toString());
+                                log.info("修改一条订单状态：{}",orderDetail.toString());
                             }
                         } catch (Exception e) {
-                            log.error("修改一条已完成订单失败！连接数据库可能出现故障:{}",e);
+                            log.error("修改一条订单状态失败！连接数据库可能出现故障:{}",e);
                         }
                     }
                 }
@@ -127,7 +125,7 @@ public class JdOrderDetailsTask {
                 hasNext = false;
             }
         }
-        log.info("拉取订单完成！耗时：{} ms",System.currentTimeMillis() - start);
+        log.info("拉取订单状态完成！耗时：{} ms",System.currentTimeMillis() - start);
     }
 
 
