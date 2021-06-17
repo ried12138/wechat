@@ -66,12 +66,12 @@ public class UserWalletServiceImpl implements UserWalletService {
             BigDecimal cumulationIncome = userWallet.getCumulationIncome();
             for (TbOrderDetails tbOrderDetail : tbOrderDetails) {
                 if (tbOrderDetail.getTkStatus() ==OrderConstant.ORDER_STATUS_SUCCESS && tbOrderDetail.getStatus() == OrderConstant.REBATE_STATUS){
-                    balance.add(tbOrderDetail.getPubShareFee());
-                    cumulationIncome.add(tbOrderDetail.getPubShareFee());
+                    balance = balance.add(tbOrderDetail.getPubShareFee());
+                    cumulationIncome = cumulationIncome.add(tbOrderDetail.getPubShareFee());
                 }else{
                     try {
                         BigDecimal pubShareFee1 = tbOrderDetail.getPubShareFee();
-                        pubShareFee.add(pubShareFee1);
+                        pubShareFee = pubShareFee.add(pubShareFee1);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -81,12 +81,16 @@ public class UserWalletServiceImpl implements UserWalletService {
             List<JdOrderDetails> jdOrderDetails = jdODMapper.selectByPrimarySubUnionId(userInfo.getSpecialId(), OrderConstant.REBATE_STATUS);
             for (JdOrderDetails jdOrderDetail : jdOrderDetails) {
                 if (jdOrderDetail.getValidcode() == OrderConstant.JD_ORDER_STATUS_RECEIV && jdOrderDetail.getStatus() == OrderConstant.REBATE_STATUS){
-                    balance.add(jdOrderDetail.getActualcosprice());
+                    balance = balance.add(jdOrderDetail.getActualcosprice());
                     cumulationIncome.add(jdOrderDetail.getActualcosprice());
                 }else{
-                    pubShareFee.add(jdOrderDetail.getEstimateCosPrice());
+                    BigDecimal estimateCosPrice = jdOrderDetail.getEstimateCosPrice();
+                    pubShareFee = pubShareFee.add(estimateCosPrice);
                 }
             }
+            userWallet.setPubShareFee(pubShareFee);
+            userWallet.setBalance(balance);
+            userWallet.setCumulationIncome(cumulationIncome);
             userWallet.setUpdateTime(new Date());
             if (userWalletMapper.updateByPrimaryKeySelective(userWallet) == 1){
                 for (TbOrderDetails tbOrderDetail : tbOrderDetails) {
@@ -137,6 +141,6 @@ public class UserWalletServiceImpl implements UserWalletService {
                 log.info("微信："+userInfo.getFromusername()+"，用户钱包更新失败！");
             }
         }
-        return userWalletMapper.queryUserWalletInfo(fromUserName);
+        return userWallet;
     }
 }

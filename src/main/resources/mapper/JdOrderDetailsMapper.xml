@@ -21,7 +21,7 @@
     <result column="status" jdbcType="INTEGER" property="status" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, orderId, parentId, orderTime, finishTime, modifyTime, plus, skuId, skuName, actualCosPrice, 
+    id, orderId, parentId, orderTime, finishTime, modifyTime, plus, skuId, skuName, actualCosPrice, estimateCosPrice,
     validCode, subUnionId, payMonth, create_time, update_time, `status`
   </sql>
     <!--通过subunionId获取用户信息 -->
