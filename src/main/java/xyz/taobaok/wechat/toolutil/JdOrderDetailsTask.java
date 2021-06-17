@@ -42,8 +42,7 @@ public class JdOrderDetailsTask {
      * 下单完成
      */
     @Async
-//    @Scheduled(cron = "1 0/4 * * * ?")
-    @PostConstruct
+    @Scheduled(cron = "1 0/4 * * * ?")
     public void getTbOrderDetails(){
         long start = System.currentTimeMillis();
         log.info("拉取京东下单订单任务开始.....");

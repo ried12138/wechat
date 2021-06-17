@@ -62,9 +62,12 @@ public class UserWalletServiceImpl implements UserWalletService {
             BigDecimal pubShareFee = userWallet.getPubShareFee();
             //余额
             BigDecimal balance = userWallet.getBalance();
+            //累计金额
+            BigDecimal cumulationIncome = userWallet.getCumulationIncome();
             for (TbOrderDetails tbOrderDetail : tbOrderDetails) {
                 if (tbOrderDetail.getTkStatus() ==OrderConstant.ORDER_STATUS_SUCCESS && tbOrderDetail.getStatus() == OrderConstant.REBATE_STATUS){
                     balance.add(tbOrderDetail.getPubShareFee());
+                    cumulationIncome.add(tbOrderDetail.getPubShareFee());
                 }else{
                     try {
                         BigDecimal pubShareFee1 = tbOrderDetail.getPubShareFee();
@@ -79,6 +82,7 @@ public class UserWalletServiceImpl implements UserWalletService {
             for (JdOrderDetails jdOrderDetail : jdOrderDetails) {
                 if (jdOrderDetail.getValidcode() == OrderConstant.JD_ORDER_STATUS_RECEIV && jdOrderDetail.getStatus() == OrderConstant.REBATE_STATUS){
                     balance.add(jdOrderDetail.getActualcosprice());
+                    cumulationIncome.add(jdOrderDetail.getActualcosprice());
                 }else{
                     pubShareFee.add(jdOrderDetail.getEstimateCosPrice());
                 }
@@ -96,6 +100,9 @@ public class UserWalletServiceImpl implements UserWalletService {
                             BigDecimal balance1 = userWallet.getBalance();
                             balance1.subtract(tbOrderDetail.getPubShareFee());
                             userWallet.setBalance(balance1);
+                            BigDecimal cumulationIncome1 = userWallet.getCumulationIncome();
+                            cumulationIncome1.subtract(balance1);
+                            userWallet.setCumulationIncome(cumulationIncome1);
                             userWallet.setUpdateTime(new Date());
                             if (userWalletMapper.updateByPrimaryKeySelective(userWallet) == 1){
                                 log.error("微信："+userInfo.getFromusername()+"，订单编号："+tbOrderDetail.getTradeParentId()+" 返利失败");
@@ -114,6 +121,9 @@ public class UserWalletServiceImpl implements UserWalletService {
                             BigDecimal balance1 = userWallet.getBalance();
                             balance1.subtract(jdOrderDetail.getActualcosprice());
                             userWallet.setBalance(balance1);
+                            BigDecimal cumulationIncome1 = userWallet.getCumulationIncome();
+                            cumulationIncome1.subtract(balance1);
+                            userWallet.setCumulationIncome(cumulationIncome1);
                             userWallet.setUpdateTime(new Date());
                             if (userWalletMapper.updateByPrimaryKeySelective(userWallet) == 1){
                                 log.error("微信："+userInfo.getFromusername()+"，京东订单编号："+jdOrderDetail.getId()+" 返利失败");

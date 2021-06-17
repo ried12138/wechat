@@ -1,7 +1,9 @@
 package xyz.taobaok.wechat.mapper;
 
+import org.springframework.stereotype.Repository;
 import xyz.taobaok.wechat.bean.UserWallet;
 
+@Repository
 public interface UserWalletMapper {
     int deleteByPrimaryKey(Integer id);
 
