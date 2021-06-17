@@ -65,10 +65,6 @@ public class TbOrderDetailsServiceImpl implements TbOrderDetailsService {
             @Override
             public int compare(TbOrderDetails tbOrderDetails, TbOrderDetails t1) {
                 if (DateTimeUtil.dateCompareNow(tbOrderDetails.getUpdateTime(),t1.getUpdateTime())){
-                    WechatOrderDetails wechatOrderDetails = new WechatOrderDetails();
-                    wechatOrderDetails.setItemTitle(substring(tbOrderDetails.getItemTitle())+"...");
-                    wechatOrderDetails.setTradeParentId(tbOrderDetails.getTradeParentId());
-                    list.add(wechatOrderDetails);
                     return 1;
                 }else{
                     return 0;
@@ -79,16 +75,28 @@ public class TbOrderDetailsServiceImpl implements TbOrderDetailsService {
             @Override
             public int compare(JdOrderDetails t2, JdOrderDetails t1) {
                 if (DateTimeUtil.dateCompareNow(t2.getUpdateTime(),t1.getUpdateTime())){
-                    WechatOrderDetails wechatOrderDetails = new WechatOrderDetails();
-                    wechatOrderDetails.setItemTitle(substring(t2.getSkuname())+"...");
-                    wechatOrderDetails.setTradeParentId(String.valueOf(t2.getParentid()));
-                    list.add(wechatOrderDetails);
                     return 1;
                 }else{
                     return 0;
                 }
             }
         });
+        if (tbod.size() !=0){
+            for (TbOrderDetails tbOrderDetails : tbod) {
+                WechatOrderDetails wechatOrderDetails = new WechatOrderDetails();
+                wechatOrderDetails.setItemTitle(substring(tbOrderDetails.getItemTitle())+"...");
+                wechatOrderDetails.setTradeParentId(tbOrderDetails.getTradeParentId());
+                list.add(wechatOrderDetails);
+            }
+        }
+        if (jdOrderDetails.size() != 0){
+            for (JdOrderDetails jdOrderDetail : jdOrderDetails) {
+                WechatOrderDetails wechatOrderDetails = new WechatOrderDetails();
+                wechatOrderDetails.setItemTitle(substring(jdOrderDetail.getSkuname())+"...");
+                wechatOrderDetails.setTradeParentId(String.valueOf(jdOrderDetail.getId()));
+                list.add(wechatOrderDetails);
+            }
+        }
         odInfo.setDetails(list);
         return odInfo;
     }
