@@ -69,12 +69,8 @@ public class UserWalletServiceImpl implements UserWalletService {
                     balance = balance.add(tbOrderDetail.getPubShareFee());
                     cumulationIncome = cumulationIncome.add(tbOrderDetail.getPubShareFee());
                 }else{
-                    try {
-                        BigDecimal pubShareFee1 = tbOrderDetail.getPubShareFee();
-                        pubShareFee = pubShareFee.add(pubShareFee1);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    pubShareFee = pubShareFee.add(tbOrderDetail.getPubShareFee());
+                    tbOrderDetail.setStatus(2);
                 }
             }
             //京东: 已付款、确认收货、未返利的订单
@@ -84,8 +80,8 @@ public class UserWalletServiceImpl implements UserWalletService {
                     balance = balance.add(jdOrderDetail.getActualcosprice());
                     cumulationIncome.add(jdOrderDetail.getActualcosprice());
                 }else{
-                    BigDecimal estimateCosPrice = jdOrderDetail.getEstimateCosPrice();
-                    pubShareFee = pubShareFee.add(estimateCosPrice);
+                    pubShareFee = pubShareFee.add(jdOrderDetail.getEstimateCosPrice());
+                    jdOrderDetail.setStatus(2);
                 }
             }
             userWallet.setPubShareFee(pubShareFee);
@@ -112,6 +108,10 @@ public class UserWalletServiceImpl implements UserWalletService {
                                 log.error("微信："+userInfo.getFromusername()+"，订单编号："+tbOrderDetail.getTradeParentId()+" 返利失败");
                             }
                         }
+                    }else if(tbOrderDetail.getStatus() == OrderConstant.REBATE_STATUS_N){
+                        if (tbODMapper.updateByPrimaryKeySelective(tbOrderDetail) == 1){
+                            log.info("微信："+userInfo.getFromusername()+"，订单编号："+tbOrderDetail.getTradeParentId()+"返利状态修改成功");
+                        }
                     }
                 }
                 for (JdOrderDetails jdOrderDetail : jdOrderDetails) {
@@ -134,6 +134,10 @@ public class UserWalletServiceImpl implements UserWalletService {
                             }
                         }
                         balance.add(jdOrderDetail.getActualcosprice());
+                    }else if(jdOrderDetail.getStatus() == OrderConstant.REBATE_STATUS_N){
+                        if (jdODMapper.updateByPrimaryKeySelective(jdOrderDetail) == 1){
+                            log.info("微信："+userInfo.getFromusername()+"，淘宝订单编号："+jdOrderDetail.getId()+"返利状态修改成功");
+                        }
                     }
                 }
                 log.info("微信："+userInfo.getFromusername()+"，用户钱包更新成功！");
