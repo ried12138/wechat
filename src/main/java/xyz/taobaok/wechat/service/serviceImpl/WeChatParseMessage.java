@@ -38,7 +38,7 @@ public class WeChatParseMessage {
     private static final String USER_ORDER_DETAILS_ERROR = "\uD83D\uDE47你的微信号目前还没有绑定订单信息，无法查询返利订单!!";
 
     private static final String USER_WALLET_ERROR ="\uD83D\uDE45抱歉钱包信息查询失败！请购买成功后将订单发送给我来绑定钱包";
-
+    private static final String USER_WITHD_DETAILS_ERROR = "\uD83D\uDE47自动提现功能暂时不可直接使用，请联系客服进行提现!!";
     @Autowired
     TbOrderDetailsTask tbOrderDetailsTask;
     @Autowired
@@ -80,7 +80,7 @@ public class WeChatParseMessage {
                 }
                 break;
             case "提现":
-
+                content = USER_WITHD_DETAILS_ERROR;
                 break;
             default:
                 content = WechatMessageUtil.menuText();
