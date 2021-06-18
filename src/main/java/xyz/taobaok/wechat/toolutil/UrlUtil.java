@@ -58,6 +58,10 @@ public class UrlUtil {
             map.put("url",urlParts[0]);
         }else if (urlParts[0].contains("yangkeduo.com")){
             map.put("platform","pdd");
+        }else if (TpwdUtil.isTpwd(urlParts[0]) != null){
+            //淘口令
+            map.put("platform","tklpwd");
+            map.put("tklpwd",TpwdUtil.isTpwd(urlParts[0]));
         }
         if(urlParts.length >1){
             String[] params = urlParts[1].split("&");
