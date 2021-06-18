@@ -42,14 +42,14 @@ public class TbOrderDetailsTask {
     TbOrderDetailsService tbOrderDetailsService;
 
     /**
-     * 每一小时拉取
+     * 每7分钟时拉取
      * 按照订单更新时间查询
      */
     @Async
-    @Scheduled(cron = "1 0 0/1 * * ?")
+    @Scheduled(cron = "1 0/7 * * * ?")
     public void getTbOrderDetailsHold(){
         long start = System.currentTimeMillis();
-        log.info("按照订单更新时间拉取所有订单任务开始.....");
+        log.info("淘宝，按照订单更新时间拉取所有订单任务开始.....");
         String startTime= DateTimeUtil.dateAddMinutes(15);
         String endTime = DateTimeUtil.getNowTime_EN();
         String str = null;
@@ -123,7 +123,7 @@ public class TbOrderDetailsTask {
      */
 //    @Scheduled(cron = "0/5 * * * * ?")
     @Async
-    @Scheduled(cron = "0 0/3 * * * ?")
+    @Scheduled(cron = "1 0/3 * * * ?")
     public void getTbOrderDetails(){
         long start = System.currentTimeMillis();
         log.info("拉取付款订单任务开始.....");
