@@ -167,7 +167,7 @@ public class WeChatParseMessage {
                 //绑定用户信息
                 int label = 0;
                 try {
-                    label = userInfoService.userInfoBind(parse.get("FromUserName"),tbOrderDetails.getSpecialId(),parse.get("FromUserName"));
+                    label = userInfoService.userInfoBind(parse.get("FromUserName"),tbOrderDetails.getSpecialId(),String.valueOf(System.currentTimeMillis()));
                 } catch (Exception e) {
                     log.error("保存用户信息异常");
                     status = USER_BIND_STATUS_ERROR;
