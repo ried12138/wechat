@@ -209,7 +209,7 @@ public class WeChatServiceImpl implements WeChatService {
                             ,jdItem.getImgUrl(),jdItem.getMaterialUrl());
                     String fromUserName = parse.get("FromUserName");
                     String openId = parse.get("openId");
-                    asyncMysqlUser.UserCheckInsert(fromUserName,openId,openId);
+                    asyncMysqlUser.UserCheckInsert(fromUserName,null,openId);
                 }
             } catch (Exception e) {
                 log.error("union API is error: Failed to get product information, itemId:{}",jdGoodsId);

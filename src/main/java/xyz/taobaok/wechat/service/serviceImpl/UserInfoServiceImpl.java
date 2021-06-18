@@ -37,7 +37,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Transactional
     @Override
     public int userInfoBind(String fromUserName, String specialId, String openId) {
-        WechatUserInfo wechatUserInfo = wechatUserInfoMapper.selectBySpecialId(specialId);
+        WechatUserInfo wechatUserInfo = wechatUserInfoMapper.selectBySpecialId(fromUserName);
         if (wechatUserInfo == null){
             WechatUserInfo user = new WechatUserInfo(fromUserName,openId,specialId);
             user.setUpdateTime(new Date());
@@ -49,6 +49,10 @@ public class UserInfoServiceImpl implements UserInfoService {
                 return 1;
             }
             return 0;
+        }else if(wechatUserInfo.getSpecialId() == null){
+            wechatUserInfo.setSpecialId(specialId);
+            wechatUserInfo.setUpdateTime(new Date());
+            return wechatUserInfoMapper.updateByPrimaryKeySelective(wechatUserInfo);
         }else{
             log.info("微信用户已存在：{}",fromUserName);
             return 0;
