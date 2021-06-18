@@ -67,26 +67,26 @@ public class TbOrderDetailsServiceImpl implements TbOrderDetailsService {
         odInfo.setPaymentOrder(odInt != null ? odInt : 0);
         odInfo.setSettlementOrder(okInt != null ? okInt : 0);
         List<WechatOrderDetails> list = new ArrayList<>();
-        Collections.sort(tbod, new Comparator<TbOrderDetails>() {
-            @Override
-            public int compare(TbOrderDetails tbOrderDetails, TbOrderDetails t1) {
-                if (DateTimeUtil.dateCompareNow(tbOrderDetails.getUpdateTime(),t1.getUpdateTime())){
-                    return 1;
-                }else{
-                    return 0;
-                }
-            }
-        });
-        Collections.sort(jdOrderDetails, new Comparator<JdOrderDetails>() {
-            @Override
-            public int compare(JdOrderDetails t2, JdOrderDetails t1) {
-                if (DateTimeUtil.dateCompareNow(t2.getUpdateTime(),t1.getUpdateTime())){
-                    return 1;
-                }else{
-                    return 0;
-                }
-            }
-        });
+//        Collections.sort(tbod, new Comparator<TbOrderDetails>() {
+//            @Override
+//            public int compare(TbOrderDetails tbOrderDetails, TbOrderDetails t1) {
+//                if (DateTimeUtil.dateCompareNow(tbOrderDetails.getUpdateTime(),t1.getUpdateTime())){
+//                    return 1;
+//                }else{
+//                    return 0;
+//                }
+//            }
+//        });
+//        Collections.sort(jdOrderDetails, new Comparator<JdOrderDetails>() {
+//            @Override
+//            public int compare(JdOrderDetails t2, JdOrderDetails t1) {
+//                if (DateTimeUtil.dateCompareNow(t2.getUpdateTime(),t1.getUpdateTime())){
+//                    return 1;
+//                }else{
+//                    return 0;
+//                }
+//            }
+//        });
         if (tbod.size() !=0){
             for (TbOrderDetails tbOrderDetails : tbod) {
                 WechatOrderDetails wechatOrderDetails = new WechatOrderDetails();
