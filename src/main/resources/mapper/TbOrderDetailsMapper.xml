@@ -67,6 +67,7 @@
         <include refid="Base_Column_List" />
         from tb_order_details
         where special_id = #{specialId,jdbcType=VARCHAR}
+        ORDER BY id DESC
         <if test="limit != null">
             LIMIT #{limit,jdbcType=INTEGER}
         </if>

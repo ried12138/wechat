@@ -30,10 +30,20 @@
         <include refid="Base_Column_List" />
         from jd_order_details
         where subUnionId = #{subUnionId,jdbcType=VARCHAR}
+        ORDER BY update_time DESC
         <if test="limit != null">
             LIMIT #{limit,jdbcType=INTEGER}
         </if>
     </select>
+
+    <!--通过subunionId获取用户订单数 -->
+    <select id="selectByPrimarySubUnionIdCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select
+        COUNT(*)
+        from jd_order_details
+        where subUnionId = #{subUnionId,jdbcType=VARCHAR}
+    </select>
+
 
     <!--通过subunionId获取用户订单信息 已付款和已确认收货 -->
     <select id="selectByPrimarySubUnionId" resultMap="BaseResultMap">
@@ -43,6 +53,13 @@
         where (validCode = 16 or validCode = 17) and subUnionId = #{subUnionId,jdbcType=VARCHAR} and `status` = #{status,jdbcType=INTEGER}
     </select>
 
+    <!--通过subunionId获取用户订单信息 已付款和已确认收货 -->
+    <select id="selectBySubUnionIdCount" resultMap="BaseResultMap">
+        select
+            COUNT(*)
+        from jd_order_details
+        where validCode = #{status,jdbcType=INTEGER} and subUnionId = #{subUnionId,jdbcType=VARCHAR}
+    </select>
     <!--通过订单号 -->
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 

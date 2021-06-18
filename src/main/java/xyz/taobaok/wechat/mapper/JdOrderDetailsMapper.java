@@ -15,7 +15,11 @@ public interface JdOrderDetailsMapper {
 
     List<JdOrderDetails> selectByPrimarySubUnionIdInfo(String subUnionId, Integer limit);
 
+    Integer selectByPrimarySubUnionIdCount(String subUnionId);
+
     List<JdOrderDetails> selectByPrimarySubUnionId(String subUnionId, Integer status);
+
+    Integer selectBySubUnionIdCount(String subUnionId, Integer status);
 
     List<JdOrderDetails> selectByPrimaryKey(String id);
 
