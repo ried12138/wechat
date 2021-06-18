@@ -286,7 +286,7 @@ public class TbOrderDetailsTask {
                     return null;
                 }
             }
-            if (check <= 0){
+            if (check >= 0){
                 log.info("成功插入一条订单信息：{}",JSONObject.toJSONString(tbODs));
                 return null;
             }

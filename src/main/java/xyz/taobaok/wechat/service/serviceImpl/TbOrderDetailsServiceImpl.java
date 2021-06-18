@@ -48,24 +48,32 @@ public class TbOrderDetailsServiceImpl implements TbOrderDetailsService {
     @Override
     public OrderDetailsInfo queryUserOrderDetailsInfo(String specialId) {
         //查询总订单数
-        Integer num = tbOrderDetailsMapper.selectByPrimarySpecialId(specialId);
-        num+= jdOrderDetailsMapper.selectByPrimarySubUnionIdCount(specialId);
+        int num = 0;
+        Integer tbNum = tbOrderDetailsMapper.selectByPrimarySpecialId(specialId);
+        Integer jd_Num = jdOrderDetailsMapper.selectByPrimarySubUnionIdCount(specialId);
+        num += tbNum != null ? tbNum : 0;
+        num += jd_Num != null ? jd_Num : 0;
         //查询已付款订单数
-        Integer odInt = tbOrderDetailsMapper.selectSpecialIdtkStatus(specialId,12);
-        odInt+= jdOrderDetailsMapper.selectBySubUnionIdCount(specialId, OrderConstant.JD_ORDER_STATUS_SUCCESS);
+        int odInt = 0;
+        Integer tbOdInt = tbOrderDetailsMapper.selectSpecialIdtkStatus(specialId,12);
+        Integer jdOdInt = jdOrderDetailsMapper.selectBySubUnionIdCount(specialId, OrderConstant.JD_ORDER_STATUS_SUCCESS);
+        odInt += tbOdInt != null ? tbOdInt : 0;
+        odInt += jdOdInt != null ? jdOdInt : 0;
         //查询结算订单数
-        Integer okInt = tbOrderDetailsMapper.selectSpecialIdtkStatus(specialId,3);
-        okInt+= jdOrderDetailsMapper.selectBySubUnionIdCount(specialId, OrderConstant.JD_ORDER_STATUS_RECEIV);
-
+        int okInt = 0;
+        Integer tbOkInt = tbOrderDetailsMapper.selectSpecialIdtkStatus(specialId,3);
+        Integer jdOkInt = jdOrderDetailsMapper.selectBySubUnionIdCount(specialId, OrderConstant.JD_ORDER_STATUS_RECEIV);
+        okInt += tbOkInt != null ? tbOkInt : 0;
+        okInt += jdOkInt != null ? jdOkInt : 0;
 
         //获取淘宝近期十个订单信息
         List<TbOrderDetails> tbod = tbOrderDetailsMapper.selectByPrimarySpecialIdInfo(specialId,5);
         //获取京东近期十个订单信息
         List<JdOrderDetails> jdOrderDetails = jdOrderDetailsMapper.selectByPrimarySubUnionIdInfo(specialId, 5);
         OrderDetailsInfo odInfo = new OrderDetailsInfo();
-        odInfo.setNum(num != null ? num : 0);
-        odInfo.setPaymentOrder(odInt != null ? odInt : 0);
-        odInfo.setSettlementOrder(okInt != null ? okInt : 0);
+        odInfo.setNum(num);
+        odInfo.setPaymentOrder(odInt);
+        odInfo.setSettlementOrder(okInt);
         List<WechatOrderDetails> list = new ArrayList<>();
 //        Collections.sort(tbod, new Comparator<TbOrderDetails>() {
 //            @Override
