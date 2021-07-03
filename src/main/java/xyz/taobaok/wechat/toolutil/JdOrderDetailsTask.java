@@ -159,6 +159,7 @@ public class JdOrderDetailsTask {
         jdOrderDetails.setSubunionid(String.valueOf(orderRow.getPositionId()));
         jdOrderDetails.setPaymonth(orderRow.getPayMonth());
         jdOrderDetails.setUpdateTime(new Date());
+        jdOrderDetails.setEstimateFee(new BigDecimal(orderRow.getEstimateFee()));
         return jdOrderDetails;
     }
 }

@@ -78,10 +78,10 @@ public class UserWalletServiceImpl implements UserWalletService {
             List<JdOrderDetails> jdOrderDetails = jdODMapper.selectByPrimarySubUnionId(userInfo.getSpecialId(), OrderConstant.REBATE_STATUS);
             for (JdOrderDetails jdOrderDetail : jdOrderDetails) {
                 if (jdOrderDetail.getValidcode() == OrderConstant.JD_ORDER_STATUS_RECEIV && jdOrderDetail.getStatus() == OrderConstant.REBATE_STATUS){
-                    balance = balance.add(jdOrderDetail.getActualcosprice());
-                    cumulationIncome.add(jdOrderDetail.getActualcosprice());
+                    balance = balance.add(jdOrderDetail.getEstimateFee());
+                    cumulationIncome.add(jdOrderDetail.getEstimateFee());
                 }else{
-                    pubShareFee = pubShareFee.add(jdOrderDetail.getEstimateCosPrice());
+                    pubShareFee = pubShareFee.add(jdOrderDetail.getEstimateFee());
                     jdOrderDetail.setStatus(2);
                 }
             }

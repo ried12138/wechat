@@ -50,7 +50,9 @@ public class WechatUserInfo implements Serializable {
         this.id = id;
         this.fromusername = fromusername;
         this.openId = openId;
-        this.specialId = specialId;
+        if(specialId != null){
+            this.specialId = specialId;
+        }
         this.createTime = createTime;
         this.updateTime = updateTime;
     }

@@ -30,7 +30,7 @@
         select
         <include refid="Base_Column_List" />
         from wechat_user_info
-        where FromUserName = #{fromUserName,jdbcType=VARCHAR}
+        where fromUserName = #{fromUserName,jdbcType=VARCHAR}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from wechat_user_info

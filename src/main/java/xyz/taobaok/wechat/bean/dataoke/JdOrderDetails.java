@@ -95,5 +95,11 @@ public class JdOrderDetails implements Serializable {
      * 订单状态，0=未完成(返利未发放)，1=已完成(返利已发放)
      */
     private Integer status;
+
+
+    /**
+     * 最终收益佣金，可能有变
+     */
+    private BigDecimal estimateFee;
     private static final long serialVersionUID = 1L;
 }
