@@ -19,10 +19,11 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="estimateFee" jdbcType="DECIMAL" property="estimateFee" />
   </resultMap>
   <sql id="Base_Column_List">
     id, orderId, parentId, orderTime, finishTime, modifyTime, plus, skuId, skuName, actualCosPrice, estimateCosPrice,
-    validCode, subUnionId, payMonth, create_time, update_time, `status`
+    validCode, subUnionId, payMonth, create_time, update_time, `status`, estimateFee
   </sql>
     <!--通过subunionId获取用户信息 -->
     <select id="selectByPrimarySubUnionIdInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
