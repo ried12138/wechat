@@ -23,7 +23,7 @@
         select
         <include refid="Base_Column_List" />
         from wechat_user_info
-        where special_id = #{specialId,jdbcType=VARCHAR}
+        where FromUserName = #{fromUserName,jdbcType=VARCHAR}
     </select>
     <!-- 根据FromUserName 查询用户信息-->
     <select id="selectBySpecialFromUserName" parameterType="java.lang.String" resultMap="BaseResultMap">
