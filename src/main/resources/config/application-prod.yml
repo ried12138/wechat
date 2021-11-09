@@ -4,7 +4,8 @@ dtk:
   appKey: 5e6c5505bb8eb
   appSecret: bee6c934e19eeb5d03462b413f57187a
   dataokeToken: 0ADCEAF6CCE07DF3
-  pid: mm_47344560_1373500358_110108500483
+#  pid: mm_47344560_1373500358_110108500483
+  pid: mm_47344560_1300550049_110010000489
   #高效转链
   getPrivilegeLink: https://openapi.dataoke.com/api/tb-service/get-privilege-link
   #获取商品详情
