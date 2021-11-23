@@ -22,7 +22,7 @@ public class TaobaoController {
     @Autowired
     TaobaoApiService taobaoApiService;
     /**
-    *  ggggggg
+    *  wwwwwww
     **/
     @RequestMapping(value = "/code",method = RequestMethod.GET,produces = "text/html;charset=utf-8")
     @ResponseBody
