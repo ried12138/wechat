@@ -21,11 +21,11 @@ public class TaobaoController {
     private static final String refreshToken = "";
     @Autowired
     TaobaoApiService taobaoApiService;
-
+    //DXFVSDFSD
     @RequestMapping(value = "/code",method = RequestMethod.GET,produces = "text/html;charset=utf-8")
     @ResponseBody
     public String index(@RequestParam("code")String code){
-
+        System.out.println("测试分支才有的打印分工会经费覆盖好久没规划局规划局");
         log.info("tb return code is :{}",refreshToken);
         String json="";
         try {
