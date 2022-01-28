@@ -56,7 +56,6 @@ public class UserWalletServiceImpl implements UserWalletService {
         }
         if (userInfo !=null){
             userWallet = userWalletMapper.queryUserWalletInfo(userInfo.getOpenId());
-
             //淘宝：获取 已结算、已付款、未返利的订单
             List<TbOrderDetails> tbOrderDetails = tbODMapper.selectByRebateOrder(userInfo.getSpecialId(), OrderConstant.REBATE_STATUS);
             //预估收益
