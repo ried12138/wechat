@@ -232,4 +232,35 @@ public class DtkApiService {
         paraMap.put("sign", SignMD5Util.getSignStr(paraMap, dtkManager.appSecret));
         return paraMap;
     }
+
+
+    /**
+     * 获取官方活动
+     * @param pageSize
+     * @param pageId
+     * @param type
+     * @return
+     */
+    public String senDaTaoKetbTopic(Integer pageSize,String pageId,Integer type){
+        TreeMap<String,Object> map = new TreeMap<String,Object>();
+        map.put("version","v1.2.0");
+        map.put("pageSize",pageSize);
+        map.put("pageId",pageId);
+        map.put("type",type);
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.tbTopic, paraMap);
+    }
+
+    /**
+     * 咚咚抢
+     * @param creatData
+     * @return
+     */
+    public String senDaTaoKeflashSale(String creatData) {
+        TreeMap<String,Object> map = new TreeMap<String,Object>();
+        map.put("version","v1.2.0");
+//        paraMap.put("roundTime",creatData);
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.flashSale, paraMap);
+    }
 }
