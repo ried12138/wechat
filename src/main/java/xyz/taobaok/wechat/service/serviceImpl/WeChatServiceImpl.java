@@ -8,7 +8,6 @@ import xyz.taobaok.wechat.bean.BaseMessage;
 import xyz.taobaok.wechat.bean.NewsMessages;
 import xyz.taobaok.wechat.bean.TextMessage;
 import xyz.taobaok.wechat.bean.WechatUserInfo;
-import xyz.taobaok.wechat.service.PasswordLibraryService;
 import xyz.taobaok.wechat.service.UserInfoService;
 import xyz.taobaok.wechat.service.WeChatService;
 import xyz.taobaok.wechat.toolutil.*;
@@ -45,9 +44,6 @@ public class WeChatServiceImpl implements WeChatService {
     AsyncMysqlServiceImpl asyncMysqlUser;
     @Autowired
     UserInfoService userInfoService;
-
-    @Autowired
-    PasswordLibraryService passwordLibraryService;
 
     /**
      * 服务器与微信公众号校验token值
@@ -104,11 +100,6 @@ public class WeChatServiceImpl implements WeChatService {
         switch (requestMap.get("MsgType")){
             case WechatMessageUtil.RESP_MESSAGE_TYPE_TEXT:  //文本
                 String str = requestMap.get("Content");
-                String success = passwordLibraryService.codeLanguage(str, fromUserName);
-                if (success != null){
-                    content = success;
-                    break;
-                }
                 Map<String, String> parse = UrlUtil.parse(str);
                 String platform = parse.get("platform");
                 parse.put("FromUserName",fromUserName);
