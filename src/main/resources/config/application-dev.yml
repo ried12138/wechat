@@ -26,6 +26,8 @@ dtk:
   tbTopic: https://openapi.dataoke.com/api/category/get-tb-topic-list
   #限时抢购
   flashSale: https://openapi.dataoke.com/api/category/ddq-goods-list
+  #热词
+  getTop100: https://openapi.dataoke.com/api/category/get-top100
 tb:
   appKey: 32659604
   secret: 4ecff47fbd6bf526fc2ba51f9b6cf4c0

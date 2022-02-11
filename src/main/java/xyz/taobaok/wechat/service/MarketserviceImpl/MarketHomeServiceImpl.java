@@ -10,9 +10,6 @@ import xyz.taobaok.wechat.bean.FlashSaleShop;
 import xyz.taobaok.wechat.service.MarketHomeService;
 import xyz.taobaok.wechat.service.serviceImpl.DtkApiService;
 import xyz.taobaok.wechat.toolutil.R;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**

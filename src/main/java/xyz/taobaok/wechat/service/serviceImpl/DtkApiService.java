@@ -1,5 +1,6 @@
 package xyz.taobaok.wechat.service.serviceImpl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -262,5 +263,20 @@ public class DtkApiService {
 //        paraMap.put("roundTime",creatData);
         TreeMap<String, Object> paraMap = getParaMap(map);
         return HttpUtils.sendGet(dtkManager.flashSale, paraMap);
+    }
+
+    public String SendDaTaoKeApiTop() {
+        TreeMap<String,Object> map = new TreeMap<String,Object>();
+        map.put("version","v1.0.1");
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.getTop100, paraMap);
+//        if (!jsonString.contains("成功")){
+//            return "";
+//        }
+//        JSONObject jsonObject = JSON.parseObject(jsonString);
+//        String data = jsonObject.getString("data");
+//        JSONObject jsonObject1 = JSON.parseObject(data);
+//        String hotWords = jsonObject1.getString("hotWords");
+//        return hotWords;
     }
 }

@@ -43,5 +43,8 @@ public class DtkManager {
     public String tbTopic;
     @Value("${dtk.flashSale}")
     public String flashSale;
+    @Value("${dtk.getTop100}")
+    public String getTop100;
+
 
 }
