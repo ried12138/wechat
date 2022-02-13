@@ -30,7 +30,7 @@ public class MarketHomeServiceImpl implements MarketHomeService {
      * @return
      */
     @Override
-    public R getActivityBanner() {
+    public R<List<ActivityBanner>> getActivityBanner() {
         String json = dtkApiService.senDaTaoKetbTopic(4, "1", 2);
         JSONObject jsonObject = JSON.parseObject(json);
         if (!json.contains("成功")){
@@ -48,7 +48,7 @@ public class MarketHomeServiceImpl implements MarketHomeService {
      * @return
      */
     @Override
-    public R getHomeFlashSale() {
+    public R<List<FlashSaleShop>> getHomeFlashSale() {
         String json = dtkApiService.senDaTaoKeflashSale(null);
         JSONObject jsonObject = JSON.parseObject(json);
         if (!json.contains("成功")){

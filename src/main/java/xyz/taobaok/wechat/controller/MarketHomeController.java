@@ -7,8 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import xyz.taobaok.wechat.bean.ActivityBanner;
+import xyz.taobaok.wechat.bean.FlashSaleShop;
 import xyz.taobaok.wechat.service.MarketHomeService;
 import xyz.taobaok.wechat.toolutil.R;
+
+import java.util.List;
 
 /**
  * 电商接口首页
@@ -28,13 +32,13 @@ public class MarketHomeController {
 
     @ApiOperation("活动首页banner")
     @GetMapping("/activityBanner")
-    public R homeActivityBanner(){
+    public R<List<ActivityBanner>> homeActivityBanner(){
         return marketHomeService.getActivityBanner();
     }
 
     @ApiOperation("限时抢购")
     @GetMapping("/flashSale")
-    public R homeFlashSale(){
+    public R<List<FlashSaleShop>> homeFlashSale(){
         return marketHomeService.getHomeFlashSale();
     }
 
