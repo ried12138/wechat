@@ -28,6 +28,8 @@ dtk:
   flashSale: https://openapi.dataoke.com/api/category/ddq-goods-list
   #热词
   getTop100: https://openapi.dataoke.com/api/category/get-top100
+  #关键字搜索
+  listSuperGoods: https://openapi.dataoke.com/api/goods/list-super-goods
 tb:
   appKey: 32659604
   secret: 4ecff47fbd6bf526fc2ba51f9b6cf4c0

@@ -1,6 +1,11 @@
 package xyz.taobaok.wechat.service;
 
+import xyz.taobaok.wechat.bean.dataoke.SearchWord;
+import xyz.taobaok.wechat.bean.dataoke.ShopImteList;
+import xyz.taobaok.wechat.bean.dataoke.TaobaoItem;
 import xyz.taobaok.wechat.toolutil.R;
+
+import java.util.List;
 
 /**
  * @Author weiranliu
@@ -9,5 +14,9 @@ import xyz.taobaok.wechat.toolutil.R;
  * @Version 1.0
  */
 public interface MarketSearchService {
-    R getHotword();
+    R<List<String>> getHotword();
+
+    R<List<ShopImteList>> searchWord(SearchWord imteIitle);
+
+    R<TaobaoItem> getItem(String itemId);
 }

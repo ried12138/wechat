@@ -45,6 +45,9 @@ public class DtkManager {
     public String flashSale;
     @Value("${dtk.getTop100}")
     public String getTop100;
+    @Value("${dtk.listSuperGoods}")
+    public String listSuperGoods;
+
 
 
 }
