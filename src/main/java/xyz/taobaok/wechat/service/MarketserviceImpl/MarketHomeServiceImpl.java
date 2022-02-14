@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.taobaok.wechat.bean.ActivityBanner;
 import xyz.taobaok.wechat.bean.FlashSaleShop;
+import xyz.taobaok.wechat.bean.dataoke.CheapSelect;
+import xyz.taobaok.wechat.bean.dataoke.ShopImteList;
 import xyz.taobaok.wechat.service.MarketHomeService;
 import xyz.taobaok.wechat.service.serviceImpl.DtkApiService;
 import xyz.taobaok.wechat.toolutil.R;
@@ -61,5 +63,20 @@ public class MarketHomeServiceImpl implements MarketHomeService {
             List<FlashSaleShop> flashSaleShops = JSONObject.parseArray(goodsList, FlashSaleShop.class);
             return R.ok(flashSaleShops);
         }
+    }
+
+
+    @Override
+    public R<List<ShopImteList>> getHomeJiukuaijiulist(CheapSelect cheapSelect) {
+        String json = dtkApiService.SendDaTaoKeNinePriceOPen(cheapSelect);
+        if (!json.contains("成功")){
+            return R.failed(null,"九块九包邮模块数据请求失败，请联系管理员");
+        }
+        JSONObject jsonObject = JSON.parseObject(json);
+        String data = jsonObject.getString("data");
+        JSONObject jsonObject1 = JSON.parseObject(data);
+        String list= jsonObject1.getString("list");
+        List<ShopImteList> shopList = JSONObject.parseArray(list, ShopImteList.class);
+        return R.ok(shopList);
     }
 }

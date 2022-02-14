@@ -123,4 +123,12 @@ public class ShopImteList {
     private Integer yunfeixian;           //0.不包运费险 1.包运费险
     @ApiModelProperty("预估淘礼金")
     private Integer estimateAmount;       //预估淘礼金
+    @ApiModelProperty("商品视频")
+    private String video;                 //商品视频
+    @ApiModelProperty("特色文案")
+    private String specialText;           //特色文案
+    @ApiModelProperty("是否属于天猫超市，0.不属于，1.属于")
+    private Integer tchaosi;            //是否属于天猫超市，0.不属于，1.属于
+
+
 }

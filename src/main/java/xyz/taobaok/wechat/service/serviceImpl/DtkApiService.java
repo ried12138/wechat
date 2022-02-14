@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import xyz.taobaok.wechat.bean.dataoke.CheapSelect;
 import xyz.taobaok.wechat.bean.dataoke.Dataa;
 import xyz.taobaok.wechat.bean.dataoke.DtktResponse;
 import xyz.taobaok.wechat.bean.dataoke.SearchWord;
@@ -290,5 +291,22 @@ public class DtkApiService {
         map.put("sort",itemTitle.getSort());
         TreeMap<String, Object> paraMap = getParaMap(map);
         return HttpUtils.sendGet(dtkManager.listSuperGoods, paraMap);
+    }
+
+    public String SendDaTaoKeNinePriceOPen(CheapSelect cheapSelect) {
+        TreeMap<String,Object> map = new TreeMap<String,Object>();
+        map.put("version","v2.0.0");
+        map.put("pageSize",cheapSelect.getPageSize());
+        map.put("pageId",cheapSelect.getPageId());
+        map.put("nineCid",cheapSelect.getNineCid());
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.opgoods, paraMap);
+    }
+
+    public String SendDaTaoKeCategory() {
+        TreeMap<String,Object> map = new TreeMap<String,Object>();
+        map.put("version","v1.1.0");
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.category, paraMap);
     }
 }

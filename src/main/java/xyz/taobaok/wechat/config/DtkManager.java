@@ -47,7 +47,8 @@ public class DtkManager {
     public String getTop100;
     @Value("${dtk.listSuperGoods}")
     public String listSuperGoods;
-
-
-
+    @Value("${dtk.opgoods}")
+    public String opgoods;
+    @Value("${dtk.category}")
+    public String category;
 }

@@ -31,7 +31,14 @@ public class MarketSearchServiceImpl implements MarketSearchService {
 
     @Override
     public R<List<String>> getHotword() {
-        String hotWords = dtkApiService.SendDaTaoKeApiTop();
+        String json = dtkApiService.SendDaTaoKeApiTop();
+        if (!json.contains("成功")){
+            return R.failed(null,"未知错误，请联系管理员");
+        }
+        JSONObject jsonObject = JSON.parseObject(json);
+        String data = jsonObject.getString("data");
+        JSONObject jsonObject1 = JSON.parseObject(data);
+        String hotWords = jsonObject1.getString("hotWords");
         List<String> str = JSONObject.parseObject(hotWords, List.class);
         return R.ok(str);
     }

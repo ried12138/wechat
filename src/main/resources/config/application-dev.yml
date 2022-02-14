@@ -30,6 +30,10 @@ dtk:
   getTop100: https://openapi.dataoke.com/api/category/get-top100
   #关键字搜索
   listSuperGoods: https://openapi.dataoke.com/api/goods/list-super-goods
+  #9块9包邮
+  opgoods: https://openapi.dataoke.com/api/goods/nine/op-goods-list
+  #超级分类
+  category: https://openapi.dataoke.com/api/category/get-super-category
 tb:
   appKey: 32659604
   secret: 4ecff47fbd6bf526fc2ba51f9b6cf4c0

@@ -2,6 +2,8 @@ package xyz.taobaok.wechat.service;
 
 import xyz.taobaok.wechat.bean.ActivityBanner;
 import xyz.taobaok.wechat.bean.FlashSaleShop;
+import xyz.taobaok.wechat.bean.dataoke.CheapSelect;
+import xyz.taobaok.wechat.bean.dataoke.ShopImteList;
 import xyz.taobaok.wechat.toolutil.R;
 
 import java.util.List;
@@ -17,4 +19,6 @@ public interface MarketHomeService {
     R<List<ActivityBanner>> getActivityBanner();
 
     R<List<FlashSaleShop>> getHomeFlashSale();
+
+    R<List<ShopImteList>> getHomeJiukuaijiulist(CheapSelect cheapSelect);
 }
