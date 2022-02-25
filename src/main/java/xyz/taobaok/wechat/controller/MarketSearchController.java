@@ -30,7 +30,6 @@ public class MarketSearchController {
     @Autowired
     MarketSearchService marketSearchService;
 
-
     @ApiOperation("热门搜索，热词")
     @GetMapping("/hotword")
     public R<List<String>> hotword(){
@@ -45,6 +44,10 @@ public class MarketSearchController {
     @ApiOperation("获取商品详情")
     @GetMapping("/item")
     public R<TaobaoItem> item(String itemId){
+        itemId = itemId+1;
         return marketSearchService.getItem(itemId);
     }
+
+
+
 }
