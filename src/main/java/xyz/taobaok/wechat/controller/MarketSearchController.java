@@ -45,6 +45,7 @@ public class MarketSearchController {
     @GetMapping("/item")
     public R<TaobaoItem> item(String itemId){
         itemId = itemId+1;
+        itemId = itemId+1+itemId;
         return marketSearchService.getItem(itemId);
     }
 
