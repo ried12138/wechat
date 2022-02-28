@@ -44,8 +44,6 @@ public class MarketSearchController {
     @ApiOperation("获取商品详情")
     @GetMapping("/item")
     public R<TaobaoItem> item(String itemId){
-        itemId = itemId+1;
-        itemId = itemId+1+itemId;
         return marketSearchService.getItem(itemId);
     }
 
