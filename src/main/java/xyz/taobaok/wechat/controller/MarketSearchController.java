@@ -41,12 +41,11 @@ public class MarketSearchController {
     public R<List<ShopImteList>> searchWord(@RequestBody SearchWord itemTitle){
         return marketSearchService.searchWord(itemTitle);
     }
+
     @ApiOperation("获取商品详情")
     @GetMapping("/item")
     public R<TaobaoItem> item(String itemId){
         return marketSearchService.getItem(itemId);
     }
-
-
 
 }
