@@ -1,11 +1,14 @@
 package xyz.taobaok.wechat.service.serviceImpl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import xyz.taobaok.wechat.bean.dataoke.CheapSelect;
 import xyz.taobaok.wechat.bean.dataoke.Dataa;
 import xyz.taobaok.wechat.bean.dataoke.DtktResponse;
+import xyz.taobaok.wechat.bean.dataoke.SearchWord;
 import xyz.taobaok.wechat.config.DtkManager;
 import xyz.taobaok.wechat.config.JdManager;
 import xyz.taobaok.wechat.toolutil.DateTimeUtil;
@@ -155,9 +158,8 @@ public class DtkApiService {
      * 获取商品详细信息
      * @param id
      * @return
-     * @throws UnsupportedEncodingException
      */
-    public String SenDaTaoKeApiGoods(String id) throws UnsupportedEncodingException {
+    public String SenDaTaoKeApiGoods(String id){
         TreeMap<String, Object> map = new TreeMap<>();
         map.put("version", "v1.2.1");
         map.put("goodsId", id);
@@ -231,5 +233,80 @@ public class DtkApiService {
         paraMap.putAll(map);
         paraMap.put("sign", SignMD5Util.getSignStr(paraMap, dtkManager.appSecret));
         return paraMap;
+    }
+
+
+    /**
+     * 获取官方活动
+     * @param pageSize
+     * @param pageId
+     * @param type
+     * @return
+     */
+    public String senDaTaoKetbTopic(Integer pageSize,String pageId,Integer type){
+        TreeMap<String,Object> map = new TreeMap<String,Object>();
+        map.put("version","v1.2.0");
+        map.put("pageSize",pageSize);
+        map.put("pageId",pageId);
+        map.put("type",type);
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.tbTopic, paraMap);
+    }
+
+    /**
+     * 咚咚抢
+     * @param creatData
+     * @return
+     */
+    public String senDaTaoKeflashSale(String creatData) {
+        TreeMap<String,Object> map = new TreeMap<String,Object>();
+        map.put("version","v1.2.0");
+//        paraMap.put("roundTime",creatData);
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.flashSale, paraMap);
+    }
+
+    public String SendDaTaoKeApiTop() {
+        TreeMap<String,Object> map = new TreeMap<String,Object>();
+        map.put("version","v1.0.1");
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.getTop100, paraMap);
+//        if (!jsonString.contains("成功")){
+//            return "";
+//        }
+//        JSONObject jsonObject = JSON.parseObject(jsonString);
+//        String data = jsonObject.getString("data");
+//        JSONObject jsonObject1 = JSON.parseObject(data);
+//        String hotWords = jsonObject1.getString("hotWords");
+//        return hotWords;
+    }
+
+    public String SendDaTaoKeListSuperGoods(SearchWord itemTitle) {
+        TreeMap<String,Object> map = new TreeMap<String,Object>();
+        map.put("version","v1.2.1");
+        map.put("type",0);
+        map.put("pageId",itemTitle.getPageId());
+        map.put("pageSize",itemTitle.getPageSize());
+        map.put("keyWords",itemTitle.getWordName());
+        map.put("sort",itemTitle.getSort());
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.listSuperGoods, paraMap);
+    }
+
+    public String SendDaTaoKeNinePriceOPen(CheapSelect cheapSelect) {
+        TreeMap<String,Object> map = new TreeMap<String,Object>();
+        map.put("version","v2.0.0");
+        map.put("pageSize",cheapSelect.getPageSize());
+        map.put("pageId",cheapSelect.getPageId());
+        map.put("nineCid",cheapSelect.getNineCid());
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.opgoods, paraMap);
+    }
+
+    public String SendDaTaoKeCategory() {
+        TreeMap<String,Object> map = new TreeMap<String,Object>();
+        map.put("version","v1.1.0");
+        TreeMap<String, Object> paraMap = getParaMap(map);
+        return HttpUtils.sendGet(dtkManager.category, paraMap);
     }
 }

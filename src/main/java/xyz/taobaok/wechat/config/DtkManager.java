@@ -39,7 +39,16 @@ public class DtkManager {
     public String parseTkl;
     @Value("${dtk.jdOrderDetails}")
     public String jdOrderDetails;
-
-
-
+    @Value("${dtk.tbTopic}")
+    public String tbTopic;
+    @Value("${dtk.flashSale}")
+    public String flashSale;
+    @Value("${dtk.getTop100}")
+    public String getTop100;
+    @Value("${dtk.listSuperGoods}")
+    public String listSuperGoods;
+    @Value("${dtk.opgoods}")
+    public String opgoods;
+    @Value("${dtk.category}")
+    public String category;
 }

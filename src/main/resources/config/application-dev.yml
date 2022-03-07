@@ -22,6 +22,18 @@ dtk:
   creatTkl: https://openapi.dataoke.com/api/tb-service/creat-taokouling
   #淘口令解析
   parseTkl: https://openapi.dataoke.com/api/tb-service/parse-taokouling
+  #淘宝官方活动推荐
+  tbTopic: https://openapi.dataoke.com/api/category/get-tb-topic-list
+  #限时抢购
+  flashSale: https://openapi.dataoke.com/api/category/ddq-goods-list
+  #热词
+  getTop100: https://openapi.dataoke.com/api/category/get-top100
+  #关键字搜索
+  listSuperGoods: https://openapi.dataoke.com/api/goods/list-super-goods
+  #9块9包邮
+  opgoods: https://openapi.dataoke.com/api/goods/nine/op-goods-list
+  #超级分类
+  category: https://openapi.dataoke.com/api/category/get-super-category
 tb:
   appKey: 32659604
   secret: 4ecff47fbd6bf526fc2ba51f9b6cf4c0
