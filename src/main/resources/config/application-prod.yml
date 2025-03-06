@@ -1,55 +1,5 @@
 wechat:
   token: "0ADCEAF6CCE07DF3"
-dtk:
-  appKey: 5e6c5505bb8eb
-  appSecret: bee6c934e19eeb5d03462b413f57187a
-  dataokeToken: 0ADCEAF6CCE07DF3
-#  pid: mm_47344560_1373500358_110108500483
-  pid: mm_47344560_1300550049_110010000489
-  #高效转链
-  getPrivilegeLink: https://openapi.dataoke.com/api/tb-service/get-privilege-link
-  #获取商品详情
-  details: https://openapi.dataoke.com/api/goods/get-goods-details
-  #京东商品转链
-  jdItemConvert: https://openapi.dataoke.com/api/dels/jd/kit/promotion-union-convert
-  # 京东订单拉取
-  jdOrderDetails: https://openapi.dataoke.com/api/dels/jd/order/get-official-order-list
-  #淘口令转淘口令
-  tklConvert: https://openapi.dataoke.com/api/tb-service/twd-to-twd
-  #淘宝订单拉取
-  orderDetails: https://openapi.dataoke.com/api/tb-service/get-order-details
-  #生成淘口令
-  creatTkl: https://openapi.dataoke.com/api/tb-service/creat-taokouling
-  #淘口令解析
-  parseTkl: https://openapi.dataoke.com/api/tb-service/parse-taokouling
-  #淘宝官方活动推荐
-  tbTopic: https://openapi.dataoke.com/api/category/get-tb-topic-list
-  #限时抢购
-  flashSale: https://openapi.dataoke.com/api/category/ddq-goods-list
-  #热词
-  getTop100: https://openapi.dataoke.com/api/category/get-top100
-  #关键字搜索
-  listSuperGoods: https://openapi.dataoke.com/api/goods/list-super-goods
-  #9块9包邮
-  opgoods: https://openapi.dataoke.com/api/goods/nine/op-goods-list
-  #超级分类
-  category: https://openapi.dataoke.com/api/category/get-super-category
-tb:
-  appKey: 32659604
-  secret: 4ecff47fbd6bf526fc2ba51f9b6cf4c0
-  url: https://eco.taobao.com/router/rest
-jd:
-  appKey: f18076bf3df77f0a45bd90b11d934b44
-  appSecret: 4120a10bb75444c2998b0b5f1d7facab
-  routerUrl: https://api.jd.com/routerjson
-  unionId: 1002425367
-  #根据skuid查询商品信息
-  unionGoodsItemUrl: jd.union.open.goods.promotiongoodsinfo.query
-  unionConvertUrl: jd.union.open.promotion.bysubunionid.get
-pdd:
-  appKey: 50f12321d152448f8dab9b4456269d3b
-  appSecret: 05b5f3ba0010042d2581cea16653becbc9efa16f
-  pid: 9941199_188648413
 server:
   port: 80
   tomcat:
@@ -62,8 +12,27 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/wechatDB?useUnicode=true&autoReconnect=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://39.106.75.80:54306/wechatDB?useUnicode=true&autoReconnect=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: liuweiran12138
+    password: liuwr12138..who
     druid:
       db-type: com.alibaba.druid.pool.DruidDataSource
+  #redis数据库的配置
+#  redis:
+#    host: 39.106.75.80
+#    port: 54379
+#    database: 0
+#    # password: yourpassword
+#    lettuce:
+#      pool:
+#        max-active: 8
+#        max-wait: -1ms
+#        max-idle: 8
+#        min-idle: 0
+#微信校验信息
+wx:
+  mp:
+    appId: "wx1a4ad02c7c500599"
+    secret: "cf419db20b750aaa63007ed3209c9783"
+    token: "0ADCEAF6CCE07DF3"
+    aes-key: "kOQ1eQ4XnWl24C07XoNfjHiJ0oa8nxa20O97yqNlds6" # 加密模式需要

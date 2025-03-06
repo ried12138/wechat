@@ -1,14 +1,9 @@
 spring:
-  mvc:
-    view:
-      prefix: classpath:/templates/
-      suffix: .html
   logpath: /Users/liuweiran/data/log
   application:
     name: waiter-Sale
   profiles:
-    active: @spring.profiles.active@
-
+    active: '@spring.profiles.active@'
 logging:
   config: 'classpath:logback-spring.xml'
   level:
@@ -17,4 +12,4 @@ logback:
   file: ${spring.logpath}/${spring.application.name}
 mybatis:
   mapper-locations: classpath:/mapper/*Mapper.xml
-  type-aliases-package: xyz.taobaok.wechat.mapper
+  type-aliases-package: xin.pwdkeeper.wechat.mapper
