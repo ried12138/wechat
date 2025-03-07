@@ -6,6 +6,10 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static me.chanjar.weixin.common.api.WxConsts.EventType.SUBSCRIBE;
 import static me.chanjar.weixin.common.api.WxConsts.EventType.UNSUBSCRIBE;
 import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType.EVENT;
@@ -21,6 +25,7 @@ import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType.TEXT;
 @Slf4j
 @RestController
 @RequestMapping("/")
+@CrossOrigin(origins = "*")
 public class WeChatController {
 
     @Autowired
@@ -125,5 +130,26 @@ public class WeChatController {
     @ResponseBody
     public String index(){
         return "is ok";
+    }
+
+    /**
+     * 新增的codeCheck接口
+     * @return 返回接收到的字符串
+     */
+
+    @PostMapping(value = "checkCode",produces = "application/json;charset=utf-8")
+    public Map<String, Object> checkCode(@RequestBody Map<String, String> request) {
+        String code = request.get("code");
+        // 这里添加验证码验证逻辑
+        boolean isValid = validateCode(code); // 假设有一个验证方法
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", isValid);
+        return response;
+    }
+
+    private boolean validateCode(String code) {
+        // 验证逻辑
+        return "123456".equals(code);
     }
 }

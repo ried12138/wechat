@@ -18,17 +18,36 @@ spring:
     druid:
       db-type: com.alibaba.druid.pool.DruidDataSource
   #redis数据库的配置
-#  redis:
-#    host: 39.106.75.80
-#    port: 54379
-#    database: 0
-#    # password: yourpassword
-#    lettuce:
-#      pool:
-#        max-active: 8
-#        max-wait: -1ms
-#        max-idle: 8
-#        min-idle: 0
+  data:
+    redis:
+      client-type: jedis
+      host: 39.106.75.80
+      port: 54379
+      database: 0
+      # password: yourpassword
+      jedis:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+#日志数据的配置
+  logpath: /logs
+logging:
+  file:
+    name: ${spring.logpath}/${spring.application.name}-info.log
+    path: ${spring.logpath}
+  level:
+    root: INFO
+    org.springframework.boot.autoconfigure: ERROR
+  pattern:
+    file: '%d{yyyy-MM-dd HH:mm:ss} - %msg%n'
+  logback:
+    rollingpolicy:
+      max-file-size: 500MB
+      max-history: 7
+      total-size-cap: 10GB
+      clean-history-on-start: true
 #微信校验信息
 wx:
   mp:
@@ -36,3 +55,5 @@ wx:
     secret: "cf419db20b750aaa63007ed3209c9783"
     token: "0ADCEAF6CCE07DF3"
     aes-key: "kOQ1eQ4XnWl24C07XoNfjHiJ0oa8nxa20O97yqNlds6" # 加密模式需要
+deepseek:
+  apiKey: "sk-eca12b3a36df4f16a70df45f910f252d"

@@ -12,9 +12,9 @@ spring:
     druid:
       db-type: com.alibaba.druid.pool.DruidDataSource
   data:
+    #redis数据库的配置
     redis:
       client-type: jedis
-  #redis数据库的配置
       host: 39.106.75.80
       port: 54379
       database: 0
@@ -25,6 +25,22 @@ spring:
           max-wait: -1ms
           max-idle: 8
           min-idle: 0
+  logpath: /Users/liuweiran/data/log
+logging:
+  file:
+    name: ${spring.logpath}/${spring.application.name}-info.log
+    path: ${spring.logpath}
+  level:
+    root: INFO
+    org.springframework.boot.autoconfigure: ERROR
+  pattern:
+    file: '%d{yyyy-MM-dd HH:mm:ss} - %msg%n'
+  logback:
+    rollingpolicy:
+      max-file-size: 500MB
+      max-history: 7
+      total-size-cap: 10GB
+      clean-history-on-start: true
 #微信校验信息
 wx:
   mp:
