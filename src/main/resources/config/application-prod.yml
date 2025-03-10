@@ -54,6 +54,6 @@ wx:
     appId: "wx1a4ad02c7c500599"
     secret: "cf419db20b750aaa63007ed3209c9783"
     token: "0ADCEAF6CCE07DF3"
-    aes-key: "kOQ1eQ4XnWl24C07XoNfjHiJ0oa8nxa20O97yqNlds6" # 加密模式需要
+    aesKey: "kOQ1eQ4XnWl24C07XoNfjHiJ0oa8nxa20O97yqNlds6" # 加密模式需要
 deepseek:
   apiKey: "sk-eca12b3a36df4f16a70df45f910f252d"

@@ -30,6 +30,7 @@ public class WechatConfig {
     private String appId;
     private String secret;
     private String token;
+    private String aesKey;
 
     @Bean
     public WxMpConfigStorage wxMpConfigStorage() {
@@ -37,6 +38,7 @@ public class WechatConfig {
         config.setAppId(appId);
         config.setSecret(secret);
         config.setToken(token);
+        config.setAesKey(aesKey);
         return config;
     }
 }

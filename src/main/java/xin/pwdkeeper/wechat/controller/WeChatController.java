@@ -25,7 +25,6 @@ import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType.TEXT;
 @Slf4j
 @RestController
 @RequestMapping("/")
-@CrossOrigin(origins = "*")
 public class WeChatController {
 
     @Autowired
@@ -50,6 +49,16 @@ public class WeChatController {
         return "非法请求";
     }
 
+    /**
+     * 微信用户信息处理接口
+     * @param requestBody
+     * @param signature
+     * @param timestamp
+     * @param nonce
+     * @param encType
+     * @param msgSignature
+     * @return
+     */
     @PostMapping(value = "wechat",produces = "application/xml; charset=UTF-8")
     @ResponseBody
     public String handleMessage(@RequestBody String requestBody,
@@ -142,7 +151,6 @@ public class WeChatController {
         String code = request.get("code");
         // 这里添加验证码验证逻辑
         boolean isValid = validateCode(code); // 假设有一个验证方法
-
         Map<String, Object> response = new HashMap<>();
         response.put("success", isValid);
         return response;

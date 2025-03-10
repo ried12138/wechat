@@ -20,6 +20,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     protected ResponseEntity handleExceptions(Exception ex, WebRequest request) {
+        // 记录详细的错误信息
+        log.error("发生异常：\n{}", ex.getMessage(), ex);
+
         if ("org.apache.catalina.connector.ClientAbortException".equals(ex.getClass().getName())) {
             log.error("发生clientAbortException：\n{}",request.toString());
 //            return null;
