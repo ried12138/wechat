@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="xin.pwdkeeper.wechat.mapper.DictTypeMapper">
+    <insert id="insert" parameterType="xin.pwdkeeper.wechat.bean.DictType">
+        INSERT INTO dict_type (type_name, description, flag)
+        VALUES (#{typeName}, #{description}, #{flag})
+    </insert>
+
+    <select id="selectById" resultType="xin.pwdkeeper.wechat.bean.DictType">
+        SELECT * FROM dict_type WHERE type_id = #{typeId}
+    </select>
+
+    <select id="selectAll" resultType="xin.pwdkeeper.wechat.bean.DictType">
+        SELECT * FROM dict_type
+    </select>
+
+    <update id="update" parameterType="xin.pwdkeeper.wechat.bean.DictType">
+        UPDATE dict_type
+        SET type_name = #{typeName}, description = #{description}, flag = #{flag}
+        WHERE type_id = #{typeId}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM dict_type WHERE type_id = #{typeId}
+    </delete>
+</mapper>

@@ -1,65 +1,27 @@
 package xin.pwdkeeper.wechat.bean;
 
-import java.io.Serializable;
-import java.util.Date;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
- * 微信用户信息
- * wechat_user_info
- * @author 
+ * 微信用户信息实体类
  */
 @Data
-public class WechatUserInfo implements Serializable {
-    /**
-     * id
-     */
+public class WechatUserInfo {
+    // 主键
     private Integer id;
-
-    /**
-     * 微信账号
-     */
-    private String fromusername;
-
-    /**
-     * 对外开放用户标示
-     */
-    private String openId;
-
-    /**
-     * 淘宝绑定唯一标示sid
-     */
-    private String specialId;
-
-    /**
-     * 创建信息时间戳
-     */
+    // 微信用户唯一标识openId
+    private String userOpenId;
+    // 用户微信账号
+    private String userName;
+    // 手机号
+    private String phone;
+    // 邮箱地址
+    private String email;
+    // 是否处于关注公众号的状态 0=没关注 1=关注
+    private Integer followStatus;
+    // 创建时间
     private Date createTime;
 
-    /**
-     * 最后一次修改信息时间戳
-     */
-    private Date updateTime;
-
-    private static final long serialVersionUID = 1L;
-
-    public WechatUserInfo() {
-    }
-
-    public WechatUserInfo(Integer id, String fromusername, String openId, String specialId, Date createTime, Date updateTime) {
-        this.id = id;
-        this.fromusername = fromusername;
-        this.openId = openId;
-        if(specialId != null){
-            this.specialId = specialId;
-        }
-        this.createTime = createTime;
-        this.updateTime = updateTime;
-    }
-
-    public WechatUserInfo(String fromusername, String openId, String specialId) {
-        this.fromusername = fromusername;
-        this.openId = openId;
-        this.specialId = specialId;
-    }
 }

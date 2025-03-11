@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="xin.pwdkeeper.wechat.mapper.AccountInfoMapper">
+    <insert id="insert" parameterType="xin.pwdkeeper.wechat.bean.AccountInfo">
+        INSERT INTO account_info (user_id, class_type, account, password, other_secret, bind_phone, bind_email, bind_answer, bind_ask, creation_time, update_time, flag)
+        VALUES (#{userId}, #{classType}, #{account}, #{password}, #{otherSecret}, #{bindPhone}, #{bindEmail}, #{bindAnswer}, #{bindAsk}, #{creationTime}, #{updateTime}, #{flag})
+    </insert>
+
+    <select id="selectById" resultType="xin.pwdkeeper.wechat.bean.AccountInfo">
+        SELECT * FROM account_info WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultType="xin.pwdkeeper.wechat.bean.AccountInfo">
+        SELECT * FROM account_info
+    </select>
+
+    <update id="update" parameterType="xin.pwdkeeper.wechat.bean.AccountInfo">
+        UPDATE account_info
+        SET user_id = #{userId}, class_type = #{classType}, account = #{account}, password = #{password}, other_secret = #{otherSecret},
+            bind_phone = #{bindPhone}, bind_email = #{bindEmail}, bind_answer = #{bindAnswer}, bind_ask = #{bindAsk}, creation_time = #{creationTime},
+            update_time = #{updateTime}, flag = #{flag}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM account_info WHERE id = #{id}
+    </delete>
+</mapper>

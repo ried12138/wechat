@@ -1,11 +1,10 @@
-package xin.pwdkeeper.wechat.service.serviceImpl;
+package xin.pwdkeeper.wechat.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xin.pwdkeeper.wechat.bean.BaseMessage;
 import xin.pwdkeeper.wechat.bean.TextMessage;
-import xin.pwdkeeper.wechat.service.UserInfoService;
 import xin.pwdkeeper.wechat.toolutil.UrlUtil;
 import xin.pwdkeeper.wechat.toolutil.WechatMessageUtil;
 import xin.pwdkeeper.wechat.service.WeChatService;
@@ -34,8 +33,7 @@ public class WeChatServiceImpl implements WeChatService {
     WeChatParseEvent weChatParseEvent;
 //    @Autowired
 //    WeChatParseMessage weChatParseMessage;
-    @Autowired
-    UserInfoService userInfoService;
+
 
     /**
      * 服务器与微信公众号校验token值

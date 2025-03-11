@@ -1,23 +1,15 @@
 package xin.pwdkeeper.wechat.mapper;
 
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Mapper;
 import xin.pwdkeeper.wechat.bean.WechatUserInfo;
 
-@Repository
+import java.util.List;
+
+@Mapper
 public interface WechatUserInfoMapper {
-    int deleteByPrimaryKey(Integer id);
-
-    int insert(WechatUserInfo record);
-
-    int insertSelective(WechatUserInfo record);
-
-    WechatUserInfo selectByPrimaryKey(Integer id);
-
-    WechatUserInfo selectBySpecialId(String fromUserName);
-
-    int updateByPrimaryKeySelective(WechatUserInfo record);
-
-    int updateByPrimaryKey(WechatUserInfo record);
-
-    WechatUserInfo selectBySpecialFromUserName(String fromUserName);
+    void insert(WechatUserInfo wechatUserInfo);
+    WechatUserInfo selectById(int id);
+    List<WechatUserInfo> selectAll();
+    void update(WechatUserInfo wechatUserInfo);
+    void delete(int id);
 }

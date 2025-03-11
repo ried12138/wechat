@@ -1,6 +1,5 @@
-package xin.pwdkeeper.wechat.service.serviceImpl;
+package xin.pwdkeeper.wechat.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**

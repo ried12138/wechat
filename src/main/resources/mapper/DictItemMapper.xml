@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="xin.pwdkeeper.wechat.mapper.DictItemMapper">
+    <insert id="insert" parameterType="xin.pwdkeeper.wechat.bean.DictItem">
+        INSERT INTO dict_item (type_id, item_code, item_value, description, sort_order)
+        VALUES (#{typeId}, #{itemCode}, #{itemValue}, #{description}, #{sortOrder})
+    </insert>
+
+    <select id="selectById" resultType="xin.pwdkeeper.wechat.bean.DictItem">
+        SELECT * FROM dict_item WHERE item_id = #{itemId}
+    </select>
+
+    <select id="selectAll" resultType="xin.pwdkeeper.wechat.bean.DictItem">
+        SELECT * FROM dict_item
+    </select>
+
+    <update id="update" parameterType="xin.pwdkeeper.wechat.bean.DictItem">
+        UPDATE dict_item
+        SET type_id = #{typeId}, item_code = #{itemCode}, item_value = #{itemValue}, description = #{description}, sort_order = #{sortOrder}
+        WHERE item_id = #{itemId}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM dict_item WHERE item_id = #{itemId}
+    </delete>
+</mapper>
