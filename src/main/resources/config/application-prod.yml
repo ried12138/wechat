@@ -18,19 +18,16 @@ spring:
     druid:
       db-type: com.alibaba.druid.pool.DruidDataSource
   #redis数据库的配置
-  data:
-    redis:
-      client-type: jedis
-      host: 39.106.75.80
-      port: 54379
-      database: 0
-      # password: yourpassword
-      jedis:
-        pool:
-          max-active: 8
-          max-wait: -1ms
-          max-idle: 8
-          min-idle: 0
+  redis:
+    host: 39.106.75.80
+    port: 54379
+    database: 0
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
 #日志数据的配置
   logpath: /logs
 logging:

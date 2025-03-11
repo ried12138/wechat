@@ -11,20 +11,17 @@ spring:
     password: liuwr12138..who
     druid:
       db-type: com.alibaba.druid.pool.DruidDataSource
-  data:
-    #redis数据库的配置
-    redis:
-      client-type: jedis
-      host: 39.106.75.80
-      port: 54379
-      database: 0
-      # password: yourpassword
-      jedis:
-        pool:
-          max-active: 8
-          max-wait: -1ms
-          max-idle: 8
-          min-idle: 0
+  #redis数据库的配置
+  redis:
+    host: 39.106.75.80
+    port: 54379
+    database: 0
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
   logpath: /Users/liuweiran/data/log
 logging:
   file:

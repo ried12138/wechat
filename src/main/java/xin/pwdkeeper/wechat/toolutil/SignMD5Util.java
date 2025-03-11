@@ -2,10 +2,7 @@ package xin.pwdkeeper.wechat.toolutil;
 
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @Title: SignMD5Util
@@ -78,6 +75,19 @@ public class SignMD5Util {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         String dateString = formatter.format(currentTime);
         return dateString;
+    }
+    /**
+     * 生成6位数的验证码
+     *
+     * @return 验证码
+     */
+    public static String generateVerificationCode() {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            sb.append(random.nextInt(10));
+        }
+        return sb.toString();
     }
 }
 

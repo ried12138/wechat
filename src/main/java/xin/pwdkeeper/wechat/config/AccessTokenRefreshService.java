@@ -23,6 +23,7 @@ public class AccessTokenRefreshService {
     private WxMpService wxMpService;
 
     /**
+     * 刷新微信token值的定时任务
      * 调整刷新间隔为7100秒（1小时58分），预留更多缓冲时间：
      */
     @Scheduled(fixedRate = 7100 * 1000)  //每2小时刷新

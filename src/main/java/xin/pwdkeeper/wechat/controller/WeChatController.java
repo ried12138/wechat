@@ -6,10 +6,11 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import xin.pwdkeeper.wechat.bean.R;
+import xin.pwdkeeper.wechat.bean.RequestParams;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import static me.chanjar.weixin.common.api.WxConsts.EventType.SUBSCRIBE;
 import static me.chanjar.weixin.common.api.WxConsts.EventType.UNSUBSCRIBE;
 import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType.EVENT;
@@ -24,7 +25,7 @@ import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType.TEXT;
  */
 @Slf4j
 @RestController
-@RequestMapping("/")
+@RequestMapping("/wechat")
 public class WeChatController {
 
     @Autowired
@@ -38,7 +39,7 @@ public class WeChatController {
      * @param echostr    随机字符串
      * @return
      */
-    @GetMapping(value = "wechat",produces = "text/plain;charset=utf-8")
+    @GetMapping(value = "/wechatToken",produces = "text/plain;charset=utf-8")
     public String checkSignature(@RequestParam(name = "signature") String signature,
                                  @RequestParam(name = "timestamp") String timestamp,
                                  @RequestParam(name = "nonce") String nonce,
@@ -59,7 +60,7 @@ public class WeChatController {
      * @param msgSignature
      * @return
      */
-    @PostMapping(value = "wechat",produces = "application/xml; charset=UTF-8")
+    @PostMapping(value = "/analyInfo",produces = "application/xml; charset=UTF-8")
     @ResponseBody
     public String handleMessage(@RequestBody String requestBody,
                                 @RequestParam("signature") String signature,
@@ -145,8 +146,7 @@ public class WeChatController {
      * 新增的codeCheck接口
      * @return 返回接收到的字符串
      */
-
-    @PostMapping(value = "checkCode",produces = "application/json;charset=utf-8")
+    @PostMapping(value = "/checkCode",produces = "application/json;charset=utf-8")
     public Map<String, Object> checkCode(@RequestBody Map<String, String> request) {
         String code = request.get("code");
         // 这里添加验证码验证逻辑
@@ -160,4 +160,7 @@ public class WeChatController {
         // 验证逻辑
         return "123456".equals(code);
     }
+
+
+
 }

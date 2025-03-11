@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xin.pwdkeeper.wechat.bean.BaseMessage;
 import xin.pwdkeeper.wechat.bean.TextMessage;
-import xin.pwdkeeper.wechat.toolutil.UrlUtil;
 import xin.pwdkeeper.wechat.toolutil.WechatMessageUtil;
 import xin.pwdkeeper.wechat.service.WeChatService;
 
@@ -91,14 +90,14 @@ public class WeChatServiceImpl implements WeChatService {
         switch (requestMap.get("MsgType")){
             case WechatMessageUtil.RESP_MESSAGE_TYPE_TEXT:  //文本
                 String str = requestMap.get("Content");
-                Map<String, String> parse = UrlUtil.parse(str);
-                String platform = parse.get("platform");
-                parse.put("FromUserName",fromUserName);
-                if (platform != null){
-                    switch (platform){
-
-                    }
-                }else{
+//                Map<String, String> parse = UrlUtil.parse(str);
+//                String platform = parse.get("platform");
+//                parse.put("FromUserName",fromUserName);
+//                if (platform != null){
+//                    switch (platform){
+//
+//                    }
+//                }else{
                     //淘口令
 //                    String tpwd = TpwdUtil.isTpwd(parse.get("url"));
 //                    if (tpwd != null){
@@ -107,7 +106,7 @@ public class WeChatServiceImpl implements WeChatService {
 //                    }else{
 //                        msg = new TextMessage(requestMap, TEXTERROR);
 //                    }
-                }
+//                }
                 break;
             case WechatMessageUtil.RESP_MESSAGE_TYPE_LINK:  //链接
 //                String url = requestMap.get("Url");
