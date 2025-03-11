@@ -17,7 +17,7 @@ public class RequestParams<T> implements Serializable {
     private String requestId;
     // 用户唯一标识
     private String userId;
-    // 时间戳
+    // 时间戳（毫秒单位）
     private Long timestamp;
     // 请求体
     private T requestBody;
