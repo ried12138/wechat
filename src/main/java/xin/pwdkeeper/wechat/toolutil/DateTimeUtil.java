@@ -100,9 +100,9 @@ public class DateTimeUtil {
     }
 
     /**
-     * 时间对比
-     * @param datea
-     * @param nowDate
+     * 时间对比 之对比年月日
+     * @param datea 对比时间
+     * @param nowDate 当前时间
      * @return
      */
     public static boolean dateCompareNow(Date datea,Date nowDate) {
@@ -120,5 +120,19 @@ public class DateTimeUtil {
         } catch (ParseException e) {
             return false;
         }
+    }
+    /**
+     * 比较给定时间与当前时间，判断两者之间是否在1分钟以内
+     * @param date 要比较的时间
+     * @return 如果两者之间在1分钟以内，返回true；否则返回false
+     */
+    public static boolean isWithinOneMinute(Date date) {
+        if (date == null) {
+            return false;
+        }
+        Date now = new Date();
+        long diffInMillis = Math.abs(now.getTime() - date.getTime());
+        long diffInMinutes = diffInMillis / (60 * 1000);
+        return diffInMinutes <= 1;
     }
 }

@@ -1,6 +1,8 @@
 spring:
-
   application:
     name: waiter-Sale
   profiles:
     active: '@spring.profiles.active@'
+mybatis:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  type-aliases-package: xin.pwdkeeper.wechat.mapper

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import xin.pwdkeeper.wechat.bean.R;
 import xin.pwdkeeper.wechat.bean.RequestParams;
 import xin.pwdkeeper.wechat.service.RedisService;
+import xin.pwdkeeper.wechat.toolutil.RedisKeysUtil;
 import xin.pwdkeeper.wechat.toolutil.SignMD5Util;
 
 import java.util.HashMap;
@@ -18,8 +19,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class RedisServiceImpl implements RedisService {
 
-
-    public static final String VERIFY_CODE_KEY = "verifyCode_";
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
@@ -57,12 +56,12 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public R generateVerifyCode(RequestParams request) {
         // 构造验证码的键值，用于在Redis中存储和查询验证码
-        String verifyCodeKey = RedisServiceImpl.VERIFY_CODE_KEY + request.getUserId();
+        String verifyCodeKey = RedisKeysUtil.VERIFY_CODE_KEY + request.getUserId();
         Map<String, Object> map = new HashMap<String, Object>();
         // 检查Redis中是否已存在该用户的验证码
         if (hasKey(verifyCodeKey)) {
             // 如果存在，直接返回存在的验证码
-            map.put("code", get(verifyCodeKey));
+            map.put(RedisKeysUtil.VERIFY_CODE, get(verifyCodeKey));
             return R.ok(map);
         }
         // 生成随机验证码
@@ -75,7 +74,7 @@ public class RedisServiceImpl implements RedisService {
             log.error("用户:{} ,验证码生成失败: {}",request.getUserId(),verifyCodeKey, e);
             return R.failed(null, "验证码生成失败。");
         }
-        map.put("code", verifyCode);
+        map.put(RedisKeysUtil.VERIFY_CODE, verifyCode);
         // 返回生成的验证码
         return R.ok(map);
     }

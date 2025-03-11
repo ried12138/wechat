@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import xin.pwdkeeper.wechat.bean.R;
 import xin.pwdkeeper.wechat.bean.RequestParams;
 import xin.pwdkeeper.wechat.service.RedisService;
-import xin.pwdkeeper.wechat.service.impl.RedisServiceImpl;
 import xin.pwdkeeper.wechat.toolutil.CommonConstants;
+import xin.pwdkeeper.wechat.toolutil.RedisKeysUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class WebFrontController {
         if (data.get("verifyCode") == null) {
             return R.failed(null, "验证码不能为空");
         }
-        Object verifyCode = redisService.get(RedisServiceImpl.VERIFY_CODE_KEY + request.getUserId());
+        Object verifyCode = redisService.get(RedisKeysUtil.VERIFY_CODE_KEY + request.getUserId());
         if (verifyCode == null) {
             return R.failed(null, "验证码已过期");
         }else if(data.get("verifyCode").equals(verifyCode)){
@@ -60,5 +60,6 @@ public class WebFrontController {
     public R generateVerifyCode(@RequestBody RequestParams request) {
         return redisService.generateVerifyCode(request);
     }
+
 
 }

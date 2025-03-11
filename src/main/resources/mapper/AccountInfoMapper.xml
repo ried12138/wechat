@@ -4,17 +4,39 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="xin.pwdkeeper.wechat.mapper.AccountInfoMapper">
+    <!-- 添加 resultMap 定义 -->
+    <resultMap id="AccountInfoResultMap" type="xin.pwdkeeper.wechat.bean.AccountInfo">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="classType" column="class_type"/>
+        <result property="account" column="account"/>
+        <result property="password" column="password"/>
+        <result property="otherSecret" column="other_secret"/>
+        <result property="bindPhone" column="bind_phone"/>
+        <result property="bindEmail" column="bind_email"/>
+        <result property="bindAnswer" column="bind_answer"/>
+        <result property="bindAsk" column="bind_ask"/>
+        <result property="creationTime" column="creation_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="flag" column="flag"/>
+    </resultMap>
+
+    <!-- 添加公共的查询字段 -->
+    <sql id="selectAccountInfo">
+        id, user_id, class_type, account, password, other_secret, bind_phone, bind_email, bind_answer, bind_ask, creation_time, update_time, flag
+    </sql>
+
     <insert id="insert" parameterType="xin.pwdkeeper.wechat.bean.AccountInfo">
         INSERT INTO account_info (user_id, class_type, account, password, other_secret, bind_phone, bind_email, bind_answer, bind_ask, creation_time, update_time, flag)
         VALUES (#{userId}, #{classType}, #{account}, #{password}, #{otherSecret}, #{bindPhone}, #{bindEmail}, #{bindAnswer}, #{bindAsk}, #{creationTime}, #{updateTime}, #{flag})
     </insert>
 
-    <select id="selectById" resultType="xin.pwdkeeper.wechat.bean.AccountInfo">
-        SELECT * FROM account_info WHERE id = #{id}
+    <select id="selectById" resultMap="AccountInfoResultMap">
+        SELECT <include refid="selectAccountInfo"/> FROM account_info WHERE id = #{id}
     </select>
 
-    <select id="selectAll" resultType="xin.pwdkeeper.wechat.bean.AccountInfo">
-        SELECT * FROM account_info
+    <select id="selectAll" resultMap="AccountInfoResultMap">
+        SELECT <include refid="selectAccountInfo"/> FROM account_info
     </select>
 
     <update id="update" parameterType="xin.pwdkeeper.wechat.bean.AccountInfo">

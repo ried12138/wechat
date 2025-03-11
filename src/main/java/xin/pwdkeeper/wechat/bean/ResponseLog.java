@@ -10,10 +10,14 @@ import lombok.Data;
  */
 @Data
 public class ResponseLog {
-    private String labelId;             //请求唯一标示
-    private String labelTime;             //时间戳
-    private String method;              //方法名
-    private Object responseData;        //响应体
+    //请求唯一标示
+    private String labelId;
+    //时间戳
+    private String labelTime;
+    //方法名
+    private String method;
+    //响应体
+    private Object responseData;
 
 
     public ResponseLog(String labelId, String labelTime, String method, Object responseData) {

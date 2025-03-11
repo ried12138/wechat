@@ -4,17 +4,33 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="xin.pwdkeeper.wechat.mapper.WechatUserInfoMapper">
+    <!-- 添加 resultMap 定义 -->
+    <resultMap id="WechatUserInfoResultMap" type="xin.pwdkeeper.wechat.bean.WechatUserInfo">
+        <id property="id" column="id"/>
+        <result property="userOpenId" column="user_open_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="followStatus" column="follow_status"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <!-- 添加公共的查询字段 -->
+    <sql id="selectWechatUserInfo">
+        id, user_open_id, user_name, phone, email, follow_status, create_time
+    </sql>
+
     <insert id="insert" parameterType="xin.pwdkeeper.wechat.bean.WechatUserInfo">
         INSERT INTO wechat_user_info (user_open_id, user_name, phone, email, follow_status, create_time)
         VALUES (#{userOpenId}, #{userName}, #{phone}, #{email}, #{followStatus}, #{createTime})
     </insert>
 
-    <select id="selectById" resultType="xin.pwdkeeper.wechat.bean.WechatUserInfo">
-        SELECT * FROM wechat_user_info WHERE id = #{id}
+    <select id="selectById" resultMap="WechatUserInfoResultMap">
+        SELECT <include refid="selectWechatUserInfo"/> FROM wechat_user_info WHERE id = #{id}
     </select>
 
-    <select id="selectAll" resultType="xin.pwdkeeper.wechat.bean.WechatUserInfo">
-        SELECT * FROM wechat_user_info
+    <select id="selectAll" resultMap="WechatUserInfoResultMap">
+        SELECT <include refid="selectWechatUserInfo"/> FROM wechat_user_info
     </select>
 
     <update id="update" parameterType="xin.pwdkeeper.wechat.bean.WechatUserInfo">

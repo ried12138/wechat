@@ -11,8 +11,10 @@ import java.util.Date;
  */
 @Data
 public class RequestParams<T> implements Serializable {
+    //请求方所属平台
+    private String requestPlatFrom;
     // 请求方唯一标识
-    private String requesterId;
+    private String requestId;
     // 用户唯一标识
     private String userId;
     // 时间戳

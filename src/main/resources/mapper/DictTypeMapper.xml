@@ -4,17 +4,30 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="xin.pwdkeeper.wechat.mapper.DictTypeMapper">
+    <!-- 添加 resultMap 定义 -->
+    <resultMap id="DictTypeResultMap" type="xin.pwdkeeper.wechat.bean.DictType">
+        <id property="typeId" column="type_id"/>
+        <result property="typeName" column="type_name"/>
+        <result property="description" column="description"/>
+        <result property="flag" column="flag"/>
+    </resultMap>
+
+    <!-- 添加公共的查询字段 -->
+    <sql id="selectDictType">
+        type_id, type_name, description, flag
+    </sql>
+
     <insert id="insert" parameterType="xin.pwdkeeper.wechat.bean.DictType">
         INSERT INTO dict_type (type_name, description, flag)
         VALUES (#{typeName}, #{description}, #{flag})
     </insert>
 
-    <select id="selectById" resultType="xin.pwdkeeper.wechat.bean.DictType">
-        SELECT * FROM dict_type WHERE type_id = #{typeId}
+    <select id="selectById" resultMap="DictTypeResultMap">
+        SELECT <include refid="selectDictType"/> FROM dict_type WHERE type_id = #{typeId}
     </select>
 
-    <select id="selectAll" resultType="xin.pwdkeeper.wechat.bean.DictType">
-        SELECT * FROM dict_type
+    <select id="selectAll" resultMap="DictTypeResultMap">
+        SELECT <include refid="selectDictType"/> FROM dict_type
     </select>
 
     <update id="update" parameterType="xin.pwdkeeper.wechat.bean.DictType">

@@ -4,17 +4,32 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="xin.pwdkeeper.wechat.mapper.DictItemMapper">
+    <!-- 添加 resultMap 定义 -->
+    <resultMap id="DictItemResultMap" type="xin.pwdkeeper.wechat.bean.DictItem">
+        <id property="itemId" column="item_id"/>
+        <result property="typeId" column="type_id"/>
+        <result property="itemCode" column="item_code"/>
+        <result property="itemValue" column="item_value"/>
+        <result property="description" column="description"/>
+        <result property="sortOrder" column="sort_order"/>
+    </resultMap>
+
+    <!-- 添加公共的查询字段 -->
+    <sql id="selectDictItem">
+        item_id, type_id, item_code, item_value, description, sort_order
+    </sql>
+
     <insert id="insert" parameterType="xin.pwdkeeper.wechat.bean.DictItem">
         INSERT INTO dict_item (type_id, item_code, item_value, description, sort_order)
         VALUES (#{typeId}, #{itemCode}, #{itemValue}, #{description}, #{sortOrder})
     </insert>
 
-    <select id="selectById" resultType="xin.pwdkeeper.wechat.bean.DictItem">
-        SELECT * FROM dict_item WHERE item_id = #{itemId}
+    <select id="selectById" resultMap="DictItemResultMap">
+        SELECT <include refid="selectDictItem"/> FROM dict_item WHERE item_id = #{itemId}
     </select>
 
-    <select id="selectAll" resultType="xin.pwdkeeper.wechat.bean.DictItem">
-        SELECT * FROM dict_item
+    <select id="selectAll" resultMap="DictItemResultMap">
+        SELECT <include refid="selectDictItem"/> FROM dict_item
     </select>
 
     <update id="update" parameterType="xin.pwdkeeper.wechat.bean.DictItem">
