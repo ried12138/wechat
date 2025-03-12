@@ -31,7 +31,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         if (ex instanceof IllegalArgumentException) {
             // 返回具体的错误信息
             return new ResponseEntity(
-                    String.format("{\"code\":400,\"data\":null,\"msg\":\"%s\"}", ex.getMessage()), httpHeaders, HttpStatus.BAD_REQUEST);
+                    String.format("{\"code\":1,\"data\":null,\"msg\":\"%s\"}", ex.getMessage()), httpHeaders, HttpStatus.BAD_REQUEST);
         }
         if ("org.apache.catalina.connector.ClientAbortException".equals(ex.getClass().getName())) {
             log.error("发生clientAbortException：\n{}",request.toString());

@@ -1,7 +1,8 @@
-package xin.pwdkeeper.wechat.service.impl;
+package xin.pwdkeeper.wechat.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xin.pwdkeeper.wechat.bean.DictItem;
 import xin.pwdkeeper.wechat.bean.DictType;
@@ -19,7 +20,10 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class RedisInitializationService {
+public class RedisInitializationPoint {
+
+    @Value("${spring.url}")
+    private String url;
 
     @Autowired
     private DictTypeService dictTypeService;
@@ -44,6 +48,9 @@ public class RedisInitializationService {
                 redisService.set(RedisKeysUtil.PLATFORM_INFO + dictItem.getItemCode(), dictItem.getItemValue());
             }
         }
-        log.info("redis初始化完成");
+        log.info("redis字典数据初始化完成:::::::::::::::::::::::::::::::::::::::::::::::::");
+        //**************************************************************************
+        redisService.set(RedisKeysUtil.SPRING_URL,url);
+        log.info("redis定制url初始化完成::::::::::::::::::::::::::::::::::::::::::::::::::");
     }
 }

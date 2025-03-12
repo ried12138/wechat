@@ -12,9 +12,17 @@ import xin.pwdkeeper.wechat.bean.RequestLog;
 import xin.pwdkeeper.wechat.bean.RequestParams;
 import xin.pwdkeeper.wechat.bean.ResponseLog;
 import xin.pwdkeeper.wechat.service.RedisService;
+import xin.pwdkeeper.wechat.toolutil.AesUtil;
 import xin.pwdkeeper.wechat.toolutil.DateTimeUtil;
 import xin.pwdkeeper.wechat.toolutil.RedisKeysUtil;
 import xin.pwdkeeper.wechat.toolutil.SignMD5Util;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 /**
@@ -42,20 +50,23 @@ public class AopVolleyAspect {
     @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WeChatController.handleMessage(..))")
     public void wechatHandleMessage() {}
 
-    @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.*(..))")
+    @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.*(..)) && !execution(* xin.pwdkeeper.wechat.controller.WebFrontController.generateVerifyCode(..))")
     public void webFrontAll() {}
+
+    @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.generateVerifyCode(..))")
+    public void webFrontByGenerateVerifyCode() {}
     /**
      *  目标执行前调用
      * @param joinPoint
      */
     @Before("webFrontAll()")
-    public void boBefore(JoinPoint joinPoint){
+    public void boBefore(JoinPoint joinPoint) throws NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         Object[] args = joinPoint.getArgs();
         if (args != null && args.length > 0 && args[0] instanceof RequestParams) {
             RequestParams requestParams = (RequestParams) args[0];
             // 进行参数校验
             if (requestParams.getRequestPlatFrom() == null){
-                throw new IllegalArgumentException("请求方平台标识不能为空");
+                throw new IllegalArgumentException("请求方所属平台不能为空");
             }
             if (requestParams.getRequestId() == null){
                 throw new IllegalArgumentException("请求方唯一标识不能为空");
@@ -66,7 +77,7 @@ public class AopVolleyAspect {
             if (requestParams.getTimestamp() == null){
                 throw new IllegalArgumentException("请求时间戳不能为空");
             }
-            if (!DateTimeUtil.isWithinOneMinute(requestParams.getTimestamp())){
+            if (!DateTimeUtil.isWithinOneMinute(requestParams.getTimestamp(),1)){
                 throw new IllegalArgumentException("请求体超时");
             }
             // 添加方法参数注入
@@ -77,15 +88,29 @@ public class AopVolleyAspect {
             if (!platfromRequestId.equals(requestParams.getRequestId())){
                 throw new IllegalArgumentException("请求方唯一标识错误");
             }
+            //解密userId
+            String openId = (String) redisService.get(requestParams.getUserId());
+            if (openId != null){
+                String decrypt = AesUtil.decrypt(requestParams.getUserId());
+                String time = decrypt.split("/")[1];
+                if (time != null){
+                    if (!DateTimeUtil.isWithinOneMinute(Long.valueOf(time),25)){
+                        throw new IllegalArgumentException("过期的地址，请重新申请");
+                    }
+                }
+                requestParams.setUserId(openId);
+            }else{
+                throw new IllegalArgumentException("过期的地址，请重新申请");
+            }
         } else {
             throw new IllegalArgumentException("请求参数格式错误");
         }
     }
 
-    /**
-     * 目标执行后调用
-     * @param joinPoint
-     */
+        /**
+         * 目标执行后调用
+         * @param joinPoint
+         */
 //    @Around("webFrontAll()")
 //    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {};
 

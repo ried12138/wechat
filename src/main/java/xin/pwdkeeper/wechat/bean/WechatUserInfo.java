@@ -13,7 +13,7 @@ public class WechatUserInfo {
     private Integer id;
     // 微信用户唯一标识openId
     private String userOpenId;
-    // 用户微信账号
+    // 微信名
     private String userName;
     // 手机号
     private String phone;

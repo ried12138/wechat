@@ -10,6 +10,8 @@ server:
       max: 100
       min-spare: 5
 spring:
+  #参照路径，用于给用户返回定制的url，生产环境，请修改成域名地址
+  url: "http://39.106.75.80"
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://39.106.75.80:54306/wechatDB?useUnicode=true&autoReconnect=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
@@ -54,3 +56,7 @@ wx:
     aesKey: "kOQ1eQ4XnWl24C07XoNfjHiJ0oa8nxa20O97yqNlds6" # 加密模式需要
 deepseek:
   apiKey: "sk-eca12b3a36df4f16a70df45f910f252d"
+#是否开启跨域请求，生产环境中因为有nginx代理解决了跨域请求的问题，所以这里设置为false
+app:
+  cors:
+    enabled: flase

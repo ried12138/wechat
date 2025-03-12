@@ -10,4 +10,6 @@ public interface WechatUserInfoService {
     List<WechatUserInfo> getAllWechatUserInfos();
     void updateWechatUserInfo(WechatUserInfo wechatUserInfo);
     void deleteWechatUserInfo(int id);
+    WechatUserInfo getWechatUserInfoByUserOpenId(String userOpenId);
+    boolean isByUserOpenId(String userOpenId);
 }

@@ -1,7 +1,5 @@
 package xin.pwdkeeper.wechat.service;
 
-import xin.pwdkeeper.wechat.bean.R;
-import xin.pwdkeeper.wechat.bean.RequestParams;
 import java.util.concurrent.TimeUnit;
 
 public interface RedisService {
@@ -14,18 +12,9 @@ public interface RedisService {
     // 删除缓存数据
     void delete(String key);
 
-    Object get(String verifyCode);
+    Object get(String obj);
 
-    /**
-     * 生成验证码并存储到Redis中
-     * @param key 缓存的key
-     * @param value 验证码
-     * @param timeout 失效时间
-     * @param unit 时间单位
-     */
     void generateVerifyCode(String key, String value, long timeout, TimeUnit unit);
-
-    R generateVerifyCode(RequestParams request);
 
     /**
      * 检查缓存中是否存在某个key

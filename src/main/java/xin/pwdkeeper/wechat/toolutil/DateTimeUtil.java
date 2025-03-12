@@ -121,11 +121,12 @@ public class DateTimeUtil {
         }
     }
     /**
-     * 比较给定时间与当前时间，判断两者之间是否在1分钟以内
+     * 比较给定时间与当前时间，判断两者之间是否在<gap>分钟以内
      * @param timestamp 要比较的时间戳（毫秒）
-     * @return 如果两者之间在1分钟以内，返回true；否则返回false
+     * @param gap 差距，相差时间 (分钟)
+     * @return 如果两者之间在<gap>分钟以内，返回true；否则返回false
      */
-    public static boolean isWithinOneMinute(Long timestamp) {
+    public static boolean isWithinOneMinute(Long timestamp,int gap) {
         if (timestamp == null) {
             return false;
         }

@@ -3,6 +3,8 @@ wechat:
 server:
   port: 8080
 spring:
+  #参照地址，用于给用户返回定制的url，开发环境根据本地环境修改
+  url: "http://localhost:8081"
   #mysql数据库的配置
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
@@ -45,3 +47,9 @@ wx:
     secret: "cf419db20b750aaa63007ed3209c9783"
     token: "0ADCEAF6CCE07DF3"
     aesKey: "kOQ1eQ4XnWl24C07XoNfjHiJ0oa8nxa20O97yqNlds6" # 加密模式需要
+deepseek:
+  apiKey: "sk-eca12b3a36df4f16a70df45f910f252d"
+#是否开启跨域请求，开发环境在没有nginx代理的时候需要启动跨域请求
+app:
+  cors:
+    enabled: true

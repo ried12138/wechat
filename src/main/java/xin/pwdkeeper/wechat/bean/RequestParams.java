@@ -21,4 +21,15 @@ public class RequestParams<T> implements Serializable {
     private Long timestamp;
     // 请求体
     private T requestBody;
+
+
+    /**
+     * 是否为公众号发送的消息
+     * true = 是
+     * false = 否
+     * @return
+     */
+    public boolean isValidMpWechat() {
+        return requestPlatFrom.contains("mp_wechat");
+    }
 }

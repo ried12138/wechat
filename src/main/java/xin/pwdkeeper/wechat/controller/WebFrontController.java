@@ -2,16 +2,22 @@ package xin.pwdkeeper.wechat.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xin.pwdkeeper.wechat.bean.R;
 import xin.pwdkeeper.wechat.bean.RequestParams;
-import xin.pwdkeeper.wechat.service.RedisService;
-import xin.pwdkeeper.wechat.toolutil.CommonConstants;
-import xin.pwdkeeper.wechat.toolutil.RedisKeysUtil;
-
+import xin.pwdkeeper.wechat.service.VerifyCodeService;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,26 +35,20 @@ import java.util.Map;
 public class WebFrontController {
 
     @Autowired
-    private RedisService redisService;
+    private VerifyCodeService verifyCodeService;
 
     /**
      * 校验验证码
+     * 生产环境中不需要这个接口提供服务，
+     * 这里只是对验证码进行校验的逻辑，
+     * 后续可能要删除此接口
      * @param request
      * @return
      */
     @PostMapping(value = "/verifyCode",produces = "application/json;charset=utf-8")
+    @PreAuthorize("isAuthenticated()")
     public R getVerifyCode(@RequestBody RequestParams request) {
-        Map<String, Object> data = (Map<String, Object>)request.getRequestBody();
-        if (data.get("verifyCode") == null) {
-            return R.failed(null, "验证码不能为空");
-        }
-        Object verifyCode = redisService.get(RedisKeysUtil.VERIFY_CODE_KEY + request.getUserId());
-        if (verifyCode == null) {
-            return R.failed(null, "验证码已过期");
-        }else if(data.get("verifyCode").equals(verifyCode)){
-            return R.ok(CommonConstants.SUCCESS);
-        }
-        return R.failed("验证码错误");
+        return verifyCodeService.parseVerifyCodeService(request);
     }
 
     /**
@@ -57,9 +57,21 @@ public class WebFrontController {
      * @return
      */
     @PostMapping(value = "/generateVerifyCode", produces = "application/json;charset=utf-8")
-    public R generateVerifyCode(@RequestBody RequestParams request) {
-        return redisService.generateVerifyCode(request);
+    public R generateVerifyCode(@RequestBody RequestParams request) throws NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        return verifyCodeService.generateVerifyCode(request);
     }
 
-
+    /**
+     * 认证后的POST请求示例
+     * @return
+     */
+//    @PostMapping(value = "/authenticatedEndpoint", produces = "application/json;charset=utf-8")
+//    @PreAuthorize("isAuthenticated()")
+//    public R authenticatedEndpoint(@RequestBody RequestParams request) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String username = authentication.getName();
+//        Map<String, String> stringStringHashMap = new HashMap<>();
+//        stringStringHashMap.put("username",username);
+//        return R.ok(stringStringHashMap);
+//    }
 }

@@ -20,7 +20,7 @@ public class R<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 返回标记：成功标记=0，失败标记=1
+     * 返回标记：成功标记=0，失败标记=1 服务器错误标记=500
      */
     private int code;
 

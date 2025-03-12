@@ -31,7 +31,7 @@ public class AesUtil {
         byte[] encryptByte = cipher.doFinal(contentByte);
         return new String(Base64.encodeBase64(encryptByte, false, true));
     }
-    //入参加密
+    //入参解密
     public static String decrypt(String content) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
         Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
         cipher.init(2, getSecretKey());

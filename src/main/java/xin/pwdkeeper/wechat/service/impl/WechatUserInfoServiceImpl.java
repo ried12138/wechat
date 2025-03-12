@@ -37,4 +37,14 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
     public void deleteWechatUserInfo(int id) {
         wechatUserInfoMapper.delete(id);
     }
+    @Override
+    public WechatUserInfo getWechatUserInfoByUserOpenId(String userOpenId) {return wechatUserInfoMapper.selectByUserOpenId(userOpenId);}
+    @Override
+    public boolean isByUserOpenId(String userOpenId){
+        WechatUserInfo wechatUserInfo = wechatUserInfoMapper.selectByUserOpenId(userOpenId);
+        if (wechatUserInfo != null){
+            return true;
+        }
+        return false;
+    }
 }

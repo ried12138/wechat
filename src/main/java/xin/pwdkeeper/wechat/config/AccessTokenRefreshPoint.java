@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 @EnableScheduling
 @Slf4j
-public class AccessTokenRefreshService {
+public class AccessTokenRefreshPoint {
 
     @Autowired
     private WxMpService wxMpService;

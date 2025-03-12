@@ -13,7 +13,8 @@ public class RedisKeysUtil {
 
     // 所有字典类型的键
     public static final String ALL_DICT_TYPES = "allDictTypes";
-
+    //定制路径
+    public static final String SPRING_URL = "springUrl";
     // 所有字典项的键
     public static final String ALL_DICT_ITEMS = "allDictItems";
     //请求方平台信息

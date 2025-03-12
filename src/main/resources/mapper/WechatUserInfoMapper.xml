@@ -29,6 +29,10 @@
         SELECT <include refid="selectWechatUserInfo"/> FROM wechat_user_info WHERE id = #{id}
     </select>
 
+    <select id="selectByUserOpenId" resultMap="WechatUserInfoResultMap">
+        SELECT <include refid="selectWechatUserInfo"/> FROM wechat_user_info WHERE user_open_id = #{userOpenId}
+    </select>
+
     <select id="selectAll" resultMap="WechatUserInfoResultMap">
         SELECT <include refid="selectWechatUserInfo"/> FROM wechat_user_info
     </select>
