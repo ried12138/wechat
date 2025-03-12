@@ -1,6 +1,6 @@
 spring:
   application:
-    name: waiter-Sale
+    name: waiter-Wechat
   profiles:
     active: '@spring.profiles.active@'
 mybatis:

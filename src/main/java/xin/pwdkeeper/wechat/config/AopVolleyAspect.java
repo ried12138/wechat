@@ -15,7 +15,6 @@ import xin.pwdkeeper.wechat.service.RedisService;
 import xin.pwdkeeper.wechat.toolutil.DateTimeUtil;
 import xin.pwdkeeper.wechat.toolutil.RedisKeysUtil;
 import xin.pwdkeeper.wechat.toolutil.SignMD5Util;
-import xin.pwdkeeper.wechat.bean.R;
 import java.util.UUID;
 
 /**
@@ -63,9 +62,6 @@ public class AopVolleyAspect {
             }
             if (requestParams.getUserId() == null){
                 throw new IllegalArgumentException("用户唯一标识不能为空");
-            }
-            if (requestParams.getTimestamp() == null){
-                throw new IllegalArgumentException("请求时间戳不能为空");
             }
             if (requestParams.getTimestamp() == null){
                 throw new IllegalArgumentException("请求时间戳不能为空");

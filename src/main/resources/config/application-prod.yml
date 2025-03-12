@@ -29,7 +29,7 @@ spring:
         max-idle: 8
         min-idle: 0
 #日志数据的配置
-  logpath: /logs
+  logpath: ./logs
 logging:
   file:
     name: ${spring.logpath}/${spring.application.name}-info.log
