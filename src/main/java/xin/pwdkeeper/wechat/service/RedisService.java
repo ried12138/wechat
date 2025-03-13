@@ -14,7 +14,7 @@ public interface RedisService {
 
     Object get(String obj);
 
-    void generateVerifyCode(String key, String value, long timeout, TimeUnit unit);
+    void settimelinessCach(String key, String value, long timeout, TimeUnit unit);
 
     /**
      * 检查缓存中是否存在某个key

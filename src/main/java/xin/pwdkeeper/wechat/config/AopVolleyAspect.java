@@ -50,6 +50,9 @@ public class AopVolleyAspect {
     @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WeChatController.handleMessage(..))")
     public void wechatHandleMessage() {}
 
+    /**
+     * 拦截所有的web请求（除了生产验证码的接口不校验）
+     */
     @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.*(..)) && !execution(* xin.pwdkeeper.wechat.controller.WebFrontController.generateVerifyCode(..))")
     public void webFrontAll() {}
 

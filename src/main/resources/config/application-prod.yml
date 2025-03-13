@@ -59,4 +59,4 @@ deepseek:
 #是否开启跨域请求，生产环境中因为有nginx代理解决了跨域请求的问题，所以这里设置为false
 app:
   cors:
-    enabled: flase
+    enabled: false

@@ -90,7 +90,7 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
         String verifyCode = SignMD5Util.generateVerificationCode();
         try {
             // 将生成的验证码保存到Redis中，并设置过期时间
-            redisService.generateVerifyCode(verifyCodeKey, verifyCode, 30, TimeUnit.MINUTES);
+            redisService.settimelinessCach(verifyCodeKey, verifyCode, 30, TimeUnit.MINUTES);
         } catch (Exception e) {
             // 如果验证码生成过程中发生异常，记录错误日志并返回错误信息
             log.error("用户:{} ,验证码生成失败: {}",request.getUserId(),verifyCodeKey, e);
@@ -108,7 +108,7 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
         String url = (String) redisService.get(RedisKeysUtil.SPRING_URL);
         String encrypt = AesUtil.encrypt(parameter+"/"+System.currentTimeMillis());
         //用户的openId放入缓存
-        redisService.set(encrypt,openId);
+        redisService.settimelinessCach(encrypt,openId,30, TimeUnit.MINUTES);
         return url+"?openId="+encrypt;
     }
 

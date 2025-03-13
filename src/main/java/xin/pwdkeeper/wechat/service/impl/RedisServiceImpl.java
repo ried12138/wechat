@@ -41,14 +41,14 @@ public class RedisServiceImpl implements RedisService {
     public Object get(String verifyCode) { return redisTemplate.opsForValue().get(verifyCode); }
 
     /**
-     * 生成验证码并存储到Redis中
+     * 校验key是否存在，如果存在则不保存key
      * @param key 缓存的key
-     * @param value 验证码
+     * @param value 值
      * @param timeout 失效时间
      * @param unit 时间单位
      */
     @Override
-    public void generateVerifyCode(String key, String value, long timeout, TimeUnit unit) {
+    public void settimelinessCach(String key, String value, long timeout, TimeUnit unit) {
         if (!hasKey(key)) {
             redisTemplate.opsForValue().set(key, value, timeout, unit);
         }
