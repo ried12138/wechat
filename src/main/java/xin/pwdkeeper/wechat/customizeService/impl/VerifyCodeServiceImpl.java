@@ -1,4 +1,4 @@
-package xin.pwdkeeper.wechat.service.impl;
+package xin.pwdkeeper.wechat.customizeService.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xin.pwdkeeper.wechat.bean.R;
 import xin.pwdkeeper.wechat.bean.RequestParams;
-import xin.pwdkeeper.wechat.service.RedisService;
-import xin.pwdkeeper.wechat.service.VerifyCodeService;
+import xin.pwdkeeper.wechat.customizeService.RedisService;
+import xin.pwdkeeper.wechat.customizeService.VerifyCodeService;
 import xin.pwdkeeper.wechat.service.WechatUserInfoService;
 import xin.pwdkeeper.wechat.util.AesUtil;
 import xin.pwdkeeper.wechat.util.JwtTokenUtil;
@@ -52,7 +52,7 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
         if (checkVerifyCode == null || checkVerifyCode.isEmpty()) {
             return R.failed(null, "验证码不能为空");
         }
-        String verifyCode = (String) redisService.get(RedisKeysUtil.VERIFY_CODE_KEY + request.getUserId());
+        String verifyCode = (String) redisService.get(RedisKeysUtil.VERIFY_CODE_KEY + request.getOpenId());
         if (verifyCode == null || verifyCode.isEmpty()) {
             return R.failed(null, "验证码已过期");
         }
@@ -76,16 +76,16 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
      */
     public R generateVerifyCode(RequestParams request) throws NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         //判断用户是否存在
-        if (!wechatUserInfoService.isByUserOpenId(request.getUserId())){
+        if (!wechatUserInfoService.isByUserOpenId(request.getOpenId())){
             return R.failed(null, "用户不存在");
         }
         // 构造验证码的键值，用于在Redis中存储和查询验证码
-        String verifyCodeKey = RedisKeysUtil.VERIFY_CODE_KEY + request.getUserId();
+        String verifyCodeKey = RedisKeysUtil.VERIFY_CODE_KEY + request.getOpenId();
         Map<String, Object> map = new HashMap<String, Object>();
         // 检查Redis中是否已存在该用户的验证码
         if (redisService.hasKey(verifyCodeKey)) {
             String verifyCode = (String) redisService.get(verifyCodeKey);
-            String url = generateSpringUrl(verifyCode, request.getUserId());
+            String url = generateSpringUrl(verifyCode, request.getOpenId());
             map.put(RedisKeysUtil.SPRING_URL, url);
             // 如果存在，直接返回存在的验证码
             map.put(RedisKeysUtil.VERIFY_CODE, verifyCode);
@@ -98,11 +98,11 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
             redisService.settimelinessCach(verifyCodeKey, verifyCode, 30, TimeUnit.MINUTES);
         } catch (Exception e) {
             // 如果验证码生成过程中发生异常，记录错误日志并返回错误信息
-            log.error("用户:{} ,验证码生成失败: {}",request.getUserId(),verifyCodeKey, e);
+            log.error("用户:{} ,验证码生成失败: {}",request.getOpenId(),verifyCodeKey, e);
             return R.failed(null, "验证码生成失败。");
         }
         //生成跳转url;
-        String url = generateSpringUrl(verifyCode, request.getUserId());
+        String url = generateSpringUrl(verifyCode, request.getOpenId());
         map.put(RedisKeysUtil.VERIFY_CODE, verifyCode);
         map.put(RedisKeysUtil.SPRING_URL, url);
         // 返回生成的验证码
@@ -118,5 +118,5 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
     }
 
 
-    private String createToken(RequestParams request){return jwtTokenUtil.generateToken(request.getUserId(),request);}
+    private String createToken(RequestParams request){return jwtTokenUtil.generateToken(request.getOpenId(),request);}
 }

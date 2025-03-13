@@ -1,6 +1,8 @@
 package xin.pwdkeeper.wechat.config;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -9,10 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import xin.pwdkeeper.wechat.bean.AccountInfo;
 import xin.pwdkeeper.wechat.bean.RequestLog;
 import xin.pwdkeeper.wechat.bean.RequestParams;
 import xin.pwdkeeper.wechat.bean.ResponseLog;
-import xin.pwdkeeper.wechat.service.RedisService;
+import xin.pwdkeeper.wechat.customizeService.RedisService;
 import xin.pwdkeeper.wechat.util.AesUtil;
 import xin.pwdkeeper.wechat.util.DateTimeUtil;
 import xin.pwdkeeper.wechat.util.RedisKeysUtil;
@@ -54,10 +57,10 @@ public class AopVolleyAspect {
     public void wechatHandleMessage() {}
 
     /**
-     * 拦截所有的web请求（除了生产验证码的接口不校验）
+     * 拦截所有的web请求
      */
     @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.*(..))")
-    public void webFrontAll() {}
+    public void addUserInfoData() {}
 
     /**
      * 拦截校验验证码的接口
@@ -75,12 +78,34 @@ public class AopVolleyAspect {
     public void verificationCode(JoinPoint joinPoint) throws NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         boBefore(joinPoint);
     }
+    @Before("addUserInfoData()")
+    public void addUserInfoData(JoinPoint joinPoint) throws NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, JsonProcessingException {
+        RequestParams requestParams = boBefore(joinPoint);
+        //校验body体
+        Object requestBody = requestParams.getRequestBody();
+        if (requestBody != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            AccountInfo accountInfo = mapper.convertValue(requestBody, AccountInfo.class);
+            if(accountInfo.isAccountEmpty()){
+                throw new IllegalArgumentException("账号不能为空");
+            }
+            if(accountInfo.isBindPhoneEmpty()){
+                throw new IllegalArgumentException("手机号格式不对");
+            }
+            if(accountInfo.isBindEmailEmpty()){
+                throw new IllegalArgumentException("邮箱格式不对");
+            }
+            requestParams.setRequestBody(accountInfo);
+        }else{
+            throw new IllegalArgumentException("请求体格式不对");
+        }
+    }
         /**
          *  目标执行前调用
          * @param joinPoint
          */
-    @Before("webFrontAll()")
-    public void boBefore(JoinPoint joinPoint) throws NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+//    @Before("webFrontAll()")
+    public RequestParams boBefore(JoinPoint joinPoint) throws NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         Object[] args = joinPoint.getArgs();
         if (args != null && args.length > 0 && args[0] instanceof RequestParams) {
             RequestParams requestParams = (RequestParams) args[0];
@@ -91,7 +116,7 @@ public class AopVolleyAspect {
             if (requestParams.getRequestId() == null){
                 throw new IllegalArgumentException("请求方唯一标识不能为空");
             }
-            if (requestParams.getUserId() == null){
+            if (requestParams.getOpenId() == null){
                 throw new IllegalArgumentException("用户唯一标识不能为空");
             }
             if (requestParams.getTimestamp() == null){
@@ -109,9 +134,9 @@ public class AopVolleyAspect {
                 throw new IllegalArgumentException("请求方唯一标识错误");
             }
             //解密userId
-            String openId = (String) redisService.get(requestParams.getUserId());
+            String openId = (String) redisService.get(requestParams.getOpenId());
             if (openId != null){
-                String decrypt = AesUtil.decrypt(requestParams.getUserId());
+                String decrypt = AesUtil.decrypt(requestParams.getOpenId());
                 String time = decrypt.split("/")[1];
                 if (time != null){
                     /**
@@ -122,10 +147,11 @@ public class AopVolleyAspect {
                         throw new IllegalArgumentException("过期的地址，请重新申请");
                     }
                 }
-                requestParams.setUserId(openId);
+                requestParams.setOpenId(openId);
             }else{
                 throw new IllegalArgumentException("授权失效,请重新获取权限");
             }
+            return requestParams;
         } else {
             throw new IllegalArgumentException("请求参数格式错误");
         }
@@ -147,7 +173,7 @@ public class AopVolleyAspect {
             if (requestParams.getRequestId() == null){
                 throw new IllegalArgumentException("请求方唯一标识不能为空");
             }
-            if (requestParams.getUserId() == null){
+            if (requestParams.getOpenId() == null){
                 throw new IllegalArgumentException("用户唯一标识不能为空");
             }
             if (requestParams.getTimestamp() == null){

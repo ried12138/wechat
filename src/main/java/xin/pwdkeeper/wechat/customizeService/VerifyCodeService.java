@@ -1,4 +1,4 @@
-package xin.pwdkeeper.wechat.service;
+package xin.pwdkeeper.wechat.customizeService;
 
 import xin.pwdkeeper.wechat.bean.R;
 import xin.pwdkeeper.wechat.bean.RequestParams;

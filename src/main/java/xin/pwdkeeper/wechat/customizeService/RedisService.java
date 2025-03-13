@@ -1,4 +1,4 @@
-package xin.pwdkeeper.wechat.service;
+package xin.pwdkeeper.wechat.customizeService;
 
 import java.util.concurrent.TimeUnit;
 

@@ -54,7 +54,7 @@ public class JwtTokenUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("requestPlatFrom",request.getRequestPlatFrom());
         claims.put("requestId",request.getRequestId());
-        claims.put("userId",request.getUserId());
+        claims.put("userId",request.getOpenId());
 
         return headerID + createToken(claims, subject);
     }

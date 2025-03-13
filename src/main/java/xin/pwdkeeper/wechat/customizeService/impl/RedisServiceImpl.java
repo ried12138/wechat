@@ -1,10 +1,10 @@
-package xin.pwdkeeper.wechat.service.impl;
+package xin.pwdkeeper.wechat.customizeService.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import xin.pwdkeeper.wechat.service.RedisService;
+import xin.pwdkeeper.wechat.customizeService.RedisService;
 
 import java.util.concurrent.TimeUnit;
 

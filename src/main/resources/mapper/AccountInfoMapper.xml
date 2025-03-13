@@ -27,8 +27,36 @@
     </sql>
 
     <insert id="insert" parameterType="xin.pwdkeeper.wechat.bean.AccountInfo">
-        INSERT INTO account_info (user_id, class_type, account, password, other_secret, bind_phone, bind_email, bind_answer, bind_ask, creation_time, update_time, flag)
-        VALUES (#{userId}, #{classType}, #{account}, #{password}, #{otherSecret}, #{bindPhone}, #{bindEmail}, #{bindAnswer}, #{bindAsk}, #{creationTime}, #{updateTime}, #{flag})
+        INSERT INTO account_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="classType != null">class_type,</if>
+            <if test="account != null and account != ''">account,</if>
+            <if test="password != null and password != ''">password,</if>
+            <if test="otherSecret != null and otherSecret != ''">other_secret,</if>
+            <if test="bindPhone != null and bindPhone != ''">bind_phone,</if>
+            <if test="bindEmail != null and bindEmail != ''">bind_email,</if>
+            <if test="bindAnswer != null and bindAnswer != ''">bind_answer,</if>
+            <if test="bindAsk != null and bindAsk != ''">bind_ask,</if>
+            <if test="creationTime != null">creation_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="flag != null">flag</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="classType != null">#{classType},</if>
+            <if test="account != null and account != ''">#{account},</if>
+            <if test="password != null and password != ''">#{password},</if>
+            <if test="otherSecret != null and otherSecret != ''">#{otherSecret},</if>
+            <if test="bindPhone != null and bindPhone != ''">#{bindPhone},</if>
+            <if test="bindEmail != null and bindEmail != ''">#{bindEmail},</if>
+            <if test="bindAnswer != null and bindAnswer != ''">#{bindAnswer},</if>
+            <if test="bindAsk != null and bindAsk != ''">#{bindAsk},</if>
+            <if test="creationTime != null">#{creationTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="flag != null">#{flag}</if>
+        </trim>
     </insert>
 
     <select id="selectById" resultMap="AccountInfoResultMap">
@@ -41,9 +69,20 @@
 
     <update id="update" parameterType="xin.pwdkeeper.wechat.bean.AccountInfo">
         UPDATE account_info
-        SET user_id = #{userId}, class_type = #{classType}, account = #{account}, password = #{password}, other_secret = #{otherSecret},
-            bind_phone = #{bindPhone}, bind_email = #{bindEmail}, bind_answer = #{bindAnswer}, bind_ask = #{bindAsk}, creation_time = #{creationTime},
-            update_time = #{updateTime}, flag = #{flag}
+        <set>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="classType != null">class_type = #{classType},</if>
+            <if test="account != null and account != ''">account = #{account},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="otherSecret != null and otherSecret != ''">other_secret = #{otherSecret},</if>
+            <if test="bindPhone != null and bindPhone != ''">bind_phone = #{bindPhone},</if>
+            <if test="bindEmail != null and bindEmail != ''">bind_email = #{bindEmail},</if>
+            <if test="bindAnswer != null and bindAnswer != ''">bind_answer = #{bindAnswer},</if>
+            <if test="bindAsk != null and bindAsk != ''">bind_ask = #{bindAsk},</if>
+            <if test="creationTime != null">creation_time = #{creationTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="flag != null">flag = #{flag}</if>
+        </set>
         WHERE id = #{id}
     </update>
 
