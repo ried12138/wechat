@@ -1,4 +1,4 @@
-package xin.pwdkeeper.wechat.toolutil;
+package xin.pwdkeeper.wechat.util;
 
 import com.thoughtworks.xstream.XStream;
 import lombok.extern.slf4j.Slf4j;

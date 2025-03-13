@@ -1,4 +1,4 @@
-package xin.pwdkeeper.wechat.toolutil;
+package xin.pwdkeeper.wechat.util;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;

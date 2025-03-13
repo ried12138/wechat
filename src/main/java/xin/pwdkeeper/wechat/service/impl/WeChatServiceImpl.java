@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xin.pwdkeeper.wechat.bean.BaseMessage;
 import xin.pwdkeeper.wechat.bean.TextMessage;
-import xin.pwdkeeper.wechat.toolutil.WechatMessageUtil;
+import xin.pwdkeeper.wechat.util.WechatMessageUtil;
 import xin.pwdkeeper.wechat.service.WeChatService;
 
 import javax.servlet.http.HttpServletRequest;

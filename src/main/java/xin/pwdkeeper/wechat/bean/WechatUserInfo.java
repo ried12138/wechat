@@ -1,6 +1,7 @@
 package xin.pwdkeeper.wechat.bean;
 
 import lombok.Data;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
 

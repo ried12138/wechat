@@ -1,11 +1,9 @@
 package xin.pwdkeeper.wechat.bean;
 
 import lombok.Data;
-import xin.pwdkeeper.wechat.toolutil.CommonConstants;
+import xin.pwdkeeper.wechat.util.CommonConstants;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 响应结果封装体

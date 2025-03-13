@@ -1,4 +1,4 @@
-package xin.pwdkeeper.wechat.toolutil;
+package xin.pwdkeeper.wechat.util;
 
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Component;

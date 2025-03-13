@@ -1,18 +1,11 @@
 package xin.pwdkeeper.wechat.service.impl;
 
-import com.mysql.cj.protocol.x.OkBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import xin.pwdkeeper.wechat.bean.R;
-import xin.pwdkeeper.wechat.bean.RequestParams;
 import xin.pwdkeeper.wechat.service.RedisService;
-import xin.pwdkeeper.wechat.toolutil.RedisKeysUtil;
-import xin.pwdkeeper.wechat.toolutil.SignMD5Util;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j

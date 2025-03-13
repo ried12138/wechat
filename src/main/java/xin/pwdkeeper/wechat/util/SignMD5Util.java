@@ -1,4 +1,4 @@
-package xin.pwdkeeper.wechat.toolutil;
+package xin.pwdkeeper.wechat.util;
 
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;

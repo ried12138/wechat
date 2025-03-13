@@ -9,7 +9,7 @@ import xin.pwdkeeper.wechat.bean.DictType;
 import xin.pwdkeeper.wechat.service.DictItemService;
 import xin.pwdkeeper.wechat.service.DictTypeService;
 import xin.pwdkeeper.wechat.service.RedisService;
-import xin.pwdkeeper.wechat.toolutil.RedisKeysUtil;
+import xin.pwdkeeper.wechat.util.RedisKeysUtil;
 
 import javax.annotation.PostConstruct;
 import java.util.List;

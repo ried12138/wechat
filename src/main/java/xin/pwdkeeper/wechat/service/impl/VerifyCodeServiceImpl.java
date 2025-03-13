@@ -2,17 +2,17 @@ package xin.pwdkeeper.wechat.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xin.pwdkeeper.wechat.bean.R;
 import xin.pwdkeeper.wechat.bean.RequestParams;
-import xin.pwdkeeper.wechat.bean.WechatUserInfo;
 import xin.pwdkeeper.wechat.service.RedisService;
 import xin.pwdkeeper.wechat.service.VerifyCodeService;
 import xin.pwdkeeper.wechat.service.WechatUserInfoService;
-import xin.pwdkeeper.wechat.toolutil.AesUtil;
-import xin.pwdkeeper.wechat.toolutil.CommonConstants;
-import xin.pwdkeeper.wechat.toolutil.RedisKeysUtil;
-import xin.pwdkeeper.wechat.toolutil.SignMD5Util;
+import xin.pwdkeeper.wechat.util.AesUtil;
+import xin.pwdkeeper.wechat.util.JwtTokenUtil;
+import xin.pwdkeeper.wechat.util.RedisKeysUtil;
+import xin.pwdkeeper.wechat.util.SignMD5Util;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -36,11 +36,14 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class VerifyCodeServiceImpl implements VerifyCodeService {
 
+    @Value("${url.aging.timeliness}")
+    private Integer timeliness;
     @Autowired
     private WechatUserInfoService wechatUserInfoService;
-
     @Autowired
     private RedisService redisService;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @Override
     public R parseVerifyCodeService(RequestParams request) {
@@ -56,7 +59,9 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
         if (!checkVerifyCode.equals(verifyCode)){
             return R.failed(null, "验证码错误");
         }
-        return R.ok("success");
+        //生成令牌(token)
+        data.put("token", createToken(request));
+        return R.ok(data);
     }
 
     /**
@@ -108,8 +113,10 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
         String url = (String) redisService.get(RedisKeysUtil.SPRING_URL);
         String encrypt = AesUtil.encrypt(parameter+"/"+System.currentTimeMillis());
         //用户的openId放入缓存
-        redisService.settimelinessCach(encrypt,openId,30, TimeUnit.MINUTES);
+        redisService.settimelinessCach(encrypt,openId,timeliness, TimeUnit.MINUTES);
         return url+"?openId="+encrypt;
     }
 
+
+    private String createToken(RequestParams request){return jwtTokenUtil.generateToken(request.getUserId(),request);}
 }

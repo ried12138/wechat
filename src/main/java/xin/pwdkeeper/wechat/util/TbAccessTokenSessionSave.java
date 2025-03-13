@@ -1,4 +1,4 @@
-package xin.pwdkeeper.wechat.toolutil;
+package xin.pwdkeeper.wechat.util;
 
 /**
  * 内部缓存使用token信息，每次重启服务后都要获取新的token

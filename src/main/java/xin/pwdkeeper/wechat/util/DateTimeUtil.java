@@ -1,4 +1,4 @@
-package xin.pwdkeeper.wechat.toolutil;
+package xin.pwdkeeper.wechat.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -133,6 +133,6 @@ public class DateTimeUtil {
         long now = System.currentTimeMillis();
         long diffInMillis = Math.abs(now - timestamp);
         long diffInMinutes = diffInMillis / (60 * 1000);
-        return diffInMinutes <= 1;
+        return diffInMinutes <= gap;
     }
 }
