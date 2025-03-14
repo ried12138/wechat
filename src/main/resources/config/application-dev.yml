@@ -64,3 +64,9 @@ jwt:
 url:
   aging:
     timeliness: 60
+#分页工具配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql

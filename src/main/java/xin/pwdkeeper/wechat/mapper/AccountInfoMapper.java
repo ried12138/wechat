@@ -1,15 +1,18 @@
 package xin.pwdkeeper.wechat.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import xin.pwdkeeper.wechat.bean.AccountInfo;
 
 import java.util.List;
 
 @Mapper
 public interface AccountInfoMapper {
-    void insert(AccountInfo accountInfo);
+    int insert(AccountInfo accountInfo);
     AccountInfo selectById(int id);
     List<AccountInfo> selectAll();
-    void update(AccountInfo accountInfo);
+    int update(List<AccountInfo> accountInfo);
+    int bulkChangesFlagState(List<Integer> ids);
+    List<AccountInfo> selectByUserId(@Param("userId") int userId);
     void delete(int id);
 }

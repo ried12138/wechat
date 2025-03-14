@@ -11,4 +11,10 @@ import xin.pwdkeeper.wechat.bean.RequestParams;
  */
 public interface UserManagementService {
     R addUserInfoData(RequestParams request);
+
+    R removeUserInfoData(RequestParams request);
+
+    R alterUserInfoData(RequestParams request);
+
+    R fetchUserInfoDataPage(RequestParams request);
 }

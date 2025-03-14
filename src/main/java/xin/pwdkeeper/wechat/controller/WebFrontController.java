@@ -40,8 +40,33 @@ public class WebFrontController {
      */
     @PostMapping(value = "/webAddUserInfoData", produces = "application/json;charset=utf-8")
     @PreAuthorize("isAuthenticated()")
-    public R addUserInfoData(@RequestBody RequestParams request) {
-        R result = userManagementService.addUserInfoData(request);
-        return result;
-    }
+    public R addUserInfoData(@RequestBody RequestParams request) {return userManagementService.addUserInfoData(request);}
+
+    /**
+     * 批量移除用户信息，资产数据
+     * @param request
+     * @return
+     */
+    @PostMapping(value = "/webRemoveUserInfoData", produces = "application/json;charset=utf-8")
+    @PreAuthorize("isAuthenticated()")
+    public R removeUserInfoData(@RequestBody RequestParams request) {return userManagementService.removeUserInfoData(request);}
+
+    /**
+     * 修改用户信息，资产数据
+     * @param request
+     * @return
+     */
+    @PostMapping(value = "/webAlterUserInfoData", produces = "application/json;charset=utf-8")
+    @PreAuthorize("isAuthenticated()")
+    public R webAlterUserInfoData(@RequestBody RequestParams request) {return userManagementService.alterUserInfoData(request);}
+
+    /**
+     * 获取用户信息，资产数据
+     * @param request
+     * @return
+     */
+    @PostMapping(value = "/webFetchUserInfoData", produces = "application/json;charset=utf-8")
+    @PreAuthorize("isAuthenticated()")
+    public R webFetchUserInfoData(@RequestBody RequestParams request) {return userManagementService.fetchUserInfoDataPage(request);}
+
 }

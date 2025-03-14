@@ -67,25 +67,40 @@
         SELECT <include refid="selectAccountInfo"/> FROM account_info
     </select>
 
-    <update id="update" parameterType="xin.pwdkeeper.wechat.bean.AccountInfo">
-        UPDATE account_info
-        <set>
-            <if test="userId != null">user_id = #{userId},</if>
-            <if test="classType != null">class_type = #{classType},</if>
-            <if test="account != null and account != ''">account = #{account},</if>
-            <if test="password != null and password != ''">password = #{password},</if>
-            <if test="otherSecret != null and otherSecret != ''">other_secret = #{otherSecret},</if>
-            <if test="bindPhone != null and bindPhone != ''">bind_phone = #{bindPhone},</if>
-            <if test="bindEmail != null and bindEmail != ''">bind_email = #{bindEmail},</if>
-            <if test="bindAnswer != null and bindAnswer != ''">bind_answer = #{bindAnswer},</if>
-            <if test="bindAsk != null and bindAsk != ''">bind_ask = #{bindAsk},</if>
-            <if test="creationTime != null">creation_time = #{creationTime},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="flag != null">flag = #{flag}</if>
-        </set>
-        WHERE id = #{id}
+    <update id="update" parameterType="java.util.List">
+        <foreach collection="list" item="accountInfo" separator=";">
+            UPDATE account_info
+            <set>
+                <if test="accountInfo.classType != null">class_type = #{accountInfo.classType},</if>
+                <if test="accountInfo.account != null and accountInfo.account != ''">account = #{accountInfo.account},</if>
+                <if test="accountInfo.password != null and accountInfo.password != ''">password = #{accountInfo.password},</if>
+                <if test="accountInfo.otherSecret != null and accountInfo.otherSecret != ''">other_secret = #{accountInfo.otherSecret},</if>
+                <if test="accountInfo.bindPhone != null and accountInfo.bindPhone != ''">bind_phone = #{accountInfo.bindPhone},</if>
+                <if test="accountInfo.bindEmail != null and accountInfo.bindEmail != ''">bind_email = #{accountInfo.bindEmail},</if>
+                <if test="accountInfo.bindAnswer != null and accountInfo.bindAnswer != ''">bind_answer = #{accountInfo.bindAnswer},</if>
+                <if test="accountInfo.bindAsk != null and accountInfo.bindAsk != ''">bind_ask = #{accountInfo.bindAsk},</if>
+                <!-- Uncomment if needed -->
+                <!-- <if test="accountInfo.creationTime != null">creation_time = #{accountInfo.creationTime},</if> -->
+                update_time = NOW(),
+                <!-- <if test="accountInfo.flag != null">flag = #{accountInfo.flag}</if> -->
+            </set>
+            WHERE id = #{accountInfo.id} and flag = 0
+        </foreach>
     </update>
-
+    <update id="bulkChangesFlagState" parameterType="java.util.List">
+        UPDATE account_info
+        SET flag = 1
+        WHERE id IN
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <select id="selectByUserId" resultMap="AccountInfoResultMap">
+        SELECT id, class_type, account, password, other_secret, bind_phone, bind_email, bind_answer, bind_ask, update_time
+        FROM account_info
+        WHERE user_id = #{userId} and flag = 0
+        ORDER BY id <!-- 你可以根据需要更改排序字段 -->
+    </select>
     <delete id="delete">
         DELETE FROM account_info WHERE id = #{id}
     </delete>
