@@ -1,4 +1,7 @@
 #!/bin/bash
+
+
+#弃用、被删除
 cd /home/ecm
 java -server -Xms512M -Xmx512M -Xss256k -jar /home/ecm/wechat.war &
 sleep 5
