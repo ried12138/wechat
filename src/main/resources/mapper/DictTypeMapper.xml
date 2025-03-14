@@ -14,7 +14,7 @@
 
     <!-- 添加公共的查询字段 -->
     <sql id="selectDictType">
-        type_id, type_name, description, flag
+        type_id, type_name, description
     </sql>
 
     <insert id="insert" parameterType="xin.pwdkeeper.wechat.bean.DictType">
@@ -23,11 +23,11 @@
     </insert>
 
     <select id="selectById" resultMap="DictTypeResultMap">
-        SELECT <include refid="selectDictType"/> FROM dict_type WHERE type_id = #{typeId}
+        SELECT <include refid="selectDictType"/> FROM dict_type WHERE type_id = #{typeId} and flag = 1
     </select>
 
     <select id="selectAll" resultMap="DictTypeResultMap">
-        SELECT <include refid="selectDictType"/> FROM dict_type
+        SELECT <include refid="selectDictType"/> FROM dict_type where flag = 1
     </select>
 
     <update id="update" parameterType="xin.pwdkeeper.wechat.bean.DictType">

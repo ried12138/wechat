@@ -12,4 +12,6 @@ public interface DictItemMapper {
     List<DictItem> selectAll();
     void update(DictItem dictItem);
     void delete(int itemId);
+    List<Integer> selectAllGroupByTypeId();
+    List<DictItem> selectByTypeIds(Integer typeId);
 }

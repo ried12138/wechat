@@ -10,4 +10,7 @@ public interface DictItemService {
     List<DictItem> getAllDictItems();
     void updateDictItem(DictItem dictItem);
     void deleteDictItem(int itemId);
+    List<DictItem> selectByTypeIds(Integer type);
+
+    List<Integer> selectAllGroupByTypeId();
 }

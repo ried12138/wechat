@@ -12,7 +12,10 @@ import xin.pwdkeeper.wechat.customizeService.RedisService;
 import xin.pwdkeeper.wechat.util.RedisKeysUtil;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 服务启动时，初始化redis数据，
@@ -42,6 +45,16 @@ public class RedisInitializationPoint {
         List<DictItem> allDictItems = dictItemService.getAllDictItems();
         redisService.set(RedisKeysUtil.ALL_DICT_TYPES, allDictTypes);
         redisService.set(RedisKeysUtil.ALL_DICT_ITEMS, allDictItems);
+
+        // 按 typeId 分组存储 DictItem 数据
+        Map<Integer, List<DictItem>> dictItemsByTypeIdMap = allDictItems.stream()
+                .collect(Collectors.groupingBy(DictItem::getTypeId));
+        for (Map.Entry<Integer, List<DictItem>> entry : dictItemsByTypeIdMap.entrySet()) {
+            Integer typeId = entry.getKey();
+            List<DictItem> dictItemsByTypeId = entry.getValue();
+            String key = RedisKeysUtil.ALL_DICT_ITEMS + ":" + typeId;
+            redisService.set(key, dictItemsByTypeId);
+        }
         //获取字典分类type_id = 2 的值，请求平台信息
         for (DictItem dictItem : allDictItems) {
             if (dictItem.getTypeId() == 2) {

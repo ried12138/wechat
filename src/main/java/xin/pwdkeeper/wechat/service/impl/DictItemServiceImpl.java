@@ -37,4 +37,14 @@ public class DictItemServiceImpl implements DictItemService {
     public void deleteDictItem(int itemId) {
         dictItemMapper.delete(itemId);
     }
+
+    @Override
+    public List<DictItem> selectByTypeIds(Integer typeId) {
+        return dictItemMapper.selectByTypeIds(typeId);
+    }
+
+    @Override
+    public List<Integer> selectAllGroupByTypeId() {
+        return dictItemMapper.selectAllGroupByTypeId();
+    }
 }

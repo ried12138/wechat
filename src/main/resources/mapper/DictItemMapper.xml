@@ -8,15 +8,18 @@
     <resultMap id="DictItemResultMap" type="xin.pwdkeeper.wechat.bean.DictItem">
         <id property="itemId" column="item_id"/>
         <result property="typeId" column="type_id"/>
+        <result property="grade" column="grade"/>
+        <result property="gradeTypeId" column="grade_type_id"/>
         <result property="itemCode" column="item_code"/>
         <result property="itemValue" column="item_value"/>
         <result property="description" column="description"/>
         <result property="sortOrder" column="sort_order"/>
+        <result property="flag" column="flag"/>
     </resultMap>
 
     <!-- 添加公共的查询字段 -->
     <sql id="selectDictItem">
-        item_id, type_id, item_code, item_value, description, sort_order
+        item_id, type_id, grade, grade_type_id, item_code, item_value, sort_order
     </sql>
 
     <insert id="insert" parameterType="xin.pwdkeeper.wechat.bean.DictItem">
@@ -25,11 +28,11 @@
     </insert>
 
     <select id="selectById" resultMap="DictItemResultMap">
-        SELECT <include refid="selectDictItem"/> FROM dict_item WHERE item_id = #{itemId}
+        SELECT <include refid="selectDictItem"/> FROM dict_item WHERE item_id = #{itemId} and flag = 1
     </select>
 
     <select id="selectAll" resultMap="DictItemResultMap">
-        SELECT <include refid="selectDictItem"/> FROM dict_item
+        SELECT <include refid="selectDictItem"/> FROM dict_item WHERE flag = 1 ORDER BY sort_order DESC
     </select>
 
     <update id="update" parameterType="xin.pwdkeeper.wechat.bean.DictItem">
@@ -41,4 +44,21 @@
     <delete id="delete">
         DELETE FROM dict_item WHERE item_id = #{itemId}
     </delete>
+    <select id="selectAllGroupByTypeId" resultType="java.lang.Integer">
+        SELECT
+            type_id
+        FROM
+            dict_item
+        WHERE
+            flag = 1
+        GROUP BY
+            type_id
+    </select>
+    <select id="selectByTypeIds" resultMap="DictItemResultMap" parameterType="java.util.List">
+        SELECT <include refid="selectDictItem"/>
+        FROM dict_item
+        WHERE type_id =#{typeId}
+        AND flag = 1
+        ORDER BY sort_order ASC
+    </select>
 </mapper>
