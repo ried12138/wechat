@@ -12,5 +12,5 @@ public interface AccountInfoService {
     int updateAccountInfo(List<AccountInfo> accountInfo);
     void deleteAccountInfo(int id);
     int removeTheMarkerAccountInfo(List<Integer> id);
-    PageInfo<AccountInfo> getAccountInByUserIdWithPagination(Integer userId, int pageNum, int pageSize);
+    PageInfo<AccountInfo> getAccountInByUserIdWithPagination(AccountInfo accountInfo);
 }

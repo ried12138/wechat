@@ -13,6 +13,6 @@ public interface AccountInfoMapper {
     List<AccountInfo> selectAll();
     int update(List<AccountInfo> accountInfo);
     int bulkChangesFlagState(List<Integer> ids);
-    List<AccountInfo> selectByUserId(@Param("userId") int userId);
+    List<AccountInfo> selectByUserId(AccountInfo accountInfo);
     void delete(int id);
 }

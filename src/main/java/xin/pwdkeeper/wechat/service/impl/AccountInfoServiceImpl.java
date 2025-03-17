@@ -62,11 +62,11 @@ public class AccountInfoServiceImpl implements AccountInfoService {
     }
 
     @Override
-    public PageInfo<AccountInfo> getAccountInByUserIdWithPagination(Integer userId, int pageNum, int pageSize) {
+    public PageInfo<AccountInfo> getAccountInByUserIdWithPagination(AccountInfo accountInfo) {
         // 设置分页参数
-        PageHelper.startPage(pageNum, pageSize);
+        PageHelper.startPage(accountInfo.getPageNum(), accountInfo.getPageSize());
         // 执行查询
-        List<AccountInfo> accountInfos = accountInfoMapper.selectByUserId(userId);
+        List<AccountInfo> accountInfos = accountInfoMapper.selectByUserId(accountInfo);
         // 返回分页结果
         return new PageInfo<>(accountInfos);
     }

@@ -81,11 +81,10 @@ public class UserManagementServiceImpl implements UserManagementService {
      */
     @Override
     public R fetchUserInfoDataPage(RequestParams request) {
-        Map<String, Object> data = (Map<String, Object>)request.getRequestBody();
-        Integer pageNum = (Integer) data.get("pageNum");
-        Integer pageSize = (Integer) data.get("pageSize");
+        AccountInfo accountInfo = (AccountInfo) request.getRequestBody();
         WechatUserInfo wechatUserInfo = wechatUserInfoService.getWechatUserInfoByUserOpenId(request.getOpenId());
-        PageInfo<AccountInfo> accountInfoPageInfo = accountInfoService.getAccountInByUserIdWithPagination(wechatUserInfo.getId(), pageNum, pageSize);
+        accountInfo.setUserId(wechatUserInfo.getId());
+        PageInfo<AccountInfo> accountInfoPageInfo = accountInfoService.getAccountInByUserIdWithPagination(accountInfo);
         return R.ok(accountInfoPageInfo);
     }
 }

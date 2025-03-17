@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="xin.pwdkeeper.wechat.mapper.AccountInfoMapper">
     <!-- 添加 resultMap 定义 -->
@@ -98,8 +98,16 @@
     <select id="selectByUserId" resultMap="AccountInfoResultMap">
         SELECT id, class_type, account, password, other_secret, bind_phone, bind_email, bind_answer, bind_ask, update_time
         FROM account_info
-        WHERE user_id = #{userId} and flag = 0
-        ORDER BY id <!-- 你可以根据需要更改排序字段 -->
+        WHERE user_id = #{userId}
+        <if test="classType != null">
+            AND class_type = #{classType}
+        </if>
+        <if test="account != null and account != ''">
+            AND account LIKE CONCAT('%', #{account}, '%')
+        </if>
+        and flag = 0
+        ORDER BY id  ASC <!-- 你可以根据需要更改排序字段 -->
+        <!-- 添加更多的字段判断条件如果需要 -->
     </select>
     <delete id="delete">
         DELETE FROM account_info WHERE id = #{id}

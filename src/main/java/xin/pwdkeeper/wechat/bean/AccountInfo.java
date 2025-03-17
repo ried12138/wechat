@@ -38,6 +38,25 @@ public class AccountInfo implements Serializable {
     // 标记，0=未删除，1=已删除
     private Integer flag;
 
+
+    //分页页码
+    private Integer pageNum;
+    //分页每页条数
+    private Integer pageSize;
+
+
+    /**
+     * 初始化对象时，如果pageNum或pageSize为空，则初始化为1和10
+     */
+    public AccountInfo() {
+        if (this.pageNum == null || this.pageNum == 0){
+            this.pageNum = 1;
+        }
+        if (this.pageSize == null || this.pageSize == 0){
+            this.pageSize = 10;
+        }
+    }
+
     /**
      * 判断账号是否为空
      * @return 如果账号为空，返回true；否则返回false
