@@ -51,9 +51,11 @@ public class RedisInitializationPoint {
                 .collect(Collectors.groupingBy(DictItem::getTypeId));
         for (Map.Entry<Integer, List<DictItem>> entry : dictItemsByTypeIdMap.entrySet()) {
             Integer typeId = entry.getKey();
-            List<DictItem> dictItemsByTypeId = entry.getValue();
-            String key = RedisKeysUtil.ALL_DICT_ITEMS + ":" + typeId;
-            redisService.set(key, dictItemsByTypeId);
+            if (typeId != 2){
+                List<DictItem> dictItemsByTypeId = entry.getValue();
+                String key = RedisKeysUtil.ALL_DICT_ITEMS + ":" + typeId;
+                redisService.set(key, dictItemsByTypeId);
+            }
         }
         //获取字典分类type_id = 2 的值，请求平台信息
         for (DictItem dictItem : allDictItems) {

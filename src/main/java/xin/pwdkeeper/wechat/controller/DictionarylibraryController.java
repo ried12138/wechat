@@ -36,7 +36,12 @@ public class DictionarylibraryController {
         return R.ok(redisService.get(RedisKeysUtil.ALL_DICT_TYPES));
     }
 
-    @GetMapping(value = "/dictItem{typeId}", produces = "application/json;charset=utf-8")
+    /**
+     * 获取二级以上字典类型
+     * @param typeId
+     * @return
+     */
+    @GetMapping(value = "/dictItem/{typeId}", produces = "application/json;charset=utf-8")
     @PreAuthorize("isAuthenticated()")
     public R getDictItem(@PathVariable Integer typeId) {
         return R.ok(redisService.get(RedisKeysUtil.ALL_DICT_ITEMS+":"+typeId));

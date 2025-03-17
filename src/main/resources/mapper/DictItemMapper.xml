@@ -32,7 +32,7 @@
     </select>
 
     <select id="selectAll" resultMap="DictItemResultMap">
-        SELECT <include refid="selectDictItem"/> FROM dict_item WHERE flag = 1 ORDER BY sort_order DESC
+        SELECT <include refid="selectDictItem"/> FROM dict_item WHERE flag = 1 ORDER BY sort_order ASC
     </select>
 
     <update id="update" parameterType="xin.pwdkeeper.wechat.bean.DictItem">
