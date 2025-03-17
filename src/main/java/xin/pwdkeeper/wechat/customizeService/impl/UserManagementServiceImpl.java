@@ -15,7 +15,6 @@ import xin.pwdkeeper.wechat.service.AccountInfoService;
 import xin.pwdkeeper.wechat.service.WechatUserInfoService;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 用于处理账号事务服务
