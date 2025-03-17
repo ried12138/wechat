@@ -21,8 +21,24 @@
     </sql>
 
     <insert id="insert" parameterType="xin.pwdkeeper.wechat.bean.WechatUserInfo">
-        INSERT INTO wechat_user_info (user_open_id, user_name, phone, email, follow_status, create_time)
-        VALUES (#{userOpenId}, #{userName}, #{phone}, #{email}, #{followStatus}, #{createTime})
+        INSERT INTO wechat_user_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userOpenId != null and userOpenId != ''">user_open_id,</if>
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="email != null and email != ''">email,</if>
+            <if test="followStatus != null">follow_status,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userOpenId != null and userOpenId != ''">#{userOpenId},</if>
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="email != null and email != ''">#{email},</if>
+            <if test="followStatus != null">#{followStatus},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
     </insert>
 
     <select id="selectById" resultMap="WechatUserInfoResultMap">
@@ -39,7 +55,14 @@
 
     <update id="update" parameterType="xin.pwdkeeper.wechat.bean.WechatUserInfo">
         UPDATE wechat_user_info
-        SET user_open_id = #{userOpenId}, user_name = #{userName}, phone = #{phone}, email = #{email}, follow_status = #{followStatus}, create_time = #{createTime}
+        <set>
+            <if test="userOpenId != null and userOpenId != ''">user_open_id = #{userOpenId},</if>
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="followStatus != null">follow_status = #{followStatus},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </set>
         WHERE id = #{id}
     </update>
 

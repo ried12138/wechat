@@ -1,18 +1,23 @@
 package xin.pwdkeeper.wechat.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import xin.pwdkeeper.wechat.bean.BaseMessage;
-import xin.pwdkeeper.wechat.bean.TextMessage;
-import xin.pwdkeeper.wechat.util.WechatMessageUtil;
+import xin.pwdkeeper.wechat.bean.*;
+import xin.pwdkeeper.wechat.customizeService.VerifyCodeService;
+import xin.pwdkeeper.wechat.service.WechatUserInfoService;
 import xin.pwdkeeper.wechat.service.WeChatService;
-
-import javax.servlet.http.HttpServletRequest;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
+
+import static me.chanjar.weixin.common.api.WxConsts.EventType.SUBSCRIBE;
+import static me.chanjar.weixin.common.api.WxConsts.EventType.UNSUBSCRIBE;
+import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType.EVENT;
+import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType.TEXT;
 
 /**
  * @Author weiranliu
@@ -24,15 +29,18 @@ import java.util.Map;
 @Slf4j
 public class WeChatServiceImpl implements WeChatService {
 
-    private static final String ISEMY = "抱歉,该商品没有优惠券！";
-    private static final String TEXTERROR = "请输入正确的商品链接或者淘口令！\n目前支持淘宝、天猫、京东商品优惠信息";
 
 
     @Autowired
     WeChatParseEvent weChatParseEvent;
-//    @Autowired
-//    WeChatParseMessage weChatParseMessage;
 
+    @Autowired
+    private WxMpService wxService;
+
+    @Autowired
+    private VerifyCodeService verifyCodeService;
+    @Autowired
+    private WechatUserInfoService wechatUserInfoService;
 
     /**
      * 服务器与微信公众号校验token值
@@ -44,32 +52,10 @@ public class WeChatServiceImpl implements WeChatService {
      */
     @Override
     public String webChatCheck(String signature, String timestamp, String nonce, String echostr) {
-        log.info("wechat token校验接口被调用");
-        //字典顺序排序
-        String[] attr = {WechatMessageUtil.TOKEN, timestamp, nonce};
-        Arrays.sort(attr);
-        StringBuffer content = new StringBuffer();
-        for (int i = 0; i < attr.length; i++) {
-            content.append(attr[i]);
+        if (wxService.checkSignature(timestamp, nonce, signature)) {
+            return echostr;
         }
-        //sha1加密
-        MessageDigest md = null;
-        String temp = null;
-        try {
-            md = MessageDigest.getInstance("SHA-1");
-            byte[] digest = md.digest(content.toString().getBytes());
-            temp = WechatMessageUtil.byteTStr(digest);
-            log.info("加密后的token：" + temp);
-            //小写对比
-            if ((temp.toLowerCase()).equals(signature)) {
-                return echostr;
-            } else {
-                return "";
-            }
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return "非法请求";
     }
 
     /**
@@ -80,55 +66,65 @@ public class WeChatServiceImpl implements WeChatService {
      * @return
      */
     @Override
-    public String webChatRequestParse(HttpServletRequest request) {
-        BaseMessage msg = null;
-        String content = WechatMessageUtil.menuText();
-        Map<String, String> requestMap = WechatMessageUtil.parseXml(request);
-        //获取微信用户信息
-        String fromUserName = requestMap.get("FromUserName");
-        log.info("被请求了！！！！！！请求信息为：{}",requestMap.toString());
-        switch (requestMap.get("MsgType")){
-            case WechatMessageUtil.RESP_MESSAGE_TYPE_TEXT:  //文本
-                String str = requestMap.get("Content");
-//                Map<String, String> parse = UrlUtil.parse(str);
-//                String platform = parse.get("platform");
-//                parse.put("FromUserName",fromUserName);
-//                if (platform != null){
-//                    switch (platform){
-//
-//                    }
-//                }else{
-                    //淘口令
-//                    String tpwd = TpwdUtil.isTpwd(parse.get("url"));
-//                    if (tpwd != null){
-//                        content = getTklConvert(tpwd,fromUserName);
-//                        content = content == null? ISEMY:content;
-//                    }else{
-//                        msg = new TextMessage(requestMap, TEXTERROR);
-//                    }
-//                }
-                break;
-            case WechatMessageUtil.RESP_MESSAGE_TYPE_LINK:  //链接
-//                String url = requestMap.get("Url");
-//                String description = requestMap.get("Description");
-//                log.info("url"+url+"\n description"+description);
-//                System.out.println("url"+url+"\n description"+description);
-                break;
-            case WechatMessageUtil.REQ_MESSAGE_TYPE_EVENT:
-                switch (requestMap.get("Event")){
-                    case WechatMessageUtil.EVENT_TYPE_SUBSCRIBE:
-                        msg = new TextMessage(requestMap, WechatMessageUtil.menuText());
-                        break;
-                    default:
-                        break;
+    public WxMpXmlOutMessage webChatRequestParse(WxMpXmlMessage message) {
+        WxMpXmlOutTextMessage content = null;
+        log.info("被请求了！！！！！！请求信息L用户的openId：{}", message.getFromUser());
+        try {
+            switch (message.getMsgType()) {
+                case TEXT:
+                    content = WxMpXmlOutMessage.TEXT()
+                            .fromUser(message.getToUser())
+                            .toUser(message.getFromUser())
+                            .build();
+                    //判断消息的内容
+                    if (message.getContent().equals("验证码")){
+                        RequestParams<Object> requestParam = new RequestParams<>();
+                        requestParam.setOpenId(message.getFromUser());
+                        R r = verifyCodeService.generateVerifyCode(requestParam);
+                        if (r.getCode() != 0 && !r.getMsg().equals("SUCCESS")){
+                            content.setContent(r.getMsg());
+                            break;
+                        }
+                        Map<String, Object> data = (Map<String, Object>)r.getData();
+                        content.setContent(String.format("获取成功!\n 你的验证码：%s \n点击此处可以查看你的资产 %s", data.get("verifyCode"),data.get("springUrl")));
+                        return content;
+                    }else if (message.getContent().equals("登记")){
+                        message.setEvent(SUBSCRIBE);
+                        return handleEvent(message);
+                    }
+                case EVENT:
+                    return handleEvent(message);
+                default:
+                    return content;
+            }
+        } catch (Exception e) {
+            log.error("消息处理异常", e);
+        }
+        return content;
+    }
+
+    private WxMpXmlOutMessage handleEvent(WxMpXmlMessage message) {
+        switch (message.getEvent()) {
+            case SUBSCRIBE:
+                //记录用户信息
+                wechatUserInfoService.addWechatUserInfo(new WechatUserInfo(null,message.getFromUser(),1,new Date()));
+                return WxMpXmlOutMessage.TEXT()
+                        .content("感谢关注！" + message.getContent()+"\n" +
+                                "你可以再次登记你的网络虚拟资产\n" +
+                                "在对话框中输入【验证码】可以查看你的虚拟账户资产")
+                        .fromUser(message.getToUser())
+                        .toUser(message.getFromUser())
+                        .build();
+            case UNSUBSCRIBE:
+                log.info("用户{}取消关注", message.getFromUser());
+                //查询用户在数据库的状态
+                WechatUserInfo wechatUserInfo = wechatUserInfoService.getWechatUserInfoByUserOpenId(message.getFromUser());
+                if (wechatUserInfo.getFollowStatus() == 1){
+                    wechatUserInfoService.updateWechatUserInfo(new WechatUserInfo(wechatUserInfo.getId(),null,0,null));
                 }
-                break;
+                return null;
             default:
-                break;
+                return null;
         }
-        if(msg == null){
-            msg = new TextMessage(requestMap, content);
-        }
-        return "WechatMessageUtil.beanToXml(msg)";
     }
 }

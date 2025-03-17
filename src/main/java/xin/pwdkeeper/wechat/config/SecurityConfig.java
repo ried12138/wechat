@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 //未授权允许被访问的路径，默认情况下，Spring Security会阻止所有未授权访问
-                .antMatchers("/", "/verifyCode/generateVerifyCode","/verifyCode/verificationCode","/dictionary/dictType").permitAll()
+                .antMatchers("/", "/verifyCode/generateVerifyCode","/verifyCode/verificationCode","/dictionary/dictType","/wechat/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()

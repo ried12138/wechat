@@ -25,4 +25,21 @@ public class WechatUserInfo {
     // 创建时间
     private Date createTime;
 
+    public WechatUserInfo() {
+    }
+
+    public WechatUserInfo(Integer id,String userOpenId,Integer followStatus,Date createTime) {
+        if (id != null){
+            this.id = id;
+        }
+        if (userOpenId != null){
+            this.userOpenId = userOpenId;
+        }
+        if (followStatus != null){
+            this.followStatus = followStatus;
+        }
+        if (createTime != null){
+            this.createTime = createTime;
+        }
+    }
 }

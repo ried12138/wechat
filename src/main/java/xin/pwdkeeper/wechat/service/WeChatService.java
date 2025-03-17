@@ -1,5 +1,8 @@
 package xin.pwdkeeper.wechat.service;
 
+import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -12,5 +15,5 @@ import javax.servlet.http.HttpServletRequest;
 public interface WeChatService {
     String webChatCheck(String signature, String timestamp, String nonce, String echostr);
 
-    String webChatRequestParse(HttpServletRequest request);
+    WxMpXmlOutMessage webChatRequestParse(WxMpXmlMessage inMessage);
 }
