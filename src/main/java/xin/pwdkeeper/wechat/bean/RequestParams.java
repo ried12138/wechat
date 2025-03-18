@@ -20,7 +20,7 @@ public class RequestParams<T> implements Serializable {
     // 时间戳（毫秒单位）
     private Long timestamp;
     // 请求体
-    private T requestBody;
+    private T requestParam;
 
 
     /**

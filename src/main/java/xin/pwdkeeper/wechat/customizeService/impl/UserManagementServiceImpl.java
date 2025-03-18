@@ -41,7 +41,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Transactional
     @Override
     public R addUserInfoData(RequestParams request) {
-        AccountInfo accountInfo = (AccountInfo)request.getRequestBody();
+        AccountInfo accountInfo = (AccountInfo)request.getRequestParam();
         WechatUserInfo wechatUserInfo = wechatUserInfoService.getWechatUserInfoByUserOpenId(request.getOpenId());
         accountInfo.setUserId(wechatUserInfo.getId());
         accountInfo.setDefaultTimes();
@@ -56,7 +56,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     @Transactional
     public R removeUserInfoData(RequestParams request) {
-        List<Integer> ids = (List<Integer>) request.getRequestBody();
+        List<Integer> ids = (List<Integer>) request.getRequestParam();
         return R.ok(accountInfoService.removeTheMarkerAccountInfo(ids));
     }
 
@@ -68,7 +68,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     @Transactional
     public R alterUserInfoData(RequestParams request) {
-        List<AccountInfo> accountInfo = (List<AccountInfo>) request.getRequestBody();
+        List<AccountInfo> accountInfo = (List<AccountInfo>) request.getRequestParam();
         return R.ok(accountInfoService.updateAccountInfo(accountInfo));
     }
 
@@ -79,7 +79,7 @@ public class UserManagementServiceImpl implements UserManagementService {
      */
     @Override
     public R fetchUserInfoDataPage(RequestParams request) {
-        AccountInfo accountInfo = (AccountInfo) request.getRequestBody();
+        AccountInfo accountInfo = (AccountInfo) request.getRequestParam();
         WechatUserInfo wechatUserInfo = wechatUserInfoService.getWechatUserInfoByUserOpenId(request.getOpenId());
         accountInfo.setUserId(wechatUserInfo.getId());
         PageInfo<AccountInfo> accountInfoPageInfo = accountInfoService.getAccountInByUserIdWithPagination(accountInfo);

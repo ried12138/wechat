@@ -190,10 +190,10 @@ public class AopVolleyAspect {
     public void addUserInfoData(JoinPoint joinPoint) {
         RequestParams requestParams = verifyBasicParameters(joinPoint, Arrays.asList("full"));
         //校验body体
-        Object requestBody = requestParams.getRequestBody();
-        if (requestBody != null) {
+        Object requestParam = requestParams.getRequestParam();
+        if (requestParam != null) {
             ObjectMapper mapper = new ObjectMapper();
-            AccountInfo accountInfo = mapper.convertValue(requestBody, AccountInfo.class);
+            AccountInfo accountInfo = mapper.convertValue(requestParam, AccountInfo.class);
             if (accountInfo.isAccountEmpty()) {
                 throw new IllegalArgumentException("账号不能为空");
             }
@@ -203,7 +203,7 @@ public class AopVolleyAspect {
             if (accountInfo.isBindEmailEmpty()) {
                 throw new IllegalArgumentException("邮箱格式不对");
             }
-            requestParams.setRequestBody(accountInfo);
+            requestParams.setRequestParam(accountInfo);
         } else {
             throw new IllegalArgumentException("请求体格式不对");
         }
@@ -218,11 +218,11 @@ public class AopVolleyAspect {
     @Before("removeUserInfoData()")
     public void removeUserInfoData(JoinPoint joinPoint) {
         RequestParams requestParams = verifyBasicParameters(joinPoint, Arrays.asList("full"));
-        Object requestBody = requestParams.getRequestBody();
-        if (requestBody != null && requestBody instanceof List<?>) {
-            List<Integer> ids = (List<Integer>) requestBody;
+        Object requestParam = requestParams.getRequestParam();
+        if (requestParam != null && requestParam instanceof List<?>) {
+            List<Integer> ids = (List<Integer>) requestParam;
             if (ids != null && ids.size() > 0) {
-                requestParams.setRequestBody(ids);
+                requestParams.setRequestParam(ids);
             } else {
                 throw new IllegalArgumentException("请求参数不能为空");
             }
@@ -239,11 +239,11 @@ public class AopVolleyAspect {
     @Before("webAlterUserInfoData()")
     public void webAlterUserInfoData(JoinPoint joinPoint) {
         RequestParams requestParams = verifyBasicParameters(joinPoint, Arrays.asList("full"));
-        Object requestBody = requestParams.getRequestBody();
-        if (requestBody != null && requestBody instanceof List<?>) {
-            List<AccountInfo> accountInfos = (List<AccountInfo>) requestBody;
+        Object requestParam = requestParams.getRequestParam();
+        if (requestParam != null && requestParam instanceof List<?>) {
+            List<AccountInfo> accountInfos = (List<AccountInfo>) requestParam;
             if (accountInfos != null && accountInfos.size() > 0) {
-                requestParams.setRequestBody(accountInfos);
+                requestParams.setRequestParam(accountInfos);
             } else {
                 throw new IllegalArgumentException("请求参数不能为空");
             }
@@ -260,11 +260,11 @@ public class AopVolleyAspect {
     public void webFetchUserInfoData(JoinPoint joinPoint) {
         RequestParams requestParams = verifyBasicParameters(joinPoint, Arrays.asList("full"));
         //校验body体
-        Object requestBody = requestParams.getRequestBody();
-        if (requestBody != null) {
+        Object requestParam = requestParams.getRequestParam();
+        if (requestParam != null) {
             ObjectMapper mapper = new ObjectMapper();
-            AccountInfo accountInfo = mapper.convertValue(requestBody, AccountInfo.class);
-            requestParams.setRequestBody(accountInfo);
+            AccountInfo accountInfo = mapper.convertValue(requestParam, AccountInfo.class);
+            requestParams.setRequestParam(accountInfo);
         } else {
             throw new IllegalArgumentException("请求体格式不对");
         }

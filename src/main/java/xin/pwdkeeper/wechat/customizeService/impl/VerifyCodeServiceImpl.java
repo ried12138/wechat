@@ -47,7 +47,7 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
 
     @Override
     public R parseVerifyCodeService(RequestParams request) {
-        Map<String, Object> data = (Map<String, Object>)request.getRequestBody();
+        Map<String, Object> data = (Map<String, Object>)request.getRequestParam();
         String checkVerifyCode = (String) data.get("verifyCode");
         if (checkVerifyCode == null || checkVerifyCode.isEmpty()) {
             return R.failed(null, "验证码不能为空");
