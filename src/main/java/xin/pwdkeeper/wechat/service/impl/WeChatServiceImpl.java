@@ -5,9 +5,11 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xin.pwdkeeper.wechat.bean.*;
+import xin.pwdkeeper.wechat.customizeService.UserManagementService;
 import xin.pwdkeeper.wechat.customizeService.VerifyCodeService;
 import xin.pwdkeeper.wechat.service.WechatUserInfoService;
 import xin.pwdkeeper.wechat.service.WeChatService;
@@ -33,14 +35,14 @@ public class WeChatServiceImpl implements WeChatService {
 
     @Autowired
     WeChatParseEvent weChatParseEvent;
-
     @Autowired
     private WxMpService wxService;
-
     @Autowired
     private VerifyCodeService verifyCodeService;
     @Autowired
     private WechatUserInfoService wechatUserInfoService;
+    @Autowired
+    private UserManagementService userManagementService;
 
     /**
      * 服务器与微信公众号校验token值
@@ -91,6 +93,9 @@ public class WeChatServiceImpl implements WeChatService {
                     }else if (message.getContent().equals("登记")){
                         message.setEvent(SUBSCRIBE);
                         return handleEvent(message);
+                    }else if (message.getContent().equals("退出")){
+                        content.setContent(signOut(message));
+                        return content;
                     }
                 case EVENT:
                     return handleEvent(message);
@@ -126,5 +131,15 @@ public class WeChatServiceImpl implements WeChatService {
             default:
                 return null;
         }
+    }
+
+    /**
+     * 安全关闭web连接
+     * @param message
+     * @return
+     */
+    private String signOut(WxMpXmlMessage message){
+        R r = userManagementService.signOut(new RequestParams<>(message.getFromUser()));
+        return r.getMsg();
     }
 }

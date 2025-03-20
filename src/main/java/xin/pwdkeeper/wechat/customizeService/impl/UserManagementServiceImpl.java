@@ -3,6 +3,7 @@ package xin.pwdkeeper.wechat.customizeService.impl;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import xin.pwdkeeper.wechat.bean.WechatUserInfo;
 import xin.pwdkeeper.wechat.customizeService.UserManagementService;
 import xin.pwdkeeper.wechat.service.AccountInfoService;
 import xin.pwdkeeper.wechat.service.WechatUserInfoService;
+import xin.pwdkeeper.wechat.util.RedisKeysUtil;
 
 import java.util.List;
 
@@ -32,6 +34,10 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Autowired
     private AccountInfoService accountInfoService;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
 
     /**
      * 添加一个用户财产
@@ -84,5 +90,19 @@ public class UserManagementServiceImpl implements UserManagementService {
         accountInfo.setUserId(wechatUserInfo.getId());
         PageInfo<AccountInfo> accountInfoPageInfo = accountInfoService.getAccountInByUserIdWithPagination(accountInfo);
         return R.ok(accountInfoPageInfo);
+    }
+
+
+    /**
+     * 退出web
+     * @param request
+     * @return
+     */
+    @Override
+    public R signOut(RequestParams request) {
+        if (redisTemplate.delete(RedisKeysUtil.VERIFY_CODE_KEY + request.getOpenId())){
+            return R.ok("安全退出");
+        }
+        return R.failed(null,"出现意外，没有安全的退出系统，请重试");
     }
 }

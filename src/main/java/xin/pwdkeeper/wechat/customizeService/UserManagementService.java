@@ -17,4 +17,6 @@ public interface UserManagementService {
     R alterUserInfoData(RequestParams request);
 
     R fetchUserInfoDataPage(RequestParams request);
+
+    R signOut(RequestParams request);
 }

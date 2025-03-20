@@ -65,7 +65,6 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
     }
 
     /**
-     * 2025.3.12 如果要接入微信公众号的话，响应体还需要修改格式
      * 目前方法返回的结果：生成的用户唯一url，和用户的验证码
      * 如果发送发不是公众号平台，则要对验证码进行加密
      * 此逻辑只用于生产验证码的地方出自微信公众号，其他地方作为校验方，不得直接获取明文验证码
@@ -95,7 +94,7 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
         String verifyCode = SignMD5Util.generateVerificationCode();
         try {
             // 将生成的验证码保存到Redis中，并设置过期时间
-            redisService.settimelinessCach(verifyCodeKey, verifyCode, 30, TimeUnit.MINUTES);
+            redisService.settimelinessCach(verifyCodeKey, verifyCode, timeliness, TimeUnit.MINUTES);
         } catch (Exception e) {
             // 如果验证码生成过程中发生异常，记录错误日志并返回错误信息
             log.error("用户:{} ,验证码生成失败: {}",request.getOpenId(),verifyCodeKey, e);

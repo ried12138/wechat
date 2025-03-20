@@ -26,6 +26,7 @@ public class WebFrontController {
     @Autowired
     private UserManagementService userManagementService;
 
+
     /**
      * 添加用户信息数据
      * @return
@@ -60,5 +61,14 @@ public class WebFrontController {
     @PostMapping(value = "/webFetchUserInfoData", produces = "application/json;charset=utf-8")
     @PreAuthorize("isAuthenticated()")
     public R webFetchUserInfoData(@RequestBody RequestParams request) {return userManagementService.fetchUserInfoDataPage(request);}
+
+    /**
+     * 登出，退出账号
+     * @param request
+     * @return
+     */
+    @PostMapping(value = "/signOut", produces = "application/json;charset=utf-8")
+    @PreAuthorize("isAuthenticated()")
+    public R webSignOut(@RequestBody RequestParams request) {return userManagementService.signOut(request);}
 
 }

@@ -22,6 +22,12 @@ public class RequestParams<T> implements Serializable {
     // 请求体
     private T requestParam;
 
+    public RequestParams() {
+    }
+
+    public RequestParams(String openId) {
+        this.openId = openId;
+    }
 
     /**
      * 是否为公众号发送的消息
