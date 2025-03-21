@@ -14,12 +14,20 @@ import xin.pwdkeeper.wechat.bean.WechatUserInfo;
 import xin.pwdkeeper.wechat.customizeService.UserManagementService;
 import xin.pwdkeeper.wechat.service.AccountInfoService;
 import xin.pwdkeeper.wechat.service.WechatUserInfoService;
+import xin.pwdkeeper.wechat.util.AesUtil;
 import xin.pwdkeeper.wechat.util.RedisKeysUtil;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
  * 用于处理账号事务服务
+ *
  * @Author weiranliu
  * @Email liuweiran12138@outlook.com
  * @Date 2025/3/13   18:43
@@ -41,21 +49,31 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     /**
      * 添加一个用户财产
+     *
      * @param request
      * @return
      */
     @Transactional
     @Override
     public R addUserInfoData(RequestParams request) {
-        AccountInfo accountInfo = (AccountInfo)request.getRequestParam();
+        AccountInfo accountInfo = (AccountInfo) request.getRequestParam();
         WechatUserInfo wechatUserInfo = wechatUserInfoService.getWechatUserInfoByUserOpenId(request.getOpenId());
         accountInfo.setUserId(wechatUserInfo.getId());
         accountInfo.setDefaultTimes();
+        String password = accountInfo.getPassword();
+        if (password != null) {
+            try {
+                accountInfo.setPassword(AesUtil.encrypt(password));
+            } catch (Exception e) {
+                R.failed(null, "加密失败,请重试"+e.getMessage());
+            }
+        }
         return R.ok(accountInfoService.addAccountInfo(accountInfo));
     }
 
     /**
      * 删除一个/多个用户财产
+     *
      * @param request
      * @return
      */
@@ -68,6 +86,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     /**
      * 修改一个用户财产
+     *
      * @param request
      * @return
      */
@@ -80,6 +99,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     /**
      * 分页获取用户财产
+     *
      * @param request
      * @return
      */
@@ -95,14 +115,35 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     /**
      * 退出web
+     *
      * @param request
      * @return
      */
     @Override
     public R signOut(RequestParams request) {
-        if (redisTemplate.delete(RedisKeysUtil.VERIFY_CODE_KEY + request.getOpenId())){
+        if (redisTemplate.delete(RedisKeysUtil.VERIFY_CODE_KEY + request.getOpenId())) {
             return R.ok("安全退出");
         }
-        return R.failed(null,"出现意外，没有安全的退出系统，请重试");
+        return R.failed(null, "出现意外，没有安全的退出系统，请重试");
+    }
+
+    /**
+     * 财产解密
+     * @param request
+     * @return
+     */
+    @Override
+    public R getDecryptDate(RequestParams request) {
+        AccountInfo accountInfo = (AccountInfo) request.getRequestParam();
+        String password = accountInfo.getPassword();
+        if (password != null) {
+            try {
+                accountInfo.setPassword(AesUtil.decrypt(password));
+            } catch (Exception e) {
+                return R.failed(null, "解密失败,请重试");
+            }
+            return R.ok(accountInfo);
+        }
+        return R.failed(null, "没有密码");
     }
 }
