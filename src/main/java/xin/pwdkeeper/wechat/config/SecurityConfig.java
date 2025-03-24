@@ -39,6 +39,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
+                .cors() // 添加 CORS 配置
+                .and()
                 .authorizeRequests()
                 //未授权允许被访问的路径，默认情况下，Spring Security会阻止所有未授权访问
                 .antMatchers("/", "/verifyCode/generateVerifyCode","/verifyCode/verificationCode","/dictionary/dictType","/wechat/*").permitAll()
@@ -70,4 +72,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
+
+
 }

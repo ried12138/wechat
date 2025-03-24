@@ -2,9 +2,17 @@ package xin.pwdkeeper.wechat.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @Author weiranliu
@@ -23,10 +31,11 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         if (corsEnabled) {
             registry.addMapping("/**") // 修改为允许所有路径
-                    .allowedOrigins("http://localhost:8081") // 修改为允许特定来源
+                    .allowedOriginPatterns("http://localhost:5173") // 修改为允许特定来源
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                     .allowedHeaders("*")
                     .allowCredentials(true)
+                    .exposedHeaders("Authorization")
                     .maxAge(3600); // 添加maxAge以避免频繁预检请求
             log.info("目前为开发环境，跨域请求问题已解决:::::::::::::CORS enabled,");
         }
