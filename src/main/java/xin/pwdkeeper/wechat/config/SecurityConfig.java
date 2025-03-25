@@ -50,9 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setContentType("application/json;charset=UTF-8");
                     response.setCharacterEncoding("UTF-8");
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setStatus(HttpServletResponse.SC_OK); // 修改状态码为200
                     PrintWriter writer = response.getWriter();
-                    writer.write("{\"code\":1,\"data\":null,\"msg\":\"你未获得授权，请先拿到授权\"}");
+                    writer.write("{\"code\":101,\"data\":null,\"msg\":\"你未获得授权，请先拿到授权\"}");
                     writer.flush();
                 })
                 .and()

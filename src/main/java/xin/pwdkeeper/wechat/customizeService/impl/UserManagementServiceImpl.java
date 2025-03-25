@@ -16,14 +16,8 @@ import xin.pwdkeeper.wechat.service.AccountInfoService;
 import xin.pwdkeeper.wechat.service.WechatUserInfoService;
 import xin.pwdkeeper.wechat.util.AesUtil;
 import xin.pwdkeeper.wechat.util.RedisKeysUtil;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用于处理账号事务服务
@@ -65,7 +59,7 @@ public class UserManagementServiceImpl implements UserManagementService {
             try {
                 accountInfo.setPassword(AesUtil.encrypt(password));
             } catch (Exception e) {
-                R.failed(null, "加密失败,请重试"+e.getMessage());
+                R.failed(null, "加密失败,请重试" + e.getMessage());
             }
         }
         return R.ok(accountInfoService.addAccountInfo(accountInfo));
@@ -129,21 +123,38 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     /**
      * 财产解密
+     *
      * @param request
      * @return
      */
     @Override
     public R getDecryptDate(RequestParams request) {
-        AccountInfo accountInfo = (AccountInfo) request.getRequestParam();
-        String password = accountInfo.getPassword();
-        if (password != null) {
-            try {
-                accountInfo.setPassword(AesUtil.decrypt(password));
-            } catch (Exception e) {
-                return R.failed(null, "解密失败,请重试");
-            }
-            return R.ok(accountInfo);
+        Map<String, Object> data = (Map<String, Object>)request.getRequestParam();
+        Integer type = (Integer) data.get("type");
+        String password = (String)data.get("password");
+        if (password == null || password.isEmpty()){
+            return R.failed(null, "密码不能为空");
         }
-        return R.failed(null, "没有密码");
+        switch (type){
+            //解密密码
+            case 1:
+                try {
+                    String decrypt = AesUtil.decrypt(password);
+                    data.put("password", decrypt);
+                } catch (Exception e) {
+                    return R.failed(null, "解密失败,请重试");
+                }
+                break;
+            //加密密码
+            case 2:
+                try {
+                    String encrypt = AesUtil.encrypt(password);
+                    data.put("password", encrypt);
+                } catch (Exception e) {
+                    return R.failed(null, "解密失败,请重试");
+                }
+                break;
+        }
+        return R.ok(data);
     }
 }

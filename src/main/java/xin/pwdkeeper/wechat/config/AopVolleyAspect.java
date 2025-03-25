@@ -59,27 +59,34 @@ public class AopVolleyAspect {
      * 拦截web请求添加用户信息
      */
     @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.addUserInfoData(..))")
-    public void addUserInfoData() {
-    }
+    public void addUserInfoData() {}
 
     /**
      * 拦截web请求批量移除用户信息、资产数据
      */
     @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.removeUserInfoData(..))")
-    public void removeUserInfoData() {
-    }
+    public void removeUserInfoData() {}
 
     /**
      * 拦截web请求修改用户信息
      */
     @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.webAlterUserInfoData(..))")
-    public void webAlterUserInfoData() {
-    }
+    public void webAlterUserInfoData() {}
 
     @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.webFetchUserInfoData(..))")
-    public void webFetchUserInfoData() {
-    }
+    public void webFetchUserInfoData() {}
 
+    /**
+     * 解密接口参数校验
+     */
+    @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.decryptDate(..))")
+    public void decryptDate() {}
+
+    /**
+     * 安全退出参数校验
+     */
+    @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.webSignOut(..))")
+    public void webSignOut() {}
     /**
      * 拦截校验验证码的接口
      */
@@ -93,6 +100,8 @@ public class AopVolleyAspect {
     @Pointcut("execution(* xin.pwdkeeper.wechat.controller.VerifyCodeController.*(..))")
     public void webFrontByGenerateVerifyCode() {
     }
+
+
 
     /**
      * 基础参数校验方法抽取
@@ -278,6 +287,36 @@ public class AopVolleyAspect {
     @Before("webFrontByGenerateVerifyCode()")
     public void GenerateVerifyCode(JoinPoint joinPoint) {
         verifyBasicParameters(joinPoint, Arrays.asList("openId"));
+    }
+
+
+    /**
+     * 安全退出接口进行拦截校验入参
+     * @param joinPoint
+     */
+    @Before("webSignOut()")
+    public void webSignOut(JoinPoint joinPoint) {
+        verifyBasicParameters(joinPoint,Arrays.asList("full"));
+    }
+
+
+    /**
+     * 解密接口进行拦截校验入参
+     * @param joinPoint
+     */
+    @Before("decryptDate()")
+    public void decryptDate(JoinPoint joinPoint) {
+        RequestParams requestParams = verifyBasicParameters(joinPoint, Arrays.asList("full"));
+        //校验body体
+        Object requestParam = requestParams.getRequestParam();
+        if (requestParam != null) {
+            Map<String, Object> data = (Map<String, Object>)requestParam;
+            Integer type = (Integer) data.get("type");
+            if (type == null || type == 0) {
+                throw new IllegalArgumentException("加密类型不能为空");
+            }
+
+        }
     }
     /**
      * 目标执行后调用

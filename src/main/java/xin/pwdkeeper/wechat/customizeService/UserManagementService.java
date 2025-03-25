@@ -28,4 +28,5 @@ public interface UserManagementService {
     R signOut(RequestParams request);
 
     R getDecryptDate(RequestParams request);
+
 }

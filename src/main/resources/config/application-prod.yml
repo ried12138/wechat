@@ -67,13 +67,13 @@ wechat:
 jwt:
   secret: 3dInVQ9lZjF3MzZkZjM2ZGYzNjdkZjM2ZGYzNjdkZjM2ZGYzNw==
   #单位(秒)
-  expiration: 1800
+  expiration: 10800
   headerId: "Bearer "
   headerKey: "Authorization"
 #url的时效时间(分钟)，生产环境，建议url时效时间为1分钟，不超过3分钟
 url:
   aging:
-    timeliness: 60
+    timeliness: 180
 #分页工具配置
 pagehelper:
   helperDialect: mysql
