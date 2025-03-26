@@ -20,10 +20,7 @@ import xin.pwdkeeper.wechat.util.DateTimeUtil;
 import xin.pwdkeeper.wechat.util.RedisKeysUtil;
 import xin.pwdkeeper.wechat.util.SignMD5Util;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 拦截数据请求
@@ -149,7 +146,7 @@ public class AopVolleyAspect {
 
     /**
      * 校验openId
-     *
+     * 只有校验验证码的时候校验openId，此逻辑用于
      * @param requestParams
      * @return
      */
