@@ -55,6 +55,7 @@ public class AccountInfo implements Serializable {
         if (this.pageSize == null || this.pageSize == 0){
             this.pageSize = 10;
         }
+        this.updateTime = new Date();
     }
 
     /**

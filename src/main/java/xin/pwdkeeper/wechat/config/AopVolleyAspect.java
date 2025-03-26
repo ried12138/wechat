@@ -203,6 +203,9 @@ public class AopVolleyAspect {
         if (requestParam != null) {
             ObjectMapper mapper = new ObjectMapper();
             AccountInfo accountInfo = mapper.convertValue(requestParam, AccountInfo.class);
+            if (accountInfo.getClassType() == null || accountInfo.getClassType() == 0){
+                throw new IllegalArgumentException("请选择账号所属平台");
+            }
             if (accountInfo.isAccountEmpty()) {
                 throw new IllegalArgumentException("账号不能为空");
             }
