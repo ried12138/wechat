@@ -103,7 +103,7 @@
             AND class_type = #{classType}
         </if>
         <if test="account != null and account != ''">
-            AND account LIKE CONCAT('%', #{account}, '%')
+            AND account LIKE CONCAT( #{account}, '%')
         </if>
         and flag = 0
         ORDER BY id  ASC <!-- 你可以根据需要更改排序字段 -->

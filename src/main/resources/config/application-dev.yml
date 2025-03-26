@@ -5,7 +5,7 @@ spring:
     resources:
       add-mappings: false
   #参照地址，用于给用户返回定制的url，开发环境根据本地环境修改
-  url: "http://localhost:8081"
+  url: "http://localhost:5173"
   #mysql数据库的配置
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
