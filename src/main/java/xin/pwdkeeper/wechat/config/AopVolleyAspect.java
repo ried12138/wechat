@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import xin.pwdkeeper.wechat.bean.AccountInfo;
-import xin.pwdkeeper.wechat.bean.RequestLog;
-import xin.pwdkeeper.wechat.bean.RequestParams;
-import xin.pwdkeeper.wechat.bean.ResponseLog;
+import xin.pwdkeeper.wechat.bean.*;
 import xin.pwdkeeper.wechat.customizeService.RedisService;
 import xin.pwdkeeper.wechat.util.AesUtil;
 import xin.pwdkeeper.wechat.util.DateTimeUtil;
@@ -84,6 +81,13 @@ public class AopVolleyAspect {
      */
     @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.webSignOut(..))")
     public void webSignOut() {}
+
+    /**
+     * 用户补全参数校验
+     */
+    @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.completeUserInfo(..))")
+    public void completeUserInfo() {
+    }
     /**
      * 拦截校验验证码的接口
      */
@@ -318,6 +322,24 @@ public class AopVolleyAspect {
 
         }
     }
+
+    @Before("completeUserInfo()")
+    public void completeUserInfo(JoinPoint joinPoint){
+        RequestParams requestParams = verifyBasicParameters(joinPoint, Arrays.asList("full"));
+        Object requestParam = requestParams.getRequestParam();
+        if (requestParam != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            WechatUserInfo wechatUserInfo = mapper.convertValue(requestParam, WechatUserInfo.class);
+            wechatUserInfo.setUserOpenId(requestParams.getOpenId());
+            if (wechatUserInfo.getUserName() == null || wechatUserInfo.getUserName().isEmpty()){
+                throw new IllegalArgumentException("请求参数错误");
+            }
+            requestParams.setRequestParam(wechatUserInfo);
+        } else {
+            throw new IllegalArgumentException("请求体格式不对");
+        }
+    }
+
     /**
      * 目标执行后调用
      * @param joinPoint

@@ -11,6 +11,8 @@ public interface WechatUserInfoMapper {
     WechatUserInfo selectById(int id);
     List<WechatUserInfo> selectAll();
     void update(WechatUserInfo wechatUserInfo);
+    int updateByOpenId(WechatUserInfo wechatUserInfo);
+
     void delete(int id);
     WechatUserInfo selectByUserOpenId(String userOpenId);
 }

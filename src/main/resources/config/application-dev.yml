@@ -53,6 +53,7 @@ wx:
     aesKey: "kOQ1eQ4XnWl24C07XoNfjHiJ0oa8nxa20O97yqNlds6" # 加密模式需要
 deepseek:
   apiKey: "sk-eca12b3a36df4f16a70df45f910f252d"
+  base_url: "https://api.deepseek.com/v1/chat/completions"
 #是否开启跨域请求，开发环境在没有nginx代理的时候需要启动跨域请求
 app:
   cors:

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xin.pwdkeeper.wechat.bean.R;
 import xin.pwdkeeper.wechat.bean.RequestParams;
+import xin.pwdkeeper.wechat.bean.WechatUserInfo;
 import xin.pwdkeeper.wechat.customizeService.RedisService;
 import xin.pwdkeeper.wechat.customizeService.VerifyCodeService;
 import xin.pwdkeeper.wechat.service.WechatUserInfoService;
@@ -56,8 +57,10 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
         if (!checkVerifyCode.equals(verifyCode)){
             return R.failed(null, "验证码错误");
         }
+        WechatUserInfo wechatUserInfo = wechatUserInfoService.getWechatUserInfoByUserOpenId(request.getOpenId());
         //生成令牌(token)
         data.put("token", createToken(request));
+        data.put("userName", wechatUserInfo.getUserName());
         return R.ok(data);
     }
 

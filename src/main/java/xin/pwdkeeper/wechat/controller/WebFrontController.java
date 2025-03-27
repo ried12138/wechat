@@ -81,4 +81,12 @@ public class WebFrontController {
     @PreAuthorize("isAuthenticated()")
     public R decryptDate(@RequestBody RequestParams request) {return userManagementService.getDecryptDate(request);}
 
+    /**
+     * 补全用户信息
+     * @param request
+     * @return
+     */
+    @PostMapping(value = "/completeUserInfo", produces = "application/json;charset=utf-8")
+    @PreAuthorize("isAuthenticated()")
+    public R completeUserInfo(@RequestBody RequestParams request) {return userManagementService.updateCompleteUserInfo(request);}
 }

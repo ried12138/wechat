@@ -1,0 +1,42 @@
+package xin.pwdkeeper.wechat.controller;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import xin.pwdkeeper.wechat.service.ChatOPenAIService;
+
+/**
+ * 接入人工智能AI
+ * @Author weiranliu
+ * @Email liuweiran12138@outlook.com
+ * @Date 2025/3/27   15:50
+ * @Version 1.0
+ */
+@Slf4j
+@RestController
+@RequestMapping("/chat")
+@RequiredArgsConstructor
+public class ChatController {
+
+    @Autowired
+    private ChatOPenAIService chatOPenAIService;
+
+    /**
+     * deepseek R1 接口
+     * @param message
+     * @return
+     */
+    // 流式调用
+    @GetMapping(value = "/deepSeekR1/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> streamChat(@RequestParam String message, @RequestParam String openId) {
+        Flux<String> stringFlux = chatOPenAIService.deepSeekR1streamChat(message);
+        log.info("返回数据"+stringFlux);
+        return stringFlux;
+    }
+}

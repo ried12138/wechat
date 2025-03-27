@@ -66,6 +66,17 @@
         WHERE id = #{id}
     </update>
 
+    <update id="updateByOpenId" parameterType="xin.pwdkeeper.wechat.bean.WechatUserInfo">
+        UPDATE wechat_user_info
+        <set>
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+        </set>
+        WHERE user_open_id = #{userOpenId}
+    </update>
+
+
     <delete id="delete">
         DELETE FROM wechat_user_info WHERE id = #{id}
     </delete>
