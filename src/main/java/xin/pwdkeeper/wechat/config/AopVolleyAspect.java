@@ -102,7 +102,9 @@ public class AopVolleyAspect {
     public void webFrontByGenerateVerifyCode() {
     }
 
-
+    @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.getUserInfo(..))")
+    public void getUserInfo() {
+    }
 
     /**
      * 基础参数校验方法抽取
@@ -339,6 +341,12 @@ public class AopVolleyAspect {
             throw new IllegalArgumentException("请求体格式不对");
         }
     }
+    @Before("getUserInfo()")
+    public void getUserInfo(JoinPoint joinPoint){
+       verifyBasicParameters(joinPoint, Arrays.asList("full"));
+    }
+
+
 
     /**
      * 目标执行后调用

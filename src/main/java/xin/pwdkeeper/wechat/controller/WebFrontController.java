@@ -89,4 +89,17 @@ public class WebFrontController {
     @PostMapping(value = "/completeUserInfo", produces = "application/json;charset=utf-8")
     @PreAuthorize("isAuthenticated()")
     public R completeUserInfo(@RequestBody RequestParams request) {return userManagementService.updateCompleteUserInfo(request);}
+
+
+    /**
+     * 获取用户基础信息
+     * @param request
+     * @return
+     */
+    @PostMapping(value = "/getUserInfo", produces = "application/json;charset=utf-8")
+    @PreAuthorize("isAuthenticated()")
+    public R getUserInfo(@RequestBody RequestParams request) {return userManagementService.getUserInfo(request);}
+
+
+
 }

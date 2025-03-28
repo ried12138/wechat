@@ -13,4 +13,5 @@ public interface WechatUserInfoService {
     WechatUserInfo getWechatUserInfoByUserOpenId(String userOpenId);
     boolean isByUserOpenId(String userOpenId);
     int updateWechatUserInfoByOpenId(WechatUserInfo wechatUserInfo);
+    WechatUserInfo selectByUserOpenIdBaseInfo(String userOpenId);
 }

@@ -52,4 +52,12 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
         }
         return false;
     }
+
+    /**
+     * 获取用户基础信息
+     * @param userOpenId
+     * @return
+     */
+    @Override
+    public WechatUserInfo selectByUserOpenIdBaseInfo(String userOpenId) {return wechatUserInfoMapper.selectByUserOpenIdBaseInfo(userOpenId);}
 }

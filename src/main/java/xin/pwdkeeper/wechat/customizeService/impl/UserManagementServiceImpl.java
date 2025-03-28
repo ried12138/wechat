@@ -171,4 +171,18 @@ public class UserManagementServiceImpl implements UserManagementService {
         }
         return R.failed(null, "补全用户信息失败");
     }
+
+    /**
+     * 获取用户基础信息
+     * @param request
+     * @return
+     */
+    @Override
+    public R getUserInfo(RequestParams request) {
+        WechatUserInfo wechatUserInfo = wechatUserInfoService.selectByUserOpenIdBaseInfo(request.getOpenId());
+        if (wechatUserInfo != null && !wechatUserInfo.getUserName().isEmpty() ){
+            return R.ok(wechatUserInfo);
+        }
+        return R.failed(null, "获取用户信息失败");
+    }
 }

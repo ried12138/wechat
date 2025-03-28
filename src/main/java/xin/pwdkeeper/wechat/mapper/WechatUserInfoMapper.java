@@ -15,4 +15,7 @@ public interface WechatUserInfoMapper {
 
     void delete(int id);
     WechatUserInfo selectByUserOpenId(String userOpenId);
+
+    WechatUserInfo selectByUserOpenIdBaseInfo(String userOpenId);
+
 }

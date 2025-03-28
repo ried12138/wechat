@@ -44,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 //未授权允许被访问的路径，默认情况下，Spring Security会阻止所有未授权访问
-                .antMatchers("/", "/verifyCode/generateVerifyCode","/verifyCode/verificationCode","/dictionary/dictType","/wechat/*").permitAll()
+                .antMatchers("/", "/verifyCode/generateVerifyCode","/verifyCode/verificationCode","/dictionary/dictType","/wechat/*","/chat/deepSeekR1/stream").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()

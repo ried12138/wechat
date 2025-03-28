@@ -35,6 +35,7 @@ public class ChatController {
     // 流式调用
     @GetMapping(value = "/deepSeekR1/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> streamChat(@RequestParam String message, @RequestParam String openId) {
+        log.info("请求聊天时的openId："+openId);
         Flux<String> stringFlux = chatOPenAIService.deepSeekR1streamChat(message);
         log.info("返回数据"+stringFlux);
         return stringFlux;

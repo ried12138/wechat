@@ -30,4 +30,6 @@ public interface UserManagementService {
     R getDecryptDate(RequestParams request);
 
     R updateCompleteUserInfo(RequestParams request);
+
+    R getUserInfo(RequestParams request);
 }
