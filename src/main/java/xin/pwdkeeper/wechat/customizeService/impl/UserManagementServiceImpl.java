@@ -116,7 +116,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     public R signOut(RequestParams request) {
         if (redisTemplate.delete(RedisKeysUtil.VERIFY_CODE_KEY + request.getOpenId())) {
-            return R.ok("安全退出");
+            return R.ok("账号已经安全关闭并退出");
         }
         return R.failed(null, "出现意外，没有安全的退出系统，请重试");
     }
@@ -180,7 +180,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     public R getUserInfo(RequestParams request) {
         WechatUserInfo wechatUserInfo = wechatUserInfoService.selectByUserOpenIdBaseInfo(request.getOpenId());
-        if (wechatUserInfo != null && !wechatUserInfo.getUserName().isEmpty() ){
+        if (wechatUserInfo != null ){
             return R.ok(wechatUserInfo);
         }
         return R.failed(null, "获取用户信息失败");

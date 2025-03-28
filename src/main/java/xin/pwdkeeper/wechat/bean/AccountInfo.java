@@ -72,7 +72,7 @@ public class AccountInfo implements Serializable {
      */
     public boolean isBindPhoneEmpty() {
         if (bindPhone == null || bindPhone.isEmpty()) {
-            return true;
+            return false;
         }
         // 使用正则表达式验证手机号格式
         Pattern pattern = Pattern.compile("^1[3-9]\\d{9}$");
@@ -85,7 +85,7 @@ public class AccountInfo implements Serializable {
      */
     public boolean isBindEmailEmpty() {
         if (bindEmail == null || bindEmail.isEmpty()) {
-            return true;
+            return false;
         }
         // 使用正则表达式验证邮箱格式
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");

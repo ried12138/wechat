@@ -1,6 +1,7 @@
 package xin.pwdkeeper.wechat.service;
 
 import reactor.core.publisher.Flux;
+import xin.pwdkeeper.wechat.bean.R;
 
 /**
  * @Author weiranliu
@@ -11,4 +12,6 @@ import reactor.core.publisher.Flux;
 public interface ChatOPenAIService {
 
     Flux<String> deepSeekR1streamChat(String message);
+
+    R chatCompletion(String userMessage);
 }

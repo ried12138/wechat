@@ -5,6 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * deepseek请求体
  * 聊天请求体
  * @Author weiranliu
  * @Email liuweiran12138@outlook.com

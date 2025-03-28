@@ -7,9 +7,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import xin.pwdkeeper.wechat.bean.DictItem;
 import xin.pwdkeeper.wechat.bean.R;
 import xin.pwdkeeper.wechat.bean.RequestParams;
 import xin.pwdkeeper.wechat.customizeService.UserManagementService;
+import xin.pwdkeeper.wechat.service.DictItemService;
+
+import java.util.Map;
 
 
 /**
@@ -26,6 +30,9 @@ public class WebFrontController {
 
     @Autowired
     private UserManagementService userManagementService;
+
+@Autowired
+DictItemService dictItemService;
 
 
     /**
@@ -101,5 +108,16 @@ public class WebFrontController {
     public R getUserInfo(@RequestBody RequestParams request) {return userManagementService.getUserInfo(request);}
 
 
-
+    /**
+     * 测试地址，不可在生产环境使用
+     */
+    @PostMapping(value = "/getUserInfoData", produces = "application/json;charset=utf-8")
+    public R getUserInfoData(@RequestBody RequestParams request) {
+        Map<String, Object> data = (Map<String, Object>)request.getRequestParam();
+        String text = (String) data.get("text");
+        String platFormText = text.substring(0, text.length() - 2);
+        DictItem dictItem = new DictItem();
+        dictItem.setItemValue(platFormText);
+        return dictItemService.addDictItem(dictItem);
+    }
 }

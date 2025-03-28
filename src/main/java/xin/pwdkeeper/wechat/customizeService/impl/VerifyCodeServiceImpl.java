@@ -57,10 +57,8 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
         if (!checkVerifyCode.equals(verifyCode)){
             return R.failed(null, "验证码错误");
         }
-        WechatUserInfo wechatUserInfo = wechatUserInfoService.getWechatUserInfoByUserOpenId(request.getOpenId());
         //生成令牌(token)
         data.put("token", createToken(request));
-        data.put("userName", wechatUserInfo.getUserName());
         return R.ok(data);
     }
 

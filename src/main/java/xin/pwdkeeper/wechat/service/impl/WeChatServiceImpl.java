@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import xin.pwdkeeper.wechat.bean.*;
 import xin.pwdkeeper.wechat.customizeService.UserManagementService;
 import xin.pwdkeeper.wechat.customizeService.VerifyCodeService;
+import xin.pwdkeeper.wechat.service.DictItemService;
 import xin.pwdkeeper.wechat.service.WechatUserInfoService;
 import xin.pwdkeeper.wechat.service.WeChatService;
 import java.util.Date;
@@ -43,6 +44,8 @@ public class WeChatServiceImpl implements WeChatService {
     private WechatUserInfoService wechatUserInfoService;
     @Autowired
     private UserManagementService userManagementService;
+    @Autowired
+    private DictItemService dictItemService;
 
     /**
      * 服务器与微信公众号校验token值
@@ -79,23 +82,31 @@ public class WeChatServiceImpl implements WeChatService {
                             .toUser(message.getFromUser())
                             .build();
                     //判断消息的内容
-                    if (message.getContent().equals("验证码")){
-                        RequestParams<Object> requestParam = new RequestParams<>();
-                        requestParam.setOpenId(message.getFromUser());
-                        R r = verifyCodeService.generateVerifyCode(requestParam);
-                        if (r.getCode() != 0 && !r.getMsg().equals("SUCCESS")){
-                            content.setContent(r.getMsg());
-                            break;
-                        }
-                        Map<String, Object> data = (Map<String, Object>)r.getData();
-                        content.setContent(String.format("获取成功!\n 你的验证码：%s \n点击此处可以查看你的资产 %s", data.get("verifyCode"),data.get("springUrl")));
-                        return content;
-                    }else if (message.getContent().equals("登记")){
-                        message.setEvent(SUBSCRIBE);
-                        return handleEvent(message);
-                    }else if (message.getContent().equals("退出")){
-                        content.setContent(signOut(message));
-                        return content;
+                    String text = message.getContent();
+                    switch (text){
+                        case "验证码":
+                            RequestParams<Object> requestParam = new RequestParams<>();
+                            requestParam.setOpenId(message.getFromUser());
+                            R r = verifyCodeService.generateVerifyCode(requestParam);
+                            if (r.getCode() != 0 && !r.getMsg().equals("SUCCESS")){
+                                content.setContent(r.getMsg());
+                                break;
+                            }
+                            Map<String, Object> data = (Map<String, Object>)r.getData();
+                            content.setContent(String.format("获取成功!\n 你的验证码：%s \n点击此处可以查看你的资产 %s", data.get("verifyCode"),data.get("springUrl")));
+                            return content;
+                        case "登记":
+                            message.setEvent(SUBSCRIBE);
+                            return handleEvent(message);
+                        case "安全退出":
+                            content.setContent(signOut(message));
+                            return content;
+                    }
+                    if (text.endsWith("平台")){
+                        String platFormText = text.substring(0, text.length() - 2);
+                        DictItem dictItem = new DictItem();
+                        dictItem.setItemValue(platFormText);
+                        dictItemService.addDictItem(dictItem);
                     }
                 case EVENT:
                     return handleEvent(message);

@@ -1,11 +1,12 @@
 package xin.pwdkeeper.wechat.service;
 
 import xin.pwdkeeper.wechat.bean.DictItem;
+import xin.pwdkeeper.wechat.bean.R;
 
 import java.util.List;
 
 public interface DictItemService {
-    void addDictItem(DictItem dictItem);
+    R addDictItem(DictItem dictItem);
     DictItem getDictItemById(int itemId);
     List<DictItem> getAllDictItems();
     void updateDictItem(DictItem dictItem);

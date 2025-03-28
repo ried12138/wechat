@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import xin.pwdkeeper.wechat.bean.R;
 import xin.pwdkeeper.wechat.service.ChatOPenAIService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 接入人工智能AI
@@ -39,5 +41,10 @@ public class ChatController {
         Flux<String> stringFlux = chatOPenAIService.deepSeekR1streamChat(message);
         log.info("返回数据"+stringFlux);
         return stringFlux;
+    }
+
+    @PostMapping(value = "/completion", produces = "application/json;charset=utf-8")
+    public R getCompletion(@RequestBody Map<String, String> request) {
+        return chatOPenAIService.chatCompletion(request.get("message"));
     }
 }
