@@ -111,13 +111,13 @@ DictItemService dictItemService;
     /**
      * 测试地址，不可在生产环境使用
      */
-    @PostMapping(value = "/getUserInfoData", produces = "application/json;charset=utf-8")
-    public R getUserInfoData(@RequestBody RequestParams request) {
-        Map<String, Object> data = (Map<String, Object>)request.getRequestParam();
-        String text = (String) data.get("text");
-        String platFormText = text.substring(0, text.length() - 2);
-        DictItem dictItem = new DictItem();
-        dictItem.setItemValue(platFormText);
-        return dictItemService.addDictItem(dictItem);
-    }
+//    @PostMapping(value = "/getUserInfoData", produces = "application/json;charset=utf-8")
+//    public R getUserInfoData(@RequestBody RequestParams request) {
+//        Map<String, Object> data = (Map<String, Object>)request.getRequestParam();
+//        String text = (String) data.get("text");
+//        String platFormText = text.substring(0, text.length() - 2);
+//        DictItem dictItem = new DictItem();
+//        dictItem.setItemValue(platFormText);
+//        return dictItemService.addDictItem(dictItem);
+//    }
 }
