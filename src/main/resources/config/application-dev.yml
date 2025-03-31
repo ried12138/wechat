@@ -29,6 +29,12 @@ spring:
         max-idle: 8
         min-idle: 0
   logpath: /Users/liuweiran/data/log
+# application.yml
+minio:
+  endpoint: http://39.106.75.80:4700
+  access-key: admin
+  secret-key: lzaIsMySun..ok@123
+  bucket: pwdkeeper-photo-info  # 对应docker-compose中创建的Bucket
 logging:
   file:
     name: ${spring.logpath}/${spring.application.name}-info.log

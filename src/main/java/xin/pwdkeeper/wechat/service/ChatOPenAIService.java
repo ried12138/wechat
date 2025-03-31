@@ -11,7 +11,7 @@ import xin.pwdkeeper.wechat.bean.R;
  */
 public interface ChatOPenAIService {
 
-    Flux<String> deepSeekR1streamChat(String message);
+    Flux<String> deepSeekR1streamChat(String message,String openId);
 
     R chatCompletion(String userMessage);
 }

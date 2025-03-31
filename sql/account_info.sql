@@ -4,14 +4,14 @@
  Source Server         : 阿里云私人数据库
  Source Server Type    : MySQL
  Source Server Version : 80027
- Source Host           : 39.106.75.80:54306
+ Source Host           : localhost:54306
  Source Schema         : wechatDB
 
  Target Server Type    : MySQL
  Target Server Version : 80027
  File Encoding         : 65001
 
- Date: 11/03/2025 12:09:32
+ Date: 31/03/2025 09:26:08
 */
 
 SET NAMES utf8mb4;
@@ -33,9 +33,9 @@ CREATE TABLE `account_info` (
   `bind_answer` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '绑定的答案',
   `bind_ask` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '绑定的问题',
   `creation_time` datetime NOT NULL COMMENT '创建时间',
-  `update_time` datetime NOT NULL COMMENT '最后一次更新时间',
+  `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '最后一次更新时间',
   `flag` int NOT NULL DEFAULT '0' COMMENT '标记，0=未删除，1=已删除',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户保存的账号信息';
+) ENGINE=InnoDB AUTO_INCREMENT=380 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户保存的账号信息';
 
 SET FOREIGN_KEY_CHECKS = 1;

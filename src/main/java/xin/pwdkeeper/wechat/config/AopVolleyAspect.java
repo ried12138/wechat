@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import xin.pwdkeeper.wechat.bean.*;
 import xin.pwdkeeper.wechat.customizeService.RedisService;
 import xin.pwdkeeper.wechat.util.AesUtil;
@@ -105,6 +106,18 @@ public class AopVolleyAspect {
     @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.getUserInfo(..))")
     public void getUserInfo() {
     }
+
+    @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.uploadFile(..))")
+    public void uploadFile() {
+    }
+    @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.getImageUrl(..))")
+    public void getImageUrl() {
+    }
+
+    @Pointcut("execution(* xin.pwdkeeper.wechat.controller.WebFrontController.imageDelete(..))")
+    public void imageDelete() {
+    }
+
 
     /**
      * 基础参数校验方法抽取
@@ -325,6 +338,10 @@ public class AopVolleyAspect {
         }
     }
 
+    /**
+     * 完善用户信息接口进行拦截校验入参
+     * @param joinPoint
+     */
     @Before("completeUserInfo()")
     public void completeUserInfo(JoinPoint joinPoint){
         RequestParams requestParams = verifyBasicParameters(joinPoint, Arrays.asList("full"));
@@ -341,9 +358,59 @@ public class AopVolleyAspect {
             throw new IllegalArgumentException("请求体格式不对");
         }
     }
+
+    /**
+     * 获取用户信息接口进行拦截校验入参
+     * @param joinPoint
+     */
     @Before("getUserInfo()")
     public void getUserInfo(JoinPoint joinPoint){
        verifyBasicParameters(joinPoint, Arrays.asList("full"));
+    }
+
+    /**
+     * 文件上传接口进行拦截校验入参
+     * @param joinPoint
+     */
+    @Before("uploadFile()")
+    public void uploadFile(JoinPoint joinPoint){
+        RequestParams requestParams = verifyBasicParameters(joinPoint, Arrays.asList("full"));
+        Map<String, Object> data = (Map<String, Object>)requestParams.getRequestParam();
+        String file = (String)data.get("base64Image");
+        if (file == null || file.isEmpty()){
+            throw new IllegalArgumentException("请求参数错误,图片未提交");
+        }
+        String objectName = (String)data.get("objectName");
+        if (objectName == null || objectName.isEmpty()){
+            throw new IllegalArgumentException("请求参数错误,名字未提交");
+        }
+        String[] split = objectName.split("\\.");
+        if (split.length < 2){
+            throw new IllegalArgumentException("请求参数错误,名字格式不对");
+        }
+        String extension = split[split.length - 1];
+        if(!extension.equals("png") && !extension.equals("jpg")){
+            throw new IllegalArgumentException("请求参数错误,图片格式不对");
+        }
+    }
+
+
+    /**
+     * 获取图片url接口进行拦截校验入参
+     * @param joinPoint
+     */
+    @Before("getImageUrl()")
+    public void getImageUrl(JoinPoint joinPoint){
+        verifyBasicParameters(joinPoint, Arrays.asList("full"));
+    }
+
+    /**
+     * 图片删除接口进行拦截校验入参
+     * @param joinPoint
+     */
+    @Before("imageDelete()")
+    public void imageDelete(JoinPoint joinPoint){
+        verifyBasicParameters(joinPoint, Arrays.asList("full"));
     }
 
 

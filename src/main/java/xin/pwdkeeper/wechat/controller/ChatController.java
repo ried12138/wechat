@@ -28,18 +28,24 @@ public class ChatController {
 
     /**
      * deepseek R1 接口
+     * 流式调用
      * @param message
      * @return
      */
-    // 流式调用
     @GetMapping(value = "/deepSeekR1/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> streamChat(@RequestParam String message, @RequestParam String openId) {
         log.info("请求聊天时的openId："+openId);
-        Flux<String> stringFlux = chatOPenAIService.deepSeekR1streamChat(message);
+        Flux<String> stringFlux = chatOPenAIService.deepSeekR1streamChat(message,openId);
         log.info("返回数据"+stringFlux);
         return stringFlux;
     }
 
+    /**
+     * deepseek R1 接口
+     * 同步请求
+     * @param request
+     * @return
+     */
     @PostMapping(value = "/completion", produces = "application/json;charset=utf-8")
     public R getCompletion(@RequestBody Map<String, String> request) {
         return chatOPenAIService.chatCompletion(request.get("message"));

@@ -35,11 +35,11 @@ public class ChatOPenAIServiceImpl implements ChatOPenAIService {
     private WebClient webClient;
 
     @Override
-    public Flux<String> deepSeekR1streamChat(String message) {
+    public Flux<String> deepSeekR1streamChat(String message,String openId) {
         ChatRequest request = new ChatRequest();
         request.setStream(true);
         request.setMessages(List.of(
-                new ChatRequest.Message("user", message)
+                new ChatRequest.Message(openId, message)
         ));
         log.info("接收到消息："+ message);
         return webClient.post()

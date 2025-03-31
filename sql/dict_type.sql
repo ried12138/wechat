@@ -4,14 +4,14 @@
  Source Server         : 阿里云私人数据库
  Source Server Type    : MySQL
  Source Server Version : 80027
- Source Host           : 39.106.75.80:54306
+ Source Host           : localhost:54306
  Source Schema         : wechatDB
 
  Target Server Type    : MySQL
  Target Server Version : 80027
  File Encoding         : 65001
 
- Date: 11/03/2025 12:06:30
+ Date: 31/03/2025 09:26:33
 */
 
 SET NAMES utf8mb4;
@@ -28,6 +28,6 @@ CREATE TABLE `dict_type` (
   `flag` int NOT NULL DEFAULT '1' COMMENT '是否启用 0=不启用，1=启用',
   PRIMARY KEY (`type_id`),
   UNIQUE KEY `type_name` (`type_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='类型字典';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='类型字典';
 
 SET FOREIGN_KEY_CHECKS = 1;
