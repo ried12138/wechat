@@ -23,7 +23,7 @@ public class AccountInfoServiceImpl implements AccountInfoService {
         if (count > 0){
             log.info("数据变动：account_info表中有"+count+"条数据被插入");
         }
-        return count;
+        return accountInfo.getId();
     }
 
     @Override
@@ -37,7 +37,7 @@ public class AccountInfoServiceImpl implements AccountInfoService {
     }
 
     @Override
-    public int updateAccountInfo(List<AccountInfo> accountInfo) {
+    public int updateAccountInfo(List<Object> accountInfo) {
         int count = accountInfoMapper.update(accountInfo);
         if (count > 0){
             log.info("数据变动：account_info表中有"+count+"条数据被修改");

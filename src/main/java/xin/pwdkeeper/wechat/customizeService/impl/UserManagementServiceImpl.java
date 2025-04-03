@@ -1,21 +1,26 @@
 package xin.pwdkeeper.wechat.customizeService.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
+import io.minio.errors.*;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import xin.pwdkeeper.wechat.bean.AccountInfo;
-import xin.pwdkeeper.wechat.bean.R;
-import xin.pwdkeeper.wechat.bean.RequestParams;
-import xin.pwdkeeper.wechat.bean.WechatUserInfo;
+import xin.pwdkeeper.wechat.bean.*;
 import xin.pwdkeeper.wechat.customizeService.UserManagementService;
 import xin.pwdkeeper.wechat.service.AccountInfoService;
+import xin.pwdkeeper.wechat.service.MinioService;
 import xin.pwdkeeper.wechat.service.WechatUserInfoService;
 import xin.pwdkeeper.wechat.util.AesUtil;
 import xin.pwdkeeper.wechat.util.RedisKeysUtil;
+
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +45,8 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
+    @Autowired
+    private MinioService minioService;
 
     /**
      * 添加一个用户财产
@@ -49,7 +56,7 @@ public class UserManagementServiceImpl implements UserManagementService {
      */
     @Transactional
     @Override
-    public R addUserInfoData(RequestParams request) {
+    public R addUserInfoData(RequestParams request) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         AccountInfo accountInfo = (AccountInfo) request.getRequestParam();
         WechatUserInfo wechatUserInfo = wechatUserInfoService.getWechatUserInfoByUserOpenId(request.getOpenId());
         accountInfo.setUserId(wechatUserInfo.getId());
@@ -62,12 +69,22 @@ public class UserManagementServiceImpl implements UserManagementService {
                 R.failed(null, "加密失败,请重试" + e.getMessage());
             }
         }
-        return R.ok(accountInfoService.addAccountInfo(accountInfo));
+        int count = accountInfoService.addAccountInfo(accountInfo);
+        if (count >= 1) {
+            log.info("数据变动：account_info表中有" + 1 + "条数据被插入");
+            //上传图片
+            R r = minioService.uploadFile(request);
+            if (r.getCode() !=0){
+                throw new RuntimeException("上传文件时发生错误");
+            }
+            return R.ok("添加成功");
+        }
+        return R.failed(null, "上传文件时发生错误");
     }
 
     /**
      * 删除一个/多个用户财产
-     *
+     * 不删除附件
      * @param request
      * @return
      */
@@ -80,15 +97,33 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     /**
      * 修改一个用户财产
-     *
+     * 目前服务支持一个单个数据的修改
      * @param request
      * @return
      */
     @Override
     @Transactional
-    public R alterUserInfoData(RequestParams request) {
-        List<AccountInfo> accountInfo = (List<AccountInfo>) request.getRequestParam();
-        return R.ok(accountInfoService.updateAccountInfo(accountInfo));
+    public R alterUserInfoData(RequestParams request) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        List<Object> accountInfo = (List<Object>) request.getRequestParam();
+        if (accountInfoService.updateAccountInfo(accountInfo) >= 1){
+            log.info("数据变动：account_info表中有"+accountInfo.size()+"条数据被修改");
+            //是否有图片上传
+            ObjectMapper mapper = new ObjectMapper();
+            for (Object accountInfoBean : accountInfo) {
+                AccountInfo info = mapper.convertValue(accountInfoBean, AccountInfo.class);
+                FileRequestBean fileRequestBean = info.getFileRequestBean();
+                if (fileRequestBean != null){
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.setOpenId(request.getOpenId());
+                    requestParams.setRequestParam(info);
+                    R r = minioService.uploadFile(requestParams);
+                    if (r.getCode() !=0){
+                        return r;
+                    }
+                }
+            }
+        }
+        return R.ok();
     }
 
     /**

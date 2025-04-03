@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import xin.pwdkeeper.wechat.bean.FileDataInfo;
-import xin.pwdkeeper.wechat.bean.R;
-import xin.pwdkeeper.wechat.bean.RequestParams;
-import xin.pwdkeeper.wechat.bean.WechatUserInfo;
+import xin.pwdkeeper.wechat.bean.*;
+import xin.pwdkeeper.wechat.mapper.AccountInfoMapper;
 import xin.pwdkeeper.wechat.mapper.FileDataInfoMapper;
 import xin.pwdkeeper.wechat.mapper.WechatUserInfoMapper;
 import xin.pwdkeeper.wechat.service.MinioService;
@@ -53,9 +51,6 @@ public class MinioServiceImpl implements MinioService {
 
     /**
      * 上传图片
-     * @param file
-     * @param objectName
-     * @param openId
      * @return
      * @throws ServerException
      * @throws InsufficientDataException
@@ -67,11 +62,14 @@ public class MinioServiceImpl implements MinioService {
      * @throws XmlParserException
      * @throws InternalException
      */
-    @Transactional
     @Override
     public R uploadFile(RequestParams request) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        Map<String, Object> data = (Map<String, Object>)request.getRequestParam();
-        String base64Image = (String)data.get("base64Image");
+        AccountInfo accountInfo = (AccountInfo)request.getRequestParam();
+        FileRequestBean fileRequestBean = accountInfo.getFileRequestBean();
+        if (fileRequestBean == null){
+            return R.ok("文件信息为空,无图片可以上传");
+        }
+        String base64Image = fileRequestBean.getBase64Image();
         //去掉 Base64 数据头部（如果有的话）
         String imageData = base64Image;
         String extension = "";
@@ -86,7 +84,7 @@ public class MinioServiceImpl implements MinioService {
         if (wechatUserInfo == null){
             return R.failed(null,"用户不存在");
         }
-        String objectName = (String)data.get("objectName");
+        String objectName = fileRequestBean.getObjectName();
         byte[] imageBytes = Base64.getDecoder().decode(imageData);
         // 将字节数组包装为 InputStream
         if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
@@ -107,7 +105,7 @@ public class MinioServiceImpl implements MinioService {
             return R.failed("上传文件时发生错误: " + e.getMessage());
         }
         //上传mysql
-        FileDataInfo fileDataInfo = new FileDataInfo(null, wechatUserInfo.getId(), storageName, null, bucketName, null, null, 1);
+        FileDataInfo fileDataInfo = new FileDataInfo(null, wechatUserInfo.getId(),accountInfo.getId(), storageName, null, bucketName, null, null, 1);
         if (fileDataInfoMapper.insert(fileDataInfo) == 1){
             log.info("数据变动：file_data_info表中有"+1+"条数据被插入");
         }
@@ -116,16 +114,17 @@ public class MinioServiceImpl implements MinioService {
 
     /**
      * 获取图片url
-     * @param openId
+     * @param request
      * @return
      */
     @Override
-    public R getImageUrl(String openId) {
-        WechatUserInfo wechatUserInfo = wechatUserInfoMapper.selectByUserOpenId(openId);
+    public R getImageUrl(RequestParams request) {
+        WechatUserInfo wechatUserInfo = wechatUserInfoMapper.selectByUserOpenId(request.getOpenId());
         if (wechatUserInfo == null){
             return R.failed(null,"用户不存在");
         }
-        FileDataInfo fileDataInfo = fileDataInfoMapper.selectByOpenId(wechatUserInfo.getId());
+        AccountInfo accountInfo = (AccountInfo)request.getRequestParam();
+        FileDataInfo fileDataInfo = fileDataInfoMapper.selectByOpenId(accountInfo.getId());
         if (fileDataInfo == null){
             return R.ok();
         }
@@ -133,6 +132,7 @@ public class MinioServiceImpl implements MinioService {
         try {
             String url = generateAccessUrl(fileDataInfo.getFileName());
             map.put("imageUrl",url);
+            map.put("objectName",fileDataInfo.getFileName().split("@")[0]);
         } catch (Exception e) {
             R.failed(null,"生成url失败");
         }
@@ -141,17 +141,18 @@ public class MinioServiceImpl implements MinioService {
 
     /**
      * 删除图片,数据库中标记flag 不被查询出出来
-     * @param openId
+     * @param request
      * @return
      */
     @Transactional
     @Override
-    public R imageDelete(String openId) {
-        WechatUserInfo wechatUserInfo = wechatUserInfoMapper.selectByUserOpenId(openId);
+    public R imageDelete(RequestParams request) {
+        WechatUserInfo wechatUserInfo = wechatUserInfoMapper.selectByUserOpenId(request.getOpenId());
         if (wechatUserInfo == null){
             return R.failed(null,"用户不存在");
         }
-        FileDataInfo fileDataInfo = fileDataInfoMapper.selectByOpenId(wechatUserInfo.getId());
+        AccountInfo accountInfo = (AccountInfo) request.getRequestParam();
+        FileDataInfo fileDataInfo = fileDataInfoMapper.selectByOpenId(accountInfo.getId());
         if (fileDataInfo == null){
             return R.ok("没有要删除的图片");
         }

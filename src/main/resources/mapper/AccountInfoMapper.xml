@@ -26,7 +26,7 @@
         id, user_id, class_type, account, password, other_secret, bind_phone, bind_email, bind_answer, bind_ask, creation_time, update_time, flag
     </sql>
 
-    <insert id="insert" parameterType="xin.pwdkeeper.wechat.bean.AccountInfo">
+    <insert id="insert" parameterType="xin.pwdkeeper.wechat.bean.AccountInfo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO account_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null">user_id,</if>

@@ -389,7 +389,7 @@ public class AopVolleyAspect {
             throw new IllegalArgumentException("请求参数错误,名字格式不对");
         }
         String extension = split[split.length - 1];
-        if(!extension.equals("png") && !extension.equals("jpg")){
+        if(!extension.equals("png") && !extension.equals("jpeg")){
             throw new IllegalArgumentException("请求参数错误,图片格式不对");
         }
     }
@@ -401,7 +401,17 @@ public class AopVolleyAspect {
      */
     @Before("getImageUrl()")
     public void getImageUrl(JoinPoint joinPoint){
-        verifyBasicParameters(joinPoint, Arrays.asList("full"));
+        RequestParams requestParams = verifyBasicParameters(joinPoint, Arrays.asList("full"));
+        Object requestParam = requestParams.getRequestParam();
+        if (requestParam != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            AccountInfo accountInfo = mapper.convertValue(requestParam, AccountInfo.class);
+            if (accountInfo.getId() == null || accountInfo.getId() == 0){
+                throw new IllegalArgumentException("请求参数错误");
+            }
+            requestParams.setRequestParam(accountInfo);
+        }
+
     }
 
     /**
@@ -410,7 +420,16 @@ public class AopVolleyAspect {
      */
     @Before("imageDelete()")
     public void imageDelete(JoinPoint joinPoint){
-        verifyBasicParameters(joinPoint, Arrays.asList("full"));
+        RequestParams requestParams = verifyBasicParameters(joinPoint, Arrays.asList("full"));
+        Object requestParam = requestParams.getRequestParam();
+        if (requestParam != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            AccountInfo accountInfo = mapper.convertValue(requestParam, AccountInfo.class);
+            if (accountInfo.getId() == null || accountInfo.getId() == 0){
+                throw new IllegalArgumentException("请求参数错误");
+            }
+            requestParams.setRequestParam(accountInfo);
+        }
     }
 
 

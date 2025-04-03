@@ -9,7 +9,7 @@ public interface AccountInfoService {
     int addAccountInfo(AccountInfo accountInfo);
     AccountInfo getAccountInfoById(int id);
     List<AccountInfo> getAllAccountInfos();
-    int updateAccountInfo(List<AccountInfo> accountInfo);
+    int updateAccountInfo(List<Object> accountInfo);
     void deleteAccountInfo(int id);
     int removeTheMarkerAccountInfo(List<Integer> id);
     PageInfo<AccountInfo> getAccountInByUserIdWithPagination(AccountInfo accountInfo);

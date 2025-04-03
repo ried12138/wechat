@@ -37,8 +37,8 @@ public class AccountInfo implements Serializable {
     private Date updateTime;
     // 标记，0=未删除，1=已删除
     private Integer flag;
-
-
+    //文件存储对象
+    private FileRequestBean fileRequestBean;
     //分页页码
     private Integer pageNum;
     //分页每页条数

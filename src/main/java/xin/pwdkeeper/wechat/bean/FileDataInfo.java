@@ -10,6 +10,8 @@ public class FileDataInfo {
     private Integer id;
     // 绑定的openId
     private Integer openId;
+    //账号id
+    private Integer accId;
     // 文件名称
     private String fileName;
     // 文件url
@@ -26,9 +28,10 @@ public class FileDataInfo {
     public FileDataInfo() {
     }
 
-    public FileDataInfo(Integer id, Integer openId, String fileName, String fileUrl, String fileBucketName, Date creationTime, Date updateTime, Integer flag) {
+    public FileDataInfo(Integer id, Integer openId,Integer accId, String fileName, String fileUrl, String fileBucketName, Date creationTime, Date updateTime, Integer flag) {
         if (id != null) this.id = id;
         if (openId != null) this.openId = openId;
+        if (accId != null) this.accId = accId;
         if (fileName != null) this.fileName = fileName;
         if (fileUrl != null) this.fileUrl = fileUrl;
         if (fileBucketName != null) this.fileBucketName = fileBucketName;

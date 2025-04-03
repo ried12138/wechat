@@ -9,6 +9,7 @@
     <resultMap id="FileDataInfoResultMap" type="xin.pwdkeeper.wechat.bean.FileDataInfo">
         <id property="id" column="id"/>
         <result property="openId" column="open_id"/>
+        <result property="accId" column="acc_id"/>
         <result property="fileName" column="file_name"/>
         <result property="fileUrl" column="file_url"/>
         <result property="fileBucketName" column="file_bucket_name"/>
@@ -19,7 +20,7 @@
 
     <!-- 添加公共的查询字段 -->
     <sql id="selectFileDataInfo">
-        id, open_id, file_name, file_url, file_bucket_name, creation_time, update_time, flag
+        id, open_id, acc_id, file_name, file_url, file_bucket_name, creation_time, update_time, flag
     </sql>
 
     <select id="selectById" resultMap="FileDataInfoResultMap">
@@ -30,9 +31,9 @@
         SELECT <include refid="selectFileDataInfo"/> FROM file_data_info
     </select>
     <select id="selectByOpenId" resultMap="FileDataInfoResultMap">
-        SELECT id, file_name, file_url, file_bucket_name, creation_time, update_time
+        SELECT id, acc_id, file_name, file_url, file_bucket_name, creation_time, update_time
         FROM file_data_info 
-        WHERE open_id = #{openId} and flag = 1
+        WHERE acc_id = #{accId} and flag = 1
         ORDER BY update_time DESC
         LIMIT 1
     </select>
@@ -41,6 +42,7 @@
         INSERT INTO file_data_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="openId != null">open_id,</if>
+            <if test="accId != null">acc_id,</if>
             <if test="fileName != null">file_name,</if>
             <if test="fileUrl != null">file_url,</if>
             <if test="fileBucketName != null">file_bucket_name,</if>
@@ -50,6 +52,7 @@
         </trim>
         <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
             <if test="openId != null">#{openId},</if>
+            <if test="accId != null">#{accId},</if>
             <if test="fileName != null">#{fileName},</if>
             <if test="fileUrl != null">#{fileUrl},</if>
             <if test="fileBucketName != null">#{fileBucketName},</if>

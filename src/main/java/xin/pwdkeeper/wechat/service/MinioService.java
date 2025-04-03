@@ -2,6 +2,7 @@ package xin.pwdkeeper.wechat.service;
 
 import io.minio.errors.*;
 import org.springframework.web.multipart.MultipartFile;
+import xin.pwdkeeper.wechat.bean.AccountInfo;
 import xin.pwdkeeper.wechat.bean.R;
 import xin.pwdkeeper.wechat.bean.RequestParams;
 
@@ -18,7 +19,7 @@ import java.security.NoSuchAlgorithmException;
 public interface MinioService {
     R uploadFile(RequestParams request) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException;
 
-    R getImageUrl(String openId);
+    R getImageUrl(RequestParams request);
 
-    R imageDelete(String openId);
+    R imageDelete(RequestParams request);
 }

@@ -17,7 +17,7 @@ public interface FileDataInfoMapper {
     void update(FileDataInfo fileDataInfo);
     void deleteById(Integer id);
 
-    FileDataInfo selectByOpenId(Integer id);
+    FileDataInfo selectByOpenId(Integer accId);
 
     int updateFlagStatus(FileDataInfo fileDataInfo);
 }

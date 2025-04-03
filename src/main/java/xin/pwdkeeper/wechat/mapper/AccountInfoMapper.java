@@ -11,7 +11,7 @@ public interface AccountInfoMapper {
     int insert(AccountInfo accountInfo);
     AccountInfo selectById(int id);
     List<AccountInfo> selectAll();
-    int update(List<AccountInfo> accountInfo);
+    int update(List<Object> accountInfo);
     int bulkChangesFlagState(List<Integer> ids);
     List<AccountInfo> selectByUserId(AccountInfo accountInfo);
     void delete(int id);

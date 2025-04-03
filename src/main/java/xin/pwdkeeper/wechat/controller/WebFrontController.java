@@ -1,21 +1,17 @@
 package xin.pwdkeeper.wechat.controller;
 
+import io.minio.errors.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import xin.pwdkeeper.wechat.bean.DictItem;
 import xin.pwdkeeper.wechat.bean.R;
 import xin.pwdkeeper.wechat.bean.RequestParams;
 import xin.pwdkeeper.wechat.customizeService.UserManagementService;
-import xin.pwdkeeper.wechat.service.DictItemService;
 import xin.pwdkeeper.wechat.service.MinioService;
-
-import java.io.ByteArrayInputStream;
-import java.util.Base64;
-import java.util.Map;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 
 /**
@@ -46,7 +42,9 @@ public class WebFrontController {
      */
     @PostMapping(value = "/webAddUserInfoData", produces = "application/json;charset=utf-8")
     @PreAuthorize("isAuthenticated()")
-    public R addUserInfoData(@RequestBody RequestParams request) {return userManagementService.addUserInfoData(request);}
+    public R addUserInfoData(@RequestBody RequestParams request) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        return userManagementService.addUserInfoData(request);
+    }
 
     /**
      * 批量移除用户信息，资产数据
@@ -64,7 +62,7 @@ public class WebFrontController {
      */
     @PostMapping(value = "/webAlterUserInfoData", produces = "application/json;charset=utf-8")
     @PreAuthorize("isAuthenticated()")
-    public R webAlterUserInfoData(@RequestBody RequestParams request) {return userManagementService.alterUserInfoData(request);}
+    public R webAlterUserInfoData(@RequestBody RequestParams request) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {return userManagementService.alterUserInfoData(request);}
 
     /**
      * 获取用户信息，资产数据
@@ -113,19 +111,19 @@ public class WebFrontController {
     public R getUserInfo(@RequestBody RequestParams request) {return userManagementService.getUserInfo(request);}
 
     /**
-     * 文件上传
+     * 文件上传 方法不能使用， 不支持直接使用接口上传图片
      * @param request
      * @return
      */
-    @PostMapping("/file/upload")
-    @PreAuthorize("isAuthenticated()")
-    public R uploadFile(@RequestBody RequestParams request) {
-        try {
-            return minioService.uploadFile(request);
-        } catch (Exception e) {
-            return R.failed("上传失败: " + e.getMessage());
-        }
-    }
+//    @PostMapping("/file/upload")
+//    @PreAuthorize("isAuthenticated()")
+//    public R uploadFile(@RequestBody RequestParams request) {
+//        try {
+//            return minioService.uploadFile(request);
+//        } catch (Exception e) {
+//            return R.failed("上传失败: " + e.getMessage());
+//        }
+//    }
 
     /**
      * 获取图片url
@@ -135,7 +133,7 @@ public class WebFrontController {
     @PostMapping(value = "/file/imageUrl")
     @PreAuthorize("isAuthenticated()")
     public R getImageUrl(@RequestBody RequestParams request) {
-        return minioService.getImageUrl(request.getOpenId());
+        return minioService.getImageUrl(request);
     }
 
     /**
@@ -146,7 +144,7 @@ public class WebFrontController {
     @PostMapping(value = "/file/imageDelete")
     @PreAuthorize("isAuthenticated()")
     public R imageDelete(@RequestBody RequestParams request) {
-        return minioService.imageDelete(request.getOpenId());
+        return minioService.imageDelete(request);
     }
 
     /**
