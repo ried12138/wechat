@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -34,8 +35,15 @@ public class ChatOPenAIServiceImpl implements ChatOPenAIService {
     @Autowired
     private WebClient webClient;
 
+    /**
+     * 流的方式处理请求deepseek 接口
+     * @param message
+     * @param openId 目前deepsek接口支持的值只有 system、user、assistant、tool
+     * @return
+     */
     @Override
     public Flux<String> deepSeekR1streamChat(String message,String openId) {
+        openId = "user";
         ChatRequest request = new ChatRequest();
         request.setStream(true);
         request.setMessages(List.of(
@@ -43,10 +51,21 @@ public class ChatOPenAIServiceImpl implements ChatOPenAIService {
         ));
         log.info("接收到消息："+ message);
         return webClient.post()
+                .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .accept(MediaType.TEXT_EVENT_STREAM)
                 .retrieve()
+                .onStatus(HttpStatus::isError, clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> {
+                                log.error("流式请求失败，状态码：{}，错误信息：{}", clientResponse.statusCode(), errorBody);
+                                return Mono.error(new RuntimeException("API 返回错误：" + clientResponse.statusCode() + " - " + errorBody));
+                            });
+                })
                 .bodyToFlux(String.class)
+                .filter(Objects::nonNull) // 过滤掉空值
+                .timeout(Duration.ofSeconds(30)) // 设置超时时间
+                .doOnError(e -> log.error("流式请求失败，错误信息：{}", e.getMessage()))
                 .onErrorResume(e -> Flux.just("Error: " + e.getMessage()));
     }
 
