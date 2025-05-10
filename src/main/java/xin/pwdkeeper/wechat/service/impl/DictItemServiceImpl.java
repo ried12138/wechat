@@ -34,7 +34,7 @@ public class DictItemServiceImpl implements DictItemService {
         List<DictItem> dictItems = dictItemMapper.selectAllByTypeId(1);
         if (itemValue.length() >= 2) {
             // 截取从开头到倒数第3个字符（即去掉最后两个字符）
-            String result = itemValue.substring(0, itemValue.length() - 2);
+            String result = itemValue.substring(0, itemValue.length());
             boolean flag = dictItems.stream()
                     .anyMatch(p -> p.getItemValue() != null && p.getItemValue().equals(result));
             if (flag) {

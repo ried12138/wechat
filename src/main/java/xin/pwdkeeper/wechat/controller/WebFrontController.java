@@ -5,13 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import xin.pwdkeeper.wechat.bean.DictItem;
 import xin.pwdkeeper.wechat.bean.R;
 import xin.pwdkeeper.wechat.bean.RequestParams;
 import xin.pwdkeeper.wechat.customizeService.UserManagementService;
+import xin.pwdkeeper.wechat.service.DictItemService;
 import xin.pwdkeeper.wechat.service.MinioService;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 
 /**
@@ -32,8 +35,8 @@ public class WebFrontController {
     @Autowired
     private MinioService minioService;
 
-//   @Autowired
-//   private DictItemService dictItemService;
+   @Autowired
+   private DictItemService dictItemService;
 
 
     /**
@@ -152,13 +155,14 @@ public class WebFrontController {
      * 请求deepseek API 同步请求
      * 测试地址，不可在生产环境使用
      */
-//    @PostMapping(value = "/getUserInfoData", produces = "application/json;charset=utf-8")
-//    public R getUserInfoData(@RequestBody RequestParams request) {
-//        Map<String, Object> data = (Map<String, Object>)request.getRequestParam();
-//        String text = (String) data.get("text");
-//        String platFormText = text.substring(0, text.length() - 2);
-//        DictItem dictItem = new DictItem();
-//        dictItem.setItemValue(platFormText); @PostMapping(value = "/getUserInfoData", produces = "application/json;charset=utf-8")
-//        return dictItemService.addDictItem(dictItem);
-//    }
+    @PostMapping(value = "/getUserInfoData", produces = "application/json;charset=utf-8")
+    public R getUserInfoData(@RequestBody RequestParams request) {
+        Map<String, Object> data = (Map<String, Object>)request.getRequestParam();
+        String text = (String) data.get("text");
+        String platFormText = text.substring(0, text.length() - 2);
+        DictItem dictItem = new DictItem();
+        dictItem.setItemValue(platFormText);
+//        @PostMapping(value = "/getUserInfoData", produces = "application/json;charset=utf-8")
+        return dictItemService.addDictItem(dictItem);
+    }
 }
