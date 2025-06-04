@@ -32,7 +32,6 @@ import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType.TEXT;
 public class WeChatServiceImpl implements WeChatService {
 
 
-
     @Autowired
     WeChatParseEvent weChatParseEvent;
     @Autowired
@@ -63,8 +62,6 @@ public class WeChatServiceImpl implements WeChatService {
     }
 
     /**
-     * 目前接口无法直接使用 2025.3.5
-     * 三大平台的商品转链服务
      * 处理微信互动消息
      * 目前只支持消息回复和关注处理
      * @return
@@ -105,7 +102,9 @@ public class WeChatServiceImpl implements WeChatService {
                         String platFormText = text.substring(0, text.length() - 2);
                         DictItem dictItem = new DictItem();
                         dictItem.setItemValue(platFormText);
-                        dictItemService.addDictItem(dictItem);
+                        R r = dictItemService.addDictItem(dictItem);
+                        content.setContent(r.getMsg() == null ? "添加中,请到登陆查看是否添加成功": r.getMsg());
+                        return content;
                     }
                 case EVENT:
                     return handleEvent(message);
@@ -124,8 +123,7 @@ public class WeChatServiceImpl implements WeChatService {
                 //记录用户信息
                 wechatUserInfoService.addWechatUserInfo(new WechatUserInfo(null,message.getFromUser(),1,new Date()));
                 return WxMpXmlOutMessage.TEXT()
-                        .content("感谢关注！" + message.getContent()+"\n" +
-                                "你可以再次登记你的网络虚拟资产\n" +
+                        .content("感谢关注！" + message.getContent() == null ? "" : message.getContent()+"\n" +                               "你可以再此登记你的网络虚拟资产\n" +
                                 "在对话框中输入【验证码】可以查看你的虚拟账户资产")
                         .fromUser(message.getToUser())
                         .toUser(message.getFromUser())
