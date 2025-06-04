@@ -43,27 +43,25 @@ public class DictItemServiceImpl implements DictItemService {
             boolean flag = dictItems.stream()
                     .anyMatch(p -> p.getItemValue() != null && p.getItemValue().equals(result));
             if (flag) {
-                return R.failed(null, itemValue + "平台项已存在");
+                return R.failed(null, itemValue + "平台已存在");
             }
             lockKey = "lock:cacheFlushPlatformDictionary" + result;
         }
         if (lockKey != null) {
             RLock lock = redissonClient.getLock(lockKey);
             try {
-                if (lock.tryLock(10, 30, TimeUnit.SECONDS)) {
-                    // 执行异步处理 调用 AI 服务
-                    asyncProcessAI(dictItem, dictItems);
-                    return R.ok("请求已提交，正在处理中");
-                } else {
-                    return R.failed(null, "系统繁忙，请稍后再试");
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // 保持中断状态
-                return R.failed(null, "操作被中断");
+                log.info("加锁成功，开始执行异步处理:%s"+lockKey);
+                // 阻塞等待锁，
+                lock.lock(20, TimeUnit.SECONDS);
+                // 执行异步处理 调用 AI 服务
+                asyncProcessAI(dictItem, dictItems);
+                return R.ok("请求已提交，正在处理中");
+            } catch (Exception e) {
+                log.error("加锁或执行过程中发生异常", e);
+                return R.failed(null, "系统异常，请稍后再试");
             } finally {
-                // 仅当当前线程持有锁时才释放
                 if (lock.isHeldByCurrentThread()) {
-                    lock.unlock();
+                    lock.unlock(); // 仅当前线程持有锁时才释放
                 }
             }
         }
@@ -73,12 +71,12 @@ public class DictItemServiceImpl implements DictItemService {
     @Async
     public void asyncProcessAI(DictItem dictItem, List<DictItem> dictItems) {
         R r = chatOPenAIService.chatCompletion(dictItem.acquireAiByAnalyze());
-        log.info("deepseek返回的内容", r);
+        log.info("deepseek返回的内容:%s", r);
         if (r.getCode() == 0) {
             dictItem = dictItems.get(0);
             Map<String, Object> data = (Map<String, Object>) r.getData();
             dictItem.analyseAIresults(data.get("json").toString());
-            log.info("解析json后对象数据:", dictItem);
+            log.info("解析json后对象数据:%s", dictItem);
             dictItemMapper.insert(dictItem);
             //同步到redis缓存
             cacheFlushPlatformDictionary();

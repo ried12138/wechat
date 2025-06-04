@@ -69,7 +69,7 @@ public class WeChatServiceImpl implements WeChatService {
     @Override
     public WxMpXmlOutMessage webChatRequestParse(WxMpXmlMessage message) {
         WxMpXmlOutTextMessage content = null;
-        log.info("被请求了！！！！！！请求信息L用户的openId：{}", message.getFromUser());
+        log.info("被请求了！！！！！！请求信息用户的openId：{}", message.getFromUser());
         try {
             switch (message.getMsgType()) {
                 case TEXT:
