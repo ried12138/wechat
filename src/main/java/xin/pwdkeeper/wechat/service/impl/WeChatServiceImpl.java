@@ -123,7 +123,8 @@ public class WeChatServiceImpl implements WeChatService {
                 //记录用户信息
                 wechatUserInfoService.addWechatUserInfo(new WechatUserInfo(null,message.getFromUser(),1,new Date()));
                 return WxMpXmlOutMessage.TEXT()
-                        .content("感谢关注！" + message.getContent() == null ? "" : message.getContent()+"\n" +                               "你可以再此登记你的网络虚拟资产\n" +
+                        .content("感谢关注！" + (message.getContent() == null ? "" : message.getContent())+"\n" +
+                                "你可以再此登记你的网络虚拟资产\n" +
                                 "在对话框中输入【验证码】可以查看你的虚拟账户资产")
                         .fromUser(message.getToUser())
                         .toUser(message.getFromUser())

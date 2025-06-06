@@ -15,7 +15,9 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
 
     @Override
     public void addWechatUserInfo(WechatUserInfo wechatUserInfo) {
-        wechatUserInfoMapper.insert(wechatUserInfo);
+        if (wechatUserInfoMapper.selectByUserOpenId(wechatUserInfo.getUserOpenId()) == null){
+            wechatUserInfoMapper.insert(wechatUserInfo);
+        }
     }
 
     @Override
