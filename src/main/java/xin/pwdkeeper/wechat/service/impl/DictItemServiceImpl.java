@@ -48,6 +48,10 @@ public class DictItemServiceImpl implements DictItemService {
             lockKey = "lock:cacheFlushPlatformDictionary" + result;
         }
         if (lockKey != null) {
+            Boolean isExist = redisService.hasKey(lockKey);
+            if (Boolean.TRUE.equals(isExist)){
+                return R.failed(null, "已添加成功.");
+            }
             RLock lock = redissonClient.getLock(lockKey);
             try {
                 log.info("加锁成功，开始执行异步处理:%s"+lockKey);
