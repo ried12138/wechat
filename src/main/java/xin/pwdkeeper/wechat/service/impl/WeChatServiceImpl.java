@@ -8,6 +8,7 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xin.pwdkeeper.wechat.bean.*;
+import xin.pwdkeeper.wechat.customizeService.LicenseService;
 import xin.pwdkeeper.wechat.customizeService.UserManagementService;
 import xin.pwdkeeper.wechat.customizeService.VerifyCodeService;
 import xin.pwdkeeper.wechat.service.DictItemService;
@@ -44,6 +45,8 @@ public class WeChatServiceImpl implements WeChatService {
     private UserManagementService userManagementService;
     @Autowired
     private DictItemService dictItemService;
+    @Autowired
+    private LicenseService licenseService;
 
     /**
      * 服务器与微信公众号校验token值
@@ -80,6 +83,17 @@ public class WeChatServiceImpl implements WeChatService {
                     //判断消息的内容
                     String text = message.getContent();
                     switch (text){
+                        case "学习码":
+                            RequestParams<Object> licenseParam = new RequestParams<>();
+                            licenseParam.setOpenId(message.getFromUser());
+                            R licenseR = licenseService.generateLicenseCode(licenseParam);
+                            if (licenseR.getCode() != 0) {
+                                content.setContent(licenseR.getMsg());
+                                break;
+                            }
+                            Map<String, Object> licenseData = (Map<String, Object>) licenseR.getData();
+                            content.setContent(String.format("你的学习验证码：%s \n请在5分钟内使用该验证码完成授权", licenseData.get("licenseCode")));
+                            return content;
                         case "验证码":
                             RequestParams<Object> requestParam = new RequestParams<>();
                             requestParam.setOpenId(message.getFromUser());

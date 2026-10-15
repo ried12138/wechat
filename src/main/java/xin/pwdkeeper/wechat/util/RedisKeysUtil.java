@@ -22,6 +22,13 @@ public class RedisKeysUtil {
 
     public static final String VERIFY_CODE = "verifyCode";
 
+    // 学习码(防盗版授权码)在Redis中的键前缀，完整key为 前缀+验证码本身
+    public static final String LICENSE_CODE_KEY = "licenseCode_";
+    // 返回体字段：学习验证码
+    public static final String LICENSE_CODE = "licenseCode";
+    // 返回体字段：加密后的授权凭证
+    public static final String LICENSE_TOKEN = "licenseToken";
+
 
     // 其他固定key值可以继续添加
     // public static final String ANOTHER_KEY = "anotherKey";

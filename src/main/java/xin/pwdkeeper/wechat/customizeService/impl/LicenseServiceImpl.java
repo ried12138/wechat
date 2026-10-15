@@ -1,0 +1,153 @@
+package xin.pwdkeeper.wechat.customizeService.impl;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import xin.pwdkeeper.wechat.bean.R;
+import xin.pwdkeeper.wechat.bean.RequestParams;
+import xin.pwdkeeper.wechat.customizeService.LicenseService;
+import xin.pwdkeeper.wechat.customizeService.RedisService;
+import xin.pwdkeeper.wechat.util.AesUtil;
+import xin.pwdkeeper.wechat.util.RedisKeysUtil;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * 学习码(防盗版授权)服务实现
+ * 说明：本实现完全独立，不复用也不改动验证码资产登录相关的既有逻辑，
+ * 加密统一复用现有的 {@link AesUtil}。
+ *
+ * @Author weiranliu
+ * @Version 1.0
+ */
+@Slf4j
+@Service
+public class LicenseServiceImpl implements LicenseService {
+
+    // 学习验证码前缀
+    private static final String LICENSE_CODE_PREFIX = "XXM";
+    // 学习验证码在Redis中的有效期（分钟）
+    private static final long ACTIVATION_TTL_MINUTES = 5;
+    // 心跳凭证的时间戳过期阈值（分钟），超过则认为授权失效
+    private static final long HEARTBEAT_EXPIRE_MINUTES = 15;
+    // 凭证明文各字段的分隔符（openId与验证码本身都不包含该字符）
+    private static final String TOKEN_SEPARATOR = "/";
+    // 一分钟的毫秒数
+    private static final long ONE_MINUTE_MILLIS = 60 * 1000L;
+
+    @Autowired
+    private RedisService redisService;
+
+    @Override
+    public R generateLicenseCode(RequestParams request) {
+        String openId = request.getOpenId();
+        if (openId == null || openId.isEmpty()) {
+            return R.failed(null, "openId不能为空");
+        }
+        // 每次回复都生成新码；若随机数碰撞已存在的key则重新生成
+        String code = generateUniqueCode();
+        try {
+            // key由验证码本身派生，value为发送人openId，有效期5分钟
+            redisService.settimelinessCach(RedisKeysUtil.LICENSE_CODE_KEY + code, openId, ACTIVATION_TTL_MINUTES, TimeUnit.MINUTES);
+        } catch (Exception e) {
+            log.error("用户:{} 学习码生成失败, code:{}", openId, code, e);
+            return R.failed(null, "学习码生成失败");
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put(RedisKeysUtil.LICENSE_CODE, code);
+        return R.ok(map);
+    }
+
+    @Override
+    public R verifyLicenseCode(RequestParams request) {
+        Map<String, Object> data = (Map<String, Object>) request.getRequestParam();
+        String code = data == null ? null : (String) data.get(RedisKeysUtil.LICENSE_CODE);
+        if (code == null || code.isEmpty()) {
+            return R.failed(null, "验证码不能为空");
+        }
+        String redisKey = RedisKeysUtil.LICENSE_CODE_KEY + code;
+        Object value = redisService.get(redisKey);
+        if (value == null) {
+            return R.failed(null, "验证码已过期或不存在");
+        }
+        String openId = String.valueOf(value);
+        // 校验通过后立即从Redis删除该验证码
+        redisService.delete(redisKey);
+        try {
+            String token = buildToken(code, openId, System.currentTimeMillis());
+            Map<String, Object> result = new HashMap<>();
+            result.put(RedisKeysUtil.LICENSE_TOKEN, token);
+            return R.ok(result);
+        } catch (Exception e) {
+            log.error("学习码校验加密失败, code:{}", code, e);
+            return R.failed(null, "校验失败");
+        }
+    }
+
+    @Override
+    public R heartbeatLicense(RequestParams request) {
+        Map<String, Object> data = (Map<String, Object>) request.getRequestParam();
+        String token = data == null ? null : (String) data.get(RedisKeysUtil.LICENSE_TOKEN);
+        if (token == null || token.isEmpty()) {
+            return R.failed(null, "凭证不能为空");
+        }
+        try {
+            String plain = AesUtil.decrypt(token);
+            String[] parts = plain.split(TOKEN_SEPARATOR);
+            if (parts.length != 3) {
+                return R.failed(null, "凭证非法");
+            }
+            String openId = parts[1];
+            long timestamp = Long.parseLong(parts[2]);
+            long ageMinutes = (System.currentTimeMillis() - timestamp) / ONE_MINUTE_MILLIS;
+            if (ageMinutes > HEARTBEAT_EXPIRE_MINUTES) {
+                return R.failed(null, "授权已过期，请重新获取验证码");
+            }
+            // 轮转：保留前缀、替换6位随机数字，刷新时间戳后重新加密
+            String newToken = buildToken(rotateCode(), openId, System.currentTimeMillis());
+            Map<String, Object> result = new HashMap<>();
+            result.put(RedisKeysUtil.LICENSE_TOKEN, newToken);
+            return R.ok(result);
+        } catch (Exception e) {
+            log.warn("学习码心跳校验失败: {}", e.getMessage());
+            return R.failed(null, "凭证校验失败");
+        }
+    }
+
+    /**
+     * 组装并加密凭证明文：验证码/openId/时间戳
+     */
+    private String buildToken(String code, String openId, long timestamp) throws Exception {
+        return AesUtil.encrypt(code + TOKEN_SEPARATOR + openId + TOKEN_SEPARATOR + timestamp);
+    }
+
+    /**
+     * 生成一个新的学习验证码（XXM+6位随机数字）
+     */
+    private String generateUniqueCode() {
+        String code;
+        do {
+            code = LICENSE_CODE_PREFIX + randomSixDigits();
+        } while (redisService.hasKey(RedisKeysUtil.LICENSE_CODE_KEY + code));
+        return code;
+    }
+
+    /**
+     * 心跳轮转：保持 XXM 前缀，重新生成6位随机数字
+     */
+    private String rotateCode() {
+        return LICENSE_CODE_PREFIX + randomSixDigits();
+    }
+
+    private String randomSixDigits() {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            sb.append(random.nextInt(10));
+        }
+        return sb.toString();
+    }
+}

@@ -66,9 +66,9 @@ public class RedisInitializationPoint {
         }
         log.info("redis字典数据初始化完成:::::::::::::::::::::::::::::::::::::::::::::::::");
         //**************************************************************************
-        if (!redisService.hasKey(RedisKeysUtil.SPRING_URL)){
+//        if (!redisService.hasKey(RedisKeysUtil.SPRING_URL)){
             redisService.set(RedisKeysUtil.SPRING_URL,url);
-        }
+//        }
         log.info("redis定制url初始化完成::::::::::::::::::::::::::::::::::::::::::::::::::");
     }
 }

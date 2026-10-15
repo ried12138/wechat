@@ -111,7 +111,7 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
         String encrypt = AesUtil.encrypt(parameter+"/"+System.currentTimeMillis());
         //用户的openId放入缓存
         redisService.settimelinessCach(encrypt,openId,timeliness, TimeUnit.MINUTES);
-        return url+"?openId="+encrypt+"&verifyCode="+parameter;
+        return url+"?openId="+encrypt+"&verifyCode="+parameter+"#/home";
     }
 
 
