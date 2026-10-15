@@ -31,8 +31,11 @@ public class LicenseServiceImpl implements LicenseService {
     private static final String LICENSE_CODE_PREFIX = "XXM";
     // 学习验证码在Redis中的有效期（分钟）
     private static final long ACTIVATION_TTL_MINUTES = 5;
+    // 心跳间隔（分钟），与客户端约定保持一致
+    private static final long HEARTBEAT_INTERVAL_MINUTES = 11;
     // 心跳凭证的时间戳过期阈值（分钟），超过则认为授权失效
-    private static final long HEARTBEAT_EXPIRE_MINUTES = 15;
+    // 取心跳间隔的2倍以上，保证即使错过一次心跳、下一次成功仍能续命
+    private static final long HEARTBEAT_EXPIRE_MINUTES = HEARTBEAT_INTERVAL_MINUTES * 2 + 3;
     // 凭证明文各字段的分隔符（openId与验证码本身都不包含该字符）
     private static final String TOKEN_SEPARATOR = "/";
     // 一分钟的毫秒数
@@ -102,8 +105,8 @@ public class LicenseServiceImpl implements LicenseService {
             }
             String openId = parts[1];
             long timestamp = Long.parseLong(parts[2]);
-            long ageMinutes = (System.currentTimeMillis() - timestamp) / ONE_MINUTE_MILLIS;
-            if (ageMinutes > HEARTBEAT_EXPIRE_MINUTES) {
+            long elapsedMs = System.currentTimeMillis() - timestamp;
+            if (elapsedMs > HEARTBEAT_EXPIRE_MINUTES * ONE_MINUTE_MILLIS) {
                 return R.failed(null, "授权已过期，请重新获取验证码");
             }
             // 轮转：保留前缀、替换6位随机数字，刷新时间戳后重新加密
