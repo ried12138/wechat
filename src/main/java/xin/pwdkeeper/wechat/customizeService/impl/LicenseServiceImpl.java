@@ -48,6 +48,7 @@ public class LicenseServiceImpl implements LicenseService {
     public R generateLicenseCode(RequestParams request) {
         String openId = request.getOpenId();
         if (openId == null || openId.isEmpty()) {
+            log.warn("[学习码-生成] 生成失败, openId为空");
             return R.failed(null, "openId不能为空");
         }
         // 每次回复都生成新码；若随机数碰撞已存在的key则重新生成
@@ -56,9 +57,10 @@ public class LicenseServiceImpl implements LicenseService {
             // key由验证码本身派生，value为发送人openId，有效期5分钟
             redisService.settimelinessCach(RedisKeysUtil.LICENSE_CODE_KEY + code, openId, ACTIVATION_TTL_MINUTES, TimeUnit.MINUTES);
         } catch (Exception e) {
-            log.error("用户:{} 学习码生成失败, code:{}", openId, code, e);
+            log.error("[学习码-生成] 存储失败, 用户:{} 学习码生成失败, code:{}", openId, code, e);
             return R.failed(null, "学习码生成失败");
         }
+        log.info("[学习码-生成] 生成成功, openId={}, code={}", openId, code);
         Map<String, Object> map = new HashMap<>();
         map.put(RedisKeysUtil.LICENSE_CODE, code);
         return R.ok(map);
@@ -69,23 +71,27 @@ public class LicenseServiceImpl implements LicenseService {
         Map<String, Object> data = (Map<String, Object>) request.getRequestParam();
         String code = data == null ? null : (String) data.get(RedisKeysUtil.LICENSE_CODE);
         if (code == null || code.isEmpty()) {
+            log.warn("[学习码-校验] 校验失败, 验证码为空, openId={}", request.getOpenId());
             return R.failed(null, "验证码不能为空");
         }
         String redisKey = RedisKeysUtil.LICENSE_CODE_KEY + code;
         Object value = redisService.get(redisKey);
         if (value == null) {
+            log.warn("[学习码-校验] 校验失败, 验证码已过期或不存在, openId={}", request.getOpenId());
             return R.failed(null, "验证码已过期或不存在");
         }
         String openId = String.valueOf(value);
         // 校验通过后立即从Redis删除该验证码
         redisService.delete(redisKey);
+        log.info("[学习码-校验] 验证码校验通过, openId={}, 开始签发凭证", openId);
         try {
             String token = buildToken(code, openId, System.currentTimeMillis());
             Map<String, Object> result = new HashMap<>();
             result.put(RedisKeysUtil.LICENSE_TOKEN, token);
+            log.info("[学习码-校验] 凭证签发成功, openId={}", openId);
             return R.ok(result);
         } catch (Exception e) {
-            log.error("学习码校验加密失败, code:{}", code, e);
+            log.error("[学习码-校验] 凭证签发失败(加密异常), openId={}, code:{}", openId, code, e);
             return R.failed(null, "校验失败");
         }
     }
@@ -95,27 +101,36 @@ public class LicenseServiceImpl implements LicenseService {
         Map<String, Object> data = (Map<String, Object>) request.getRequestParam();
         String token = data == null ? null : (String) data.get(RedisKeysUtil.LICENSE_TOKEN);
         if (token == null || token.isEmpty()) {
+            log.warn("[学习码-心跳] 校验失败, 凭证为空, openId={}", request.getOpenId());
             return R.failed(null, "凭证不能为空");
         }
+        // 敏感凭证脱敏：仅记录 token 长度用于排查传输截断，严禁打印密文
+        log.info("[学习码-心跳] 开始校验, tokenLength={}", token.length());
         try {
             String plain = AesUtil.decrypt(token);
             String[] parts = plain.split(TOKEN_SEPARATOR);
             if (parts.length != 3) {
+                log.warn("[学习码-心跳] 校验失败, 凭证非法, tokenLength={}", token.length());
                 return R.failed(null, "凭证非法");
             }
             String openId = parts[1];
             long timestamp = Long.parseLong(parts[2]);
             long elapsedMs = System.currentTimeMillis() - timestamp;
+            // openId 解密后才能拿到，这里才是"谁发起了心跳"的关键日志
+            log.info("[学习码-心跳] 凭证解析成功, openId={}, 距上次心跳={}分钟", openId, elapsedMs / ONE_MINUTE_MILLIS);
             if (elapsedMs > HEARTBEAT_EXPIRE_MINUTES * ONE_MINUTE_MILLIS) {
+                log.warn("[学习码-心跳] 授权过期, openId={}, 距上次心跳={}分钟, 过期阈值={}分钟", openId, elapsedMs / ONE_MINUTE_MILLIS, HEARTBEAT_EXPIRE_MINUTES);
                 return R.failed(null, "授权已过期，请重新获取验证码");
             }
             // 轮转：保留前缀、替换6位随机数字，刷新时间戳后重新加密
             String newToken = buildToken(rotateCode(), openId, System.currentTimeMillis());
             Map<String, Object> result = new HashMap<>();
             result.put(RedisKeysUtil.LICENSE_TOKEN, newToken);
+            log.info("[学习码-心跳] 心跳成功, openId={}, 凭证已轮转", openId);
             return R.ok(result);
         } catch (Exception e) {
-            log.warn("学习码心跳校验失败: {}", e.getMessage());
+            // 解密失败等异常，同样只做脱敏处理，仅记录 token 长度与异常信息
+            log.warn("[学习码-心跳] 凭证校验失败, tokenLength={}, err={}", token.length(), e.getMessage());
             return R.failed(null, "凭证校验失败");
         }
     }
